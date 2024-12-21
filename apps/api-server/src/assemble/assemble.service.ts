@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import { ConflictException, Injectable } from '@nestjs/common';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import { Tables } from 'src/supabase/supabase.types';
@@ -9,10 +8,7 @@ import { UpdateAssembleDto } from './dto/update-assemble.dto';
 
 @Injectable()
 export class AssembleService {
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly supabaseService: SupabaseService,
-  ) {}
+  constructor(private readonly supabaseService: SupabaseService) {}
 
   async createAssemble(
     { title }: CreateAssembleDto,
@@ -106,11 +102,6 @@ export class AssembleService {
     }
 
     const { data: myAssembleList } = await query;
-
-    // const nextCursor =
-    //   myAssembleList.length > 0
-    //     ? myAssembleList[myAssembleList.length - 1].id
-    //     : null;
 
     return myAssembleList ?? [];
   }
