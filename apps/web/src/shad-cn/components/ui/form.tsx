@@ -119,7 +119,21 @@ const FormInput = React.forwardRef<
   React.ElementRef<typeof Input>,
   React.ComponentPropsWithoutRef<typeof Input>
 >(({ className, ...props }, ref) => {
-  const { error } = useFormField();
+  const { trigger } = useFormContext();
+  const { name, error } = useFormField();
+
+  /** NOTE: maxLength가 있는 경우 trigger 활성화 */
+  React.useEffect(() => {
+    if (props.value) {
+      trigger(name);
+    }
+  }, [
+    (typeof props.type === "undefined" || props.type === "text") &&
+      typeof props.value === "string" &&
+      typeof props.maxLength === "number" &&
+      props.value.length > props.maxLength,
+    name,
+  ]);
 
   return (
     <Input

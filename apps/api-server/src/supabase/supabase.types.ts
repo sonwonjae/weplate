@@ -9,7 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      assemble: {
+      assembles: {
         Row: {
           createdAt: string;
           id: string;
@@ -65,6 +65,39 @@ export type Database = {
           },
         ];
       };
+      user_assembles: {
+        Row: {
+          assembleId: string;
+          permission: Database['public']['Enums']['permission'];
+          userId: string;
+        };
+        Insert: {
+          assembleId?: string;
+          permission?: Database['public']['Enums']['permission'];
+          userId?: string;
+        };
+        Update: {
+          assembleId?: string;
+          permission?: Database['public']['Enums']['permission'];
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_assembles_assembleId_fkey';
+            columns: ['assembleId'];
+            isOneToOne: false;
+            referencedRelation: 'assembles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user_assembles_userId_fkey';
+            columns: ['userId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       users: {
         Row: {
           avatarUrl: string;
@@ -106,6 +139,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
+      permission: 'owner' | 'member';
       provider: 'kakao';
     };
     CompositeTypes: {

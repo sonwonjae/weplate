@@ -1,14 +1,26 @@
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 import { Skeleton } from "@/shad-cn/components/ui/skeleton";
-import { RQClient } from "@/utils/react-query";
+import { RQInfinityClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import AssembleItem from "./AssembleItem";
 
 function AssembleList() {
-  const myAssembleListQuery = new RQClient({ url: "/api/assemble/list/my" });
+  const router = useRouter();
+
+  const myAssembleListQuery = new RQInfinityClient({
+    url: "/api/assemble/list/my",
+    /** FIXME: 유틸화를 하든 뭘하든 사용성 올려야될듯 */
+    params: {
+      cursor: null,
+      search: String(router.query.search || ""),
+      sort: String(router.query.sort) === "latest" ? "latest" : "oldest",
+      limit: Number(router.query.limit) || 10,
+    },
+  });
   const {
     data: myAssembleList,
     isFetching,

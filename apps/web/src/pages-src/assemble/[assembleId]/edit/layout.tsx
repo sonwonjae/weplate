@@ -47,9 +47,15 @@ function Layout({ children }: PropsWithChildren) {
         title,
       });
 
-      console.log({ updatedAssemble });
-
-      router.replace(`/assemble/${router.query.assembleId}`);
+      if (
+        router.query.redirectUrl &&
+        typeof router.query.redirectUrl === "string" &&
+        /^\//.test(router.query.redirectUrl)
+      ) {
+        router.replace(router.query.redirectUrl);
+      } else {
+        router.replace(`/`);
+      }
       return updatedAssemble;
     },
   });

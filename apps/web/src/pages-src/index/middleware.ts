@@ -1,23 +1,41 @@
-import type { Middleware, CustomIncomingMessage } from "@/middlewares/type";
+import type {
+  Middleware,
+  CustomIncomingMessage,
+  Params,
+  Query,
+} from "@/middlewares/type";
 
 import { dehydrate, QueryClient } from "@tanstack/react-query";
 
+import { checkSingleQuery } from "@/middlewares/common/queryValidation";
 import { pipe } from "@/middlewares/utils/pipe";
-import { RQServer } from "@/utils/react-query";
+import { RQInfinityServer, RQServer } from "@/utils/react-query";
+import { RQInfinityRequestParams } from "@/utils/react-query/infinity";
 
-type Req = CustomIncomingMessage;
+export type HomePageReq = CustomIncomingMessage<
+  Params,
+  RQInfinityRequestParams & Query
+>;
 
-const prefetch: Middleware<Req> = async (req, res) => {
+const prefetch: Middleware<HomePageReq> = async (req, res) => {
   const queryClient = new QueryClient();
 
   try {
-    const authQuery = new RQServer({ type: "auth", url: "/auth/check", res });
-    const myAssembleListQuery = new RQServer({
+    const authQuery = new RQServer({ type: "auth", url: "/api/user/auth/check", res });
+    await queryClient.fetchQuery(authQuery.queryOptions);
+
+    const myAssembleListQuery = new RQInfinityServer({
       url: "/api/assemble/list/my",
+      params: req.query,
       res,
     });
-    await queryClient.fetchQuery(authQuery.queryOptions);
     await queryClient.fetchQuery(myAssembleListQuery.queryOptions);
+
+    const isWithinCreationLimitQuery = new RQServer({
+      url: "/api/assemble/check/within-creation-limit",
+      res,
+    });
+    await queryClient.fetchQuery(isWithinCreationLimitQuery.queryOptions);
 
     return {
       props: { dehydratedState: dehydrate(queryClient) },
@@ -32,6 +50,22 @@ const prefetch: Middleware<Req> = async (req, res) => {
   }
 };
 
-const middleware = pipe<Req>(prefetch);
+const middleware = pipe<HomePageReq>(
+  checkSingleQuery({
+    queryName: "cursor",
+  }),
+  checkSingleQuery({
+    queryName: "search",
+  }),
+  checkSingleQuery({
+    queryName: "sort",
+    defaultSingleQuery: "latest",
+  }),
+  checkSingleQuery({
+    queryName: "limit",
+    defaultSingleQuery: 10,
+  }),
+  prefetch,
+);
 
 export default middleware;

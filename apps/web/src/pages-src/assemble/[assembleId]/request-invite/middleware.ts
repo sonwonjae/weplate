@@ -13,24 +13,31 @@ const prefetch: Middleware<Req> = async (req, res) => {
   const assembleId = req.params?.assembleId as string;
 
   try {
-    const authQuery = new RQServer({ type: "auth", url: "/api/user/auth/check", res });
     const assembleQuery = new RQServer({
       url: `/api/assemble/${assembleId}/item`,
       res,
     });
-    await queryClient.fetchQuery(authQuery.queryOptions);
     await queryClient.fetchQuery(assembleQuery.queryOptions);
 
     return {
       props: { dehydratedState: dehydrate(queryClient) },
     };
   } catch {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: true,
-      },
-    };
+    try {
+      const authQuery = new RQServer({ type: "auth", url: "/api/user/auth/check", res });
+      await queryClient.fetchQuery(authQuery.queryOptions);
+
+      return {
+        props: { dehydratedState: dehydrate(queryClient) },
+      };
+    } catch {
+      return {
+        redirect: {
+          destination: "/login",
+          permanent: true,
+        },
+      };
+    }
   }
 };
 

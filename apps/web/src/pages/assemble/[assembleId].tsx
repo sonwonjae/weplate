@@ -18,7 +18,7 @@ export const getServerSideProps = makeGetServerSideProps(router);
 
 function AssembleItemPage() {
   const router = useRouter();
-  const authQuery = new RQClient({ type: "auth", url: "/auth/check" });
+  const authQuery = new RQClient({ type: "auth", url: "/api/user/auth/check" });
   const assembleQuery = new RQClient({
     url: `/api/assemble/${router.query.assembleId}/item`,
   });
@@ -27,16 +27,13 @@ function AssembleItemPage() {
   const { data: assemble } = useQuery(assembleQuery.queryOptions);
 
   return (
-    <>
-      <span className={cn("font-bold", "py-4", "px-5")}>
-        [{userInfo?.name}]
-      </span>
-      님{" "}
+    <section className={cn("py-4", "px-5")}>
+      <span className={cn("font-bold")}>[{userInfo?.name}]</span>님{" "}
       <span className={cn("font-bold", "py-4", "px-5")}>
         [{assemble?.title}]
       </span>
       에 오신 것을 환영해요.
-    </>
+    </section>
   );
 }
 

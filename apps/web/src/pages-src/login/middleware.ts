@@ -11,7 +11,7 @@ const prefetch: Middleware<Req> = async (req, res) => {
   const queryClient = new QueryClient();
 
   try {
-    const authQuery = new RQServer({ type: "auth", url: "/auth/check", res });
+    const authQuery = new RQServer({ type: "auth", url: "/api/user/auth/check", res });
     await queryClient.fetchQuery(authQuery.queryOptions);
 
     return {

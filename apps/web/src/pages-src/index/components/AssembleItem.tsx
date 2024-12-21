@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EllipsisIcon, PencilIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
 
 import { Button } from "@/shad-cn/components/ui/button";
 import {
@@ -14,8 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/shad-cn/components/ui/dialog";
-import { apiAxios, RQClient } from "@/utils/react-query";
-import { ResponseMap } from "@/utils/react-query/types";
+import { apiAxios, RQInfinityClient } from "@/utils/react-query";
+import { InfinityResponseMap } from "@/utils/react-query/infinity";
 import { cn } from "@/utils/tailwind";
 
 interface AssembleItemPureProps {
@@ -23,7 +24,7 @@ interface AssembleItemPureProps {
   activeTools: boolean;
   changeActiveTools: (assembleId: string) => void;
 }
-type AssembleItemProps = ResponseMap["/api/assemble/list/my"][number] &
+type AssembleItemProps = InfinityResponseMap["/api/assemble/list/my"][number] &
   AssembleItemPureProps;
 
 function AssembleItem({
@@ -34,9 +35,20 @@ function AssembleItem({
   id: assembleId,
   title,
 }: AssembleItemProps) {
+  const toolsContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
   const queryClient = useQueryClient();
-  const myAssembleListQuery = new RQClient({ url: "/api/assemble/list/my" });
+  const myAssembleListQuery = new RQInfinityClient({
+    url: "/api/assemble/list/my",
+    /** FIXME: 유틸화를 하든 뭘하든 사용성 올려야될듯 */
+    params: {
+      cursor: null,
+      search: String(router.query.search || ""),
+      sort: String(router.query.sort) === "latest" ? "latest" : "oldest",
+      limit: Number(router.query.limit) || 10,
+    },
+  });
 
   const { mutateAsync: deleteAssemble, isPending } = useMutation({
     mutationFn: async () => {
@@ -67,6 +79,17 @@ function AssembleItem({
     }
   })();
 
+  useEffect(() => {
+    if (!toolsContainerRef.current) {
+      return;
+    }
+
+    toolsContainerRef.current.style.paddingRight = `${
+      toolsContainerRef.current.querySelector("div:not([hidden])")
+        ?.clientWidth || 0
+    }px`;
+  }, [toolsState]);
+
   return (
     <>
       <li
@@ -85,14 +108,19 @@ function AssembleItem({
       >
         <div className={cn("flex", "gap-3", "w-full", "items-center")}>
           <div className={cn("w-12", "h-12", "rounded-full", "bg-slate-100")} />
-          <div className={cn("flex-1", "flex", "flex-col", "gap-1")}>
+          <div
+            className={cn("flex-1", "flex", "flex-col", "gap-1", "truncate")}
+          >
             <Link
+              prefetch={false}
+              shallow={false}
               href={`/assemble/${assembleId}`}
               className={cn(
+                "flex-1",
                 "block",
-                "w-full",
                 "hover:text-primary",
                 "font-bold",
+                "truncate",
               )}
             >
               {title}
@@ -110,8 +138,9 @@ function AssembleItem({
               N명과 함께
             </span>
           </div>
-          <div className={cn("relative", "h-12")}>
+          <div ref={toolsContainerRef} className={cn("relative", "h-12")}>
             <div
+              hidden={toolsState === "active"}
               className={cn(
                 "absolute",
                 "top-0",
@@ -125,7 +154,6 @@ function AssembleItem({
               )}
             >
               <Button
-                hidden={activeTools}
                 disabled={activeTools}
                 color="link"
                 size="icon-md"
@@ -142,6 +170,7 @@ function AssembleItem({
               </Button>
             </div>
             <div
+              hidden={toolsState !== "active"}
               className={cn(
                 "absolute",
                 "top-0",
@@ -159,7 +188,6 @@ function AssembleItem({
               )}
             >
               <Button
-                hidden={toolsState === "inactive" || toolsState === "init"}
                 disabled={toolsState === "inactive" || toolsState === "init"}
                 color="link"
                 size="icon-md"

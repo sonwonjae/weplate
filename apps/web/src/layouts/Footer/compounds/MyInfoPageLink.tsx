@@ -7,7 +7,7 @@ import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 function MyInfoPageLink() {
-  const authQuery = new RQClient({ type: "auth", url: "/auth/check" });
+  const authQuery = new RQClient({ type: "auth", url: "/api/user/auth/check" });
   const { data: userInfo } = useQuery(authQuery.queryOptions);
   const router = useRouter();
 

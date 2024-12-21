@@ -6,10 +6,14 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
+import { UserInfo } from 'src/auth/auth.decorator';
+import { Tables } from 'src/supabase/supabase.types';
 
 import { AssembleService } from './assemble.service';
 import { CreateAssembleDto } from './dto/create-assemble.dto';
+import { GetAssembleInfinityListParamsDto } from './dto/get-assemble-infinity-list.dto';
 import { UpdateAssembleDto } from './dto/update-assemble.dto';
 
 @Controller('assemble')
@@ -17,14 +21,24 @@ export class AssembleController {
   constructor(private readonly assembleService: AssembleService) {}
 
   @Post('item')
-  createAssemble(@Body() createAssembleDto: CreateAssembleDto) {
-    return this.assembleService.createAssemble(createAssembleDto);
+  createAssemble(
+    @Body() createAssembleDto: CreateAssembleDto,
+    @UserInfo() userInfo: Tables<'users'>,
+  ) {
+    return this.assembleService.createAssemble(createAssembleDto, userInfo);
   }
 
-  // FIXME: auth check middleware 붙히기
+  @Get('check/within-creation-limit')
+  checkWithinCreationLimit(@UserInfo() userInfo: Tables<'users'>) {
+    return this.assembleService.checkWithinCreationLimit(userInfo);
+  }
+
   @Get('list/my')
-  getAssembleList() {
-    return this.assembleService.getMyAssembleList();
+  getAssembleList(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Query() query: GetAssembleInfinityListParamsDto,
+  ) {
+    return this.assembleService.getMyAssembleList(userInfo, query);
   }
 
   @Get(':assembleId/item')

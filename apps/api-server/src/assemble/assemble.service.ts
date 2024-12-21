@@ -1,16 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { SupabaseService } from 'src/supabase/supabase.service';
+import { Tables } from 'src/supabase/supabase.types';
 
 import { CreateAssembleDto } from './dto/create-assemble.dto';
+import { GetAssembleInfinityListParamsDto } from './dto/get-assemble-infinity-list.dto';
 import { UpdateAssembleDto } from './dto/update-assemble.dto';
 
 @Injectable()
 export class AssembleService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly supabaseService: SupabaseService,
+  ) {}
 
-  async createAssemble({ title }: CreateAssembleDto) {
+  async createAssemble(
+    { title }: CreateAssembleDto,
+    userInfo: Tables<'users'>,
+  ) {
     const { data: assemble } = await this.supabaseService.client
-      .from('assemble')
+      .from('assembles')
       .insert({
         title,
         createdAt: new Date().toISOString(),
@@ -19,20 +28,97 @@ export class AssembleService {
       .select('*')
       .single();
 
+    if (!assemble) {
+      throw new ConflictException();
+    }
+
+    const { data: userAssemble } = await this.supabaseService.client
+      .from('user_assembles')
+      .insert({ userId: userInfo.id, assembleId: assemble.id })
+      .select('*')
+      .single();
+
+    if (!userAssemble) {
+      throw new ConflictException();
+    }
     return assemble;
   }
 
-  // FIXME: pagination 구현하기
-  async getMyAssembleList() {
-    const { data: myAssembleList } = await this.supabaseService.client
-      .from('assemble')
-      .select('*');
-    return myAssembleList;
+  async checkWithinCreationLimit(userInfo: Tables<'users'>) {
+    if (!userInfo) {
+      return {
+        isWithinCreationLimit: true,
+        limit: Number(process.env.ASSEMBLE_LIMIT),
+      };
+    }
+
+    const { data: userAssemble } = await this.supabaseService.client
+      .from('user_assembles')
+      .select('*')
+      .eq('userId', userInfo.id);
+
+    if (
+      Array.isArray(userAssemble) &&
+      userAssemble.length >= Number(process.env.ASSEMBLE_LIMIT)
+    ) {
+      return {
+        isWithinCreationLimit: false,
+        limit: Number(process.env.ASSEMBLE_LIMIT),
+      };
+    }
+    return {
+      isWithinCreationLimit: true,
+      limit: Number(process.env.ASSEMBLE_LIMIT),
+    };
+  }
+
+  async getMyAssembleList(
+    userInfo: Tables<'users'>,
+    { cursor, search, sort, limit }: GetAssembleInfinityListParamsDto,
+  ) {
+    let query = this.supabaseService.client
+      .from('assembles')
+      .select(
+        `
+          *,
+          user_assembles!inner(userId)
+        `,
+      )
+      .eq('user_assembles.userId', userInfo.id);
+
+    if (sort === 'latest') {
+      query = query.order('updatedAt', { ascending: true });
+    }
+    if (sort === 'oldest') {
+      query = query.order('updatedAt', { ascending: false });
+    }
+
+    if (cursor) {
+      query = query.gt('id', cursor);
+    }
+
+    if (search) {
+      console.log({ search });
+      query = query.ilike('title', `%${search}%`);
+    }
+
+    if (limit) {
+      query = query.limit(limit);
+    }
+
+    const { data: myAssembleList } = await query;
+
+    // const nextCursor =
+    //   myAssembleList.length > 0
+    //     ? myAssembleList[myAssembleList.length - 1].id
+    //     : null;
+
+    return myAssembleList ?? [];
   }
 
   async getAssembleItem(assembleId: string) {
     const { data: assemble } = await this.supabaseService.client
-      .from('assemble')
+      .from('assembles')
       .select('*')
       .eq('id', assembleId)
       .single();
@@ -41,9 +127,8 @@ export class AssembleService {
   }
 
   async updateAssemble(assembleId: string, { title }: UpdateAssembleDto) {
-    console.log({assembleId, title})
     const { data: assemble } = await this.supabaseService.client
-      .from('assemble')
+      .from('assembles')
       .update({
         title,
         updatedAt: new Date().toISOString(),
@@ -57,7 +142,7 @@ export class AssembleService {
 
   async removeAssemble(assembleId: string) {
     await this.supabaseService.client
-      .from('assemble')
+      .from('assembles')
       .delete()
       .eq('id', assembleId);
 

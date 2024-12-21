@@ -1,13 +1,27 @@
+import { useQuery } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 
 import { Button } from "@/shad-cn/components/ui/button";
+import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 function CreateAssembleButton() {
   const router = useRouter();
+  const isWithinCreationLimitQuery = new RQClient({
+    url: "/api/assemble/check/within-creation-limit",
+  });
+  const { data: { isWithinCreationLimit, limit } = {} } = useQuery(
+    isWithinCreationLimitQuery.queryOptions,
+  );
+
   const moveCreateAssemblePage = () => {
-    router.push("/assemble/create");
+    if (isWithinCreationLimit) {
+      router.push("/assemble/create");
+    } else {
+      toast.info(`모임 갯수는 ${limit}개를 초과할 수 없습니다.`);
+    }
   };
 
   return (

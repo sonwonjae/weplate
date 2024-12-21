@@ -8,5 +8,5 @@ export class CreateAssembleDto {
   })
   @IsString()
   @IsNotEmpty()
-  title: Tables<'assemble'>['title'];
+  title: Tables<'assembles'>['title'];
 }

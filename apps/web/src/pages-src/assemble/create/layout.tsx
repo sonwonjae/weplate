@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { XIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,7 +10,7 @@ import { z } from "zod";
 import { Header, Main, Footer } from "@/layouts";
 import { Button } from "@/shad-cn/components/ui/button";
 import { Form } from "@/shad-cn/components/ui/form";
-import { apiAxios } from "@/utils/react-query";
+import { apiAxios, RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 export const assembleFormSchema = z.object({
@@ -21,6 +21,13 @@ export const assembleFormSchema = z.object({
 });
 
 function Layout({ children }: PropsWithChildren) {
+  const isWithinCreationLimitQuery = new RQClient({
+    url: "/api/assemble/check/within-creation-limit",
+  });
+  const { data: { isWithinCreationLimit } = {} } = useQuery(
+    isWithinCreationLimitQuery.queryOptions,
+  );
+
   const router = useRouter();
   const formId = useId();
 
@@ -83,17 +90,32 @@ function Layout({ children }: PropsWithChildren) {
           </form>
         </Main>
         <Footer className={cn("px-5")}>
-          <Button
-            form={formId}
-            type="submit"
-            size="lg"
-            round
-            loading={isPending}
-            disabled={isPending}
-            className={cn("w-full")}
-          >
-            모임 생성
-          </Button>
+          {isWithinCreationLimit && (
+            <Button
+              form={formId}
+              type="submit"
+              size="lg"
+              round
+              loading={isPending}
+              disabled={isPending}
+              className={cn("w-full")}
+            >
+              모임 생성
+            </Button>
+          )}
+          {!isWithinCreationLimit && (
+            <Button
+              form={formId}
+              type="submit"
+              size="lg"
+              round
+              loading={isPending}
+              disabled
+              className={cn("w-full")}
+            >
+              모임 최대 갯수 초과
+            </Button>
+          )}
         </Footer>
       </Form>
     </>

@@ -1,25 +1,38 @@
-import type { CustomIncomingMessage } from "@/middlewares/type";
 import type { ServerResponse } from "http";
 
+import { useQuery } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
+import { toast } from "sonner";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
 import { AssembleList } from "@/pages-src/index/components";
 import Layout from "@/pages-src/index/layout";
-import middleware from "@/pages-src/index/middleware";
+import middleware, { HomePageReq } from "@/pages-src/index/middleware";
+import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
-const router = createRouter<CustomIncomingMessage, ServerResponse>();
+const router = createRouter<HomePageReq, ServerResponse>();
 router.get(middleware);
 
 export const getServerSideProps = makeGetServerSideProps(router);
 
 function HomePage() {
   const router = useRouter();
+  const isWithinCreationLimitQuery = new RQClient({
+    url: "/api/assemble/check/within-creation-limit",
+  });
+  const { data: { isWithinCreationLimit, limit } = {} } = useQuery(
+    isWithinCreationLimitQuery.queryOptions,
+  );
+
   const moveCreateAssemblePage = () => {
-    router.push("/assemble/create");
+    if (isWithinCreationLimit) {
+      router.push("/assemble/create");
+    } else {
+      toast.info(`모임 갯수는 ${limit}개를 초과할 수 없습니다.`);
+    }
   };
 
   return (
