@@ -29,7 +29,7 @@ export interface RQInfinityDefaultParams<
   ReqURL extends keyof InfinityResponseMap,
 > {
   url: ReqURL;
-  params: RQInfinityRequestParams;
+  params: Record<string, unknown>;
   customQueryOptions?: UseQueryOptions<TQueryFnData, AxiosError>;
 }
 
@@ -37,10 +37,10 @@ export class RQInfinity<
   ReqURL extends keyof InfinityResponseMap,
   TQueryFnData extends InfinityResponseMap[ReqURL],
 > {
-  #method: "GET";
+  #method = "GET";
 
   url: RQInfinityDefaultParams<TQueryFnData, ReqURL>["url"];
-  params: RQInfinityDefaultParams<TQueryFnData, ReqURL>["params"];
+  _params: RQInfinityDefaultParams<TQueryFnData, ReqURL>["params"];
   customQueryOptions?: RQInfinityDefaultParams<
     TQueryFnData,
     ReqURL
@@ -52,10 +52,8 @@ export class RQInfinity<
     params,
     customQueryOptions,
   }: RQInfinityDefaultParams<TQueryFnData, ReqURL>) {
-    this.#method = "GET";
-
     this.url = url;
-    this.params = params;
+    this._params = params;
     this.customQueryOptions = customQueryOptions;
 
     this.axiosInstance = (() => {
@@ -65,6 +63,36 @@ export class RQInfinity<
           return apiAxios;
       }
     })();
+  }
+
+  get params(): RQInfinityRequestParams {
+    const params: Partial<RQInfinityRequestParams> = {};
+
+    if (typeof this._params?.cursor === "string") {
+      params.cursor = this._params.cursor;
+    } else {
+      params.cursor = null;
+    }
+
+    if (typeof this._params?.search === "string") {
+      params.search = this._params.search;
+    } else {
+      params.search = "";
+    }
+
+    if (this._params?.sort === "latest" || this._params?.sort === "oldest") {
+      params.sort = this._params.sort;
+    } else {
+      throw new Error("RQInfinity에서 sort 값은 필수입니다.");
+    }
+
+    if (!Number.isNaN(Number(this._params?.limit))) {
+      params.limit = Number(this._params?.limit);
+    } else {
+      throw new Error("RQInfinity에서 limit 값은 필수입니다.");
+    }
+
+    return params as Required<RQInfinityRequestParams>;
   }
 
   get baseKey() {

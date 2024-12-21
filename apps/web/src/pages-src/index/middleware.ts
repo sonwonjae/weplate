@@ -21,7 +21,7 @@ const prefetch: Middleware<HomePageReq> = async (req, res) => {
   const queryClient = new QueryClient();
 
   try {
-    const authQuery = new RQServer({ type: "auth", url: "/api/user/auth/check", res });
+    const authQuery = new RQServer({ url: "/api/user/auth/check", res });
     await queryClient.fetchQuery(authQuery.queryOptions);
 
     const myAssembleListQuery = new RQInfinityServer({

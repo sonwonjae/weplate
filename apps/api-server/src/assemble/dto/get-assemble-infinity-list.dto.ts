@@ -20,7 +20,6 @@ export class GetAssembleInfinityListParamsDto {
   @IsOptional()
   @IsString()
   @Transform(({ value }) => {
-    console.log('string', typeof value);
     if (!value) {
       return undefined;
     }

@@ -16,7 +16,7 @@ router.get(middleware);
 export const getServerSideProps = makeGetServerSideProps(router);
 
 function MyInfo() {
-  const authQuery = new RQClient({ type: "auth", url: "/api/user/auth/check" });
+  const authQuery = new RQClient({ url: "/api/user/auth/check" });
   const { data: userInfo } = useQuery(authQuery.queryOptions);
 
   return (

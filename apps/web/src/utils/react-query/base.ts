@@ -32,7 +32,6 @@ export interface RQDefaultParams<
   ReqURL extends keyof ResponseMap,
 > {
   url: ReqURL;
-  type?: "api" | "auth";
   customQueryOptions?: UseQueryOptions<TQueryFnData, AxiosError>;
 }
 
@@ -52,10 +51,9 @@ export class RQ<
   ReqURL extends keyof ResponseMap,
   TQueryFnData extends ResponseMap[ReqURL],
 > {
-  #method: "GET";
+  #method = "GET";
 
   url: RQDefaultParams<TQueryFnData, ReqURL>["url"];
-  type?: RQDefaultParams<TQueryFnData, ReqURL>["type"];
   customQueryOptions?: RQDefaultParams<
     TQueryFnData,
     ReqURL
@@ -64,19 +62,15 @@ export class RQ<
 
   constructor({
     url,
-    type = "api",
     customQueryOptions,
   }: RQDefaultParams<TQueryFnData, ReqURL>) {
-    this.#method = "GET";
-
     this.url = url;
-    this.type = type;
     this.customQueryOptions = customQueryOptions;
     this.axiosInstance = (() => {
-      switch (type) {
-        case "auth":
+      switch (true) {
+        case /^\/api\/user/.test(this.url):
           return authAxios;
-        case "api":
+        case /^^\/api/.test(this.url):
         default:
           return apiAxios;
       }

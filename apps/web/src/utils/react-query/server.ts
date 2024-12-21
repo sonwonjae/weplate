@@ -21,17 +21,15 @@ export class RQServer<
   ReqURL extends keyof ResponseMap,
   TQueryFnData extends ResponseMap[ReqURL],
 > extends RQ<ReqURL, TQueryFnData> {
-  #method: "GET";
+  #method = "GET";
   res: ServerResponse;
 
   constructor({
     url,
     res,
     customQueryOptions,
-    type = "api",
   }: RQServerParams<TQueryFnData, ReqURL>) {
-    super({ url, customQueryOptions, type });
-    this.#method = "GET";
+    super({ url, customQueryOptions });
     this.res = res;
   }
 
@@ -67,7 +65,7 @@ export class RQInfinityServer<
   ReqURL extends keyof InfinityResponseMap,
   TQueryFnData extends InfinityResponseMap[ReqURL],
 > extends RQInfinity<ReqURL, TQueryFnData> {
-  #method: "GET";
+  #method = "GET";
   res: ServerResponse;
 
   constructor({
@@ -77,7 +75,6 @@ export class RQInfinityServer<
     customQueryOptions,
   }: RQInfinityServerParams<TQueryFnData, ReqURL>) {
     super({ url, params, customQueryOptions });
-    this.#method = "GET";
     this.res = res;
   }
 

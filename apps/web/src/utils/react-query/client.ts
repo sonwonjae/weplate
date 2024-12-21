@@ -14,12 +14,8 @@ export class RQClient<
   ReqURL extends keyof ResponseMap,
   TQueryFnData extends ResponseMap[ReqURL],
 > extends RQ<ReqURL, TQueryFnData> {
-  constructor({
-    url,
-    customQueryOptions,
-    type = "api",
-  }: RQParams<TQueryFnData, ReqURL>) {
-    super({ url, customQueryOptions, type });
+  constructor({ url, customQueryOptions }: RQParams<TQueryFnData, ReqURL>) {
+    super({ url, customQueryOptions });
   }
 }
 

@@ -6,7 +6,7 @@ import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 function Auth() {
-  const authQuery = new RQClient({ type: "auth", url: "/api/user/auth/check" });
+  const authQuery = new RQClient({ url: "/api/user/auth/check" });
   const { data: userInfo } = useQuery(authQuery.queryOptions);
 
   if (!userInfo) {

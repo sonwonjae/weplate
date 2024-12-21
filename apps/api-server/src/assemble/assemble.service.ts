@@ -98,7 +98,6 @@ export class AssembleService {
     }
 
     if (search) {
-      console.log({ search });
       query = query.ilike('title', `%${search}%`);
     }
 

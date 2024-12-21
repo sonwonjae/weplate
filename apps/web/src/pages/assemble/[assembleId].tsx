@@ -18,7 +18,7 @@ export const getServerSideProps = makeGetServerSideProps(router);
 
 function AssembleItemPage() {
   const router = useRouter();
-  const authQuery = new RQClient({ type: "auth", url: "/api/user/auth/check" });
+  const authQuery = new RQClient({ url: "/api/user/auth/check" });
   const assembleQuery = new RQClient({
     url: `/api/assemble/${router.query.assembleId}/item`,
   });
