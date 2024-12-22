@@ -135,7 +135,7 @@ function AssembleList() {
           />
         );
       })}
-      {myAssembleList.length >
+      {myAssembleList.length >=
         Number(process.env.NEXT_PUBLIC_ASSEMBLE_PAGE_LIMIT) && (
         <div
           ref={ref}
