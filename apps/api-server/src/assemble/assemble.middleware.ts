@@ -21,7 +21,7 @@ export class CheckAssemblePermissionMiddleware implements NestMiddleware {
     }
 
     const { data: userAssemble } = await this.supabaseService.client
-      .from('user_assembles')
+      .from('user__assembles')
       .select('*')
       .eq('userId', req.userInfo.id)
       .eq('assembleId', assembleId)

@@ -65,7 +65,73 @@ export type Database = {
           },
         ];
       };
-      user_assembles: {
+      cuisine: {
+        Row: {
+          id: string;
+          name: string;
+        };
+        Insert: {
+          id?: string;
+          name?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+        };
+        Relationships: [];
+      };
+      food__cuisine: {
+        Row: {
+          cuisineId: string;
+          foodId: string;
+        };
+        Insert: {
+          cuisineId?: string;
+          foodId?: string;
+        };
+        Update: {
+          cuisineId?: string;
+          foodId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'food__cuisine_cuisineId_fkey';
+            columns: ['cuisineId'];
+            isOneToOne: false;
+            referencedRelation: 'cuisine';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'food__cuisine_foodId_fkey';
+            columns: ['foodId'];
+            isOneToOne: false;
+            referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      foods: {
+        Row: {
+          createdAt: string;
+          id: string;
+          name: string;
+          updatedAt: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id?: string;
+          name?: string;
+          updatedAt?: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          name?: string;
+          updatedAt?: string;
+        };
+        Relationships: [];
+      };
+      user__assembles: {
         Row: {
           assembleId: string;
           permission: Database['public']['Enums']['permission'];

@@ -29,7 +29,7 @@ export class AssembleService {
     }
 
     const { data: userAssemble } = await this.supabaseService.client
-      .from('user_assembles')
+      .from('user__assembles')
       .insert({ userId: userInfo.id, assembleId: assemble.id })
       .select('*')
       .single();
@@ -49,7 +49,7 @@ export class AssembleService {
     }
 
     const { data: userAssemble } = await this.supabaseService.client
-      .from('user_assembles')
+      .from('user__assembles')
       .select('*')
       .eq('userId', userInfo.id);
 
@@ -77,10 +77,10 @@ export class AssembleService {
       .select(
         `
           *,
-          user_assembles!inner(userId)
+          user__assembles!inner(userId)
         `,
       )
-      .eq('user_assembles.userId', userInfo.id);
+      .eq('user__assembles.userId', userInfo.id);
 
     if (cursor) {
       const { data: cursorAssemble } = await this.supabaseService.client
