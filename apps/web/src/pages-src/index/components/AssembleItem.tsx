@@ -24,8 +24,9 @@ interface AssembleItemPureProps {
   activeTools: boolean;
   changeActiveTools: (assembleId: string) => void;
 }
-type AssembleItemProps = InfinityResponseMap["/api/assemble/list/my"][number] &
-  AssembleItemPureProps;
+type AssembleItemProps =
+  InfinityResponseMap["/api/assemble/list/my"]["list"][number] &
+    AssembleItemPureProps;
 
 function AssembleItem({
   isActiveToolsAssembleId,
@@ -41,13 +42,7 @@ function AssembleItem({
   const queryClient = useQueryClient();
   const myAssembleListQuery = new RQInfinityClient({
     url: "/api/assemble/list/my",
-    /** FIXME: 유틸화를 하든 뭘하든 사용성 올려야될듯 */
-    params: {
-      cursor: null,
-      search: String(router.query.search || ""),
-      sort: String(router.query.sort) === "latest" ? "latest" : "oldest",
-      limit: Number(router.query.limit) || 10,
-    },
+    params: router.query,
   });
 
   const { mutateAsync: deleteAssemble, isPending } = useMutation({

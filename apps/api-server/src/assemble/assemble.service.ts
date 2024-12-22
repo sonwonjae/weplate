@@ -44,7 +44,7 @@ export class AssembleService {
     if (!userInfo) {
       return {
         isWithinCreationLimit: true,
-        limit: Number(process.env.ASSEMBLE_LIMIT),
+        limit: Number(process.env.ASSEMBLE_CREATION_LIMIT),
       };
     }
 
@@ -55,16 +55,16 @@ export class AssembleService {
 
     if (
       Array.isArray(userAssemble) &&
-      userAssemble.length >= Number(process.env.ASSEMBLE_LIMIT)
+      userAssemble.length >= Number(process.env.ASSEMBLE_CREATION_LIMIT)
     ) {
       return {
         isWithinCreationLimit: false,
-        limit: Number(process.env.ASSEMBLE_LIMIT),
+        limit: Number(process.env.ASSEMBLE_CREATION_LIMIT),
       };
     }
     return {
       isWithinCreationLimit: true,
-      limit: Number(process.env.ASSEMBLE_LIMIT),
+      limit: Number(process.env.ASSEMBLE_CREATION_LIMIT),
     };
   }
 
@@ -82,15 +82,31 @@ export class AssembleService {
       )
       .eq('user_assembles.userId', userInfo.id);
 
-    if (sort === 'latest') {
-      query = query.order('updatedAt', { ascending: true });
-    }
-    if (sort === 'oldest') {
-      query = query.order('updatedAt', { ascending: false });
+    if (cursor) {
+      const { data: cursorAssemble } = await this.supabaseService.client
+        .from('assembles')
+        .select('*')
+        .eq('id', cursor)
+        .single();
+
+      if (cursorAssemble) {
+        const operator = (() => {
+          switch (sort) {
+            case 'oldest':
+              return 'gt';
+            case 'latest':
+              return 'lt';
+          }
+        })();
+        query = query.filter('updatedAt', operator, cursorAssemble.updatedAt);
+      }
     }
 
-    if (cursor) {
-      query = query.gt('id', cursor);
+    if (sort === 'latest') {
+      query = query.order('updatedAt', { ascending: false });
+    }
+    if (sort === 'oldest') {
+      query = query.order('updatedAt', { ascending: true });
     }
 
     if (search) {
@@ -103,7 +119,10 @@ export class AssembleService {
 
     const { data: myAssembleList } = await query;
 
-    return myAssembleList ?? [];
+    return {
+      list: myAssembleList ?? [],
+      cursor: myAssembleList?.[myAssembleList.length - 1]?.id ?? null,
+    };
   }
 
   async getAssembleItem(assembleId: string) {

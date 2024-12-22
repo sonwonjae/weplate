@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { XIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -10,7 +10,7 @@ import { z } from "zod";
 import { Header, Main, Footer } from "@/layouts";
 import { Button } from "@/shad-cn/components/ui/button";
 import { Form } from "@/shad-cn/components/ui/form";
-import { apiAxios, RQClient } from "@/utils/react-query";
+import { apiAxios, RQClient, RQInfinityClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 export const assembleFormSchema = z.object({
@@ -29,6 +29,7 @@ function Layout({ children }: PropsWithChildren) {
   );
 
   const router = useRouter();
+  const queryClient = useQueryClient();
   const formId = useId();
 
   const form = useForm<z.infer<typeof assembleFormSchema>>({
@@ -48,7 +49,23 @@ function Layout({ children }: PropsWithChildren) {
         title,
       });
 
+      const isWithinCreationLimitQuery = new RQClient({
+        url: "/api/assemble/check/within-creation-limit",
+      });
+      await queryClient.invalidateQueries({
+        queryKey: isWithinCreationLimitQuery.queryKey,
+      });
+
+      const myAssembleListQuery = new RQInfinityClient({
+        url: "/api/assemble/list/my",
+        params: router.query,
+      });
+      await queryClient.invalidateQueries({
+        queryKey: myAssembleListQuery.baseKey,
+      });
+
       router.replace(`/assemble/${createdAssemble.id}`);
+
       return createdAssemble;
     },
   });

@@ -26,7 +26,7 @@ function KakaoLogin() {
 
   return (
     <a
-      href={`${process.env.NEXT_PUBLIC_AUTH_SERVER_HOST}/kakao/login?redirectUrl=${redirectUrl}`}
+      href={`${process.env.NEXT_PUBLIC_AUTH_SERVER_HOST}/api/user/kakao/login?redirectUrl=${redirectUrl}`}
       className={cn(
         "flex",
         "items-center",

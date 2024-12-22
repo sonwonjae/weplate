@@ -29,7 +29,7 @@ const prefetch: Middleware<HomePageReq> = async (req, res) => {
       params: req.query,
       res,
     });
-    await queryClient.fetchQuery(myAssembleListQuery.queryOptions);
+    await queryClient.fetchInfiniteQuery(myAssembleListQuery.queryOptions);
 
     const isWithinCreationLimitQuery = new RQServer({
       url: "/api/assemble/check/within-creation-limit",
@@ -52,9 +52,6 @@ const prefetch: Middleware<HomePageReq> = async (req, res) => {
 
 const middleware = pipe<HomePageReq>(
   checkSingleQuery({
-    queryName: "cursor",
-  }),
-  checkSingleQuery({
     queryName: "search",
   }),
   checkSingleQuery({
@@ -63,7 +60,7 @@ const middleware = pipe<HomePageReq>(
   }),
   checkSingleQuery({
     queryName: "limit",
-    defaultSingleQuery: 10,
+    defaultSingleQuery: Number(process.env.NEXT_PUBLIC_ASSEMBLE_PAGE_LIMIT),
   }),
   prefetch,
 );

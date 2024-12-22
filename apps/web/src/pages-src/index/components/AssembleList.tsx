@@ -1,8 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 
 import { Skeleton } from "@/shad-cn/components/ui/skeleton";
+import { ThreeDots } from "@/ui/loading-icons";
 import { RQInfinityClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
@@ -13,25 +15,33 @@ function AssembleList() {
 
   const myAssembleListQuery = new RQInfinityClient({
     url: "/api/assemble/list/my",
-    /** FIXME: 유틸화를 하든 뭘하든 사용성 올려야될듯 */
-    params: {
-      cursor: null,
-      search: String(router.query.search || ""),
-      sort: String(router.query.sort) === "latest" ? "latest" : "oldest",
-      limit: Number(router.query.limit) || 10,
-    },
+    params: router.query,
   });
-  const {
-    data: myAssembleList,
-    isFetching,
-    isLoading,
-  } = useQuery(myAssembleListQuery.queryOptions);
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useInfiniteQuery(myAssembleListQuery.queryOptions);
+  const { ref, inView } = useInView();
 
-  const isUpdating = isFetching || isLoading;
+  const isUpdating = isLoading;
 
   const [isActiveToolsAssembleId, changeActiveTools] = useState<string | null>(
     null,
   );
+
+  useEffect(() => {
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [inView, hasNextPage, fetchNextPage]);
+
+  if (!data) {
+    return;
+  }
+
+  const myAssembleList = data.pages
+    .map(({ list }) => {
+      return list;
+    })
+    .flat(1);
 
   if (!myAssembleList || !myAssembleList.length) {
     return (
@@ -125,6 +135,31 @@ function AssembleList() {
           />
         );
       })}
+      {myAssembleList.length >
+        Number(process.env.NEXT_PUBLIC_ASSEMBLE_PAGE_LIMIT) && (
+        <div
+          ref={ref}
+          className={cn(
+            "flex",
+            "justify-center",
+            "items-center",
+            "w-full",
+            "pt-2",
+            "pb-8",
+            "rounded-md",
+            "bg-white",
+            "text-slate-400",
+          )}
+        >
+          {isFetchingNextPage ? (
+            <ThreeDots height={15} />
+          ) : hasNextPage ? (
+            "더보기"
+          ) : (
+            "더 이상 모임이 없습니다."
+          )}
+        </div>
+      )}
     </ul>
   );
 }

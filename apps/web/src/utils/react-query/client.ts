@@ -19,20 +19,14 @@ export class RQClient<
   }
 }
 
-type RQInfinityParams<
-  TQueryFnData extends InfinityResponseMap[ReqURL],
-  ReqURL extends keyof InfinityResponseMap,
-> = RQInfinityDefaultParams<TQueryFnData, ReqURL>;
+type RQInfinityParams<ReqURL extends keyof InfinityResponseMap> =
+  RQInfinityDefaultParams<ReqURL>;
 
 export class RQInfinityClient<
   TQueryFnData extends InfinityResponseMap[ReqURL],
   ReqURL extends keyof InfinityResponseMap,
 > extends RQInfinity<ReqURL, TQueryFnData> {
-  constructor({
-    url,
-    params,
-    customQueryOptions,
-  }: RQInfinityParams<TQueryFnData, ReqURL>) {
-    super({ url, params, customQueryOptions });
+  constructor({ url, params }: RQInfinityParams<ReqURL>) {
+    super({ url, params });
   }
 }
