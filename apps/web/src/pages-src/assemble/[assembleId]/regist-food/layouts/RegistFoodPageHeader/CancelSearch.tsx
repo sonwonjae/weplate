@@ -5,7 +5,7 @@ import { z } from "zod";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
-import { useFavoriteFoodStore } from "../../stores/favorite-food";
+import { useFavoriteFoodStore } from "../../stores/regist-food";
 
 function CancelSearch() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();

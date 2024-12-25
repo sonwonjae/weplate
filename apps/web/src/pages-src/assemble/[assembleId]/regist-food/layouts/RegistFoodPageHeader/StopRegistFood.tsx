@@ -14,7 +14,7 @@ import {
 } from "@/shad-cn/components/ui/dialog";
 import { cn } from "@/utils/tailwind";
 
-import { useFavoriteFoodStore } from "../../stores/favorite-food";
+import { useFavoriteFoodStore } from "../../stores/regist-food";
 
 function StopRegistFood() {
   const router = useRouter();

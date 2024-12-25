@@ -8,7 +8,7 @@ import { Main } from "@/layouts";
 import { Form } from "@/shad-cn/components/ui/form";
 
 import { RegistFoodPageHeader, RegistFoodPageFooter } from "./layouts";
-import { useFavoriteFoodStore } from "./stores/favorite-food";
+import { useFavoriteFoodStore } from "./stores/regist-food";
 
 export const foodSurveyForm = z.object({
   favorite: z.string(),

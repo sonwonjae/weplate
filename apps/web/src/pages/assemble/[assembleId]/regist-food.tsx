@@ -17,7 +17,7 @@ import Layout, {
   foodSurveyForm,
 } from "@/pages-src/assemble/[assembleId]/regist-food/layout";
 import middleware from "@/pages-src/assemble/[assembleId]/regist-food/middleware";
-import { useFavoriteFoodStore } from "@/pages-src/assemble/[assembleId]/regist-food/stores/favorite-food";
+import { useFavoriteFoodStore } from "@/pages-src/assemble/[assembleId]/regist-food/stores/regist-food";
 import { cn } from "@/utils/tailwind";
 
 const router = createRouter<CustomIncomingMessage, ServerResponse>();

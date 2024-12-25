@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
-import { useFavoriteFoodStore } from "../stores/favorite-food";
+import { useFavoriteFoodStore } from "../stores/regist-food";
 
 function FavoriteDescriptionSection() {
   const authQuery = new RQClient({ url: "/api/user/auth/check" });
