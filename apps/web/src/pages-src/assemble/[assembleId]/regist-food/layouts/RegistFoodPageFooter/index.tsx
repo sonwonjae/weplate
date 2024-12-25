@@ -6,59 +6,58 @@ import { Button } from "@/shad-cn/components/ui/button";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
-import { useFavoriteFoodStore } from "../../stores/regist-foods";
+import { useRegistFoodStore } from "../../stores/regist-foods";
+import { useRegistStepsStore } from "../../stores/regist-steps";
 
 function RegistFoodPageFooter() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
-  const { favoriteList = [], preFavoriteList = [] } =
-    useWatch<z.infer<typeof foodSurveyForm>>();
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
+  });
+  const moveNextStep = useRegistStepsStore((state) => {
+    return state.moveNextStep;
+  });
+  const { preList = [], list = [] } =
+    useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
 
-  const searchActiveState = useFavoriteFoodStore((state) => {
+  const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
   });
-  const endSearch = useFavoriteFoodStore((state) => {
+  const endSearch = useRegistFoodStore((state) => {
     return state.endSearch;
   });
 
-  const isReadyMoveToNextStep =
-    !!favoriteList.length && searchActiveState === "out";
+  const isReadyMoveToNextStep = !!list.length && searchActiveState === "out";
 
-  const moveNextStep = () => {
-    console.log("move to hate");
-  };
+  const registFoodList = () => {
+    const list = form.getValues(`${currentStep}.list`);
 
-  const registFavoriteFoodList = () => {
-    const favoriteList = form.getValues("favoriteList");
-
-    const preCheckedFavoriteList = form
-      .getValues("preFavoriteList")
-      .filter((preFavoriteFood) => {
-        return preFavoriteFood.status === "pre-checked";
+    const preCheckedList = form
+      .getValues(`${currentStep}.preList`)
+      .filter((preFood) => {
+        return preFood.status === "pre-checked";
       })
-      .map((preCheckedFavoriteFood) => {
+      .map((preCheckedFood) => {
         return {
-          id: preCheckedFavoriteFood.id,
-          name: preCheckedFavoriteFood.name,
+          id: preCheckedFood.id,
+          name: preCheckedFood.name,
         };
       });
-    const preUncheckedFavoriteList = form
-      .getValues("preFavoriteList")
-      .filter((preFavoriteFood) => {
-        return preFavoriteFood.status === "pre-unchecked";
+    const preUncheckedList = form
+      .getValues(`${currentStep}.preList`)
+      .filter((preFood) => {
+        return preFood.status === "pre-unchecked";
       });
 
-    const changedFavoriteList = favoriteList.filter((favoriteFood) => {
-      return !preUncheckedFavoriteList.find((preUncheckedFavoriteFood) => {
-        return preUncheckedFavoriteFood.id === favoriteFood.id;
+    const changedList = list.filter((food) => {
+      return !preUncheckedList.find((preUncheckedFood) => {
+        return preUncheckedFood.id === food.id;
       });
     });
 
-    form.setValue("favoriteList", [
-      ...changedFavoriteList,
-      ...preCheckedFavoriteList,
-    ]);
-    form.setValue("preFavoriteList", []);
-    form.setValue("favorite", "");
+    form.setValue(`${currentStep}.list`, [...changedList, ...preCheckedList]);
+    form.setValue(`${currentStep}.preList`, []);
+    form.setValue(`${currentStep}.searchKeyword`, "");
 
     endSearch();
   };
@@ -67,7 +66,7 @@ function RegistFoodPageFooter() {
     if (isReadyMoveToNextStep) {
       return moveNextStep;
     }
-    return registFavoriteFoodList;
+    return registFoodList;
   })();
 
   return (
@@ -86,7 +85,7 @@ function RegistFoodPageFooter() {
         size="lg"
         round
         className={cn("w-full")}
-        disabled={!isReadyMoveToNextStep && !preFavoriteList.length}
+        disabled={!isReadyMoveToNextStep && !preList.length}
         onClick={finalClickHandler}
       >
         {isReadyMoveToNextStep && "선호 음식 등록 완료"}

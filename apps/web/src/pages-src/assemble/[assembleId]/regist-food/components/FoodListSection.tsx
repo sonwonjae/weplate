@@ -8,14 +8,18 @@ import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../layout";
-import { useFavoriteFoodStore } from "../stores/regist-foods";
+import { useRegistFoodStore } from "../stores/regist-foods";
+import { useRegistStepsStore } from "../stores/regist-steps";
 
 function FoodListSection() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
-  const { preFavoriteList = [], favoriteList = [] } =
-    useWatch<z.infer<typeof foodSurveyForm>>();
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
+  });
+  const { preList = [], list = [] } =
+    useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
 
-  const searchKeyword = useFavoriteFoodStore((state) => {
+  const searchKeyword = useRegistFoodStore((state) => {
     return state.searchKeyword;
   });
 
@@ -107,8 +111,8 @@ function FoodListSection() {
   }
 
   const combinedFootList = foodList.map((searchedFood) => {
-    const preCheckedFood = preFavoriteList.find(({ id: preFavoriteFoodId }) => {
-      return preFavoriteFoodId === searchedFood.id;
+    const preCheckedFood = preList.find(({ id: preFoodId }) => {
+      return preFoodId === searchedFood.id;
     });
     if (preCheckedFood) {
       return {
@@ -118,8 +122,8 @@ function FoodListSection() {
       };
     }
 
-    const checkedFood = favoriteList.find(({ id: favoriteFoodId }) => {
-      return favoriteFoodId === searchedFood.id;
+    const checkedFood = list.find(({ id: foodId }) => {
+      return foodId === searchedFood.id;
     });
     if (checkedFood) {
       return {
@@ -139,14 +143,14 @@ function FoodListSection() {
   const changeFoodStatus = (
     food: Required<(typeof combinedFootList)[number]>,
   ) => {
-    const filteredPreFavoriteList = preFavoriteList.filter(
-      (prevPreFavoriteFood) => {
-        return prevPreFavoriteFood.id !== food.id;
+    const filteredPreList = preList.filter(
+      (prevPreFood) => {
+        return prevPreFood.id !== food.id;
       },
       // FIXME: 이거 타입 관련 에러 방법 찾기
-    ) as Required<(typeof preFavoriteList)[number]>[];
+    ) as Required<(typeof preList)[number]>[];
 
-    const changedPreFavoriteFood = (() => {
+    const changedPreFood = (() => {
       switch (food.status) {
         case "pre-checked":
           return null;
@@ -168,15 +172,15 @@ function FoodListSection() {
       }
     })();
 
-    const changedPreFavoriteList = (() => {
-      if (changedPreFavoriteFood) {
-        return [...filteredPreFavoriteList, changedPreFavoriteFood];
+    const changedPreList = (() => {
+      if (changedPreFood) {
+        return [...filteredPreList, changedPreFood];
       }
 
-      return filteredPreFavoriteList;
+      return filteredPreList;
     })();
 
-    form.setValue("preFavoriteList", changedPreFavoriteList);
+    form.setValue(`${currentStep}.preList`, changedPreList);
   };
 
   return (

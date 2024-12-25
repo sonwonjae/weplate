@@ -11,10 +11,14 @@ import {
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../layout";
-import { useFavoriteFoodStore } from "../stores/regist-foods";
+import { useRegistFoodStore } from "../stores/regist-foods";
+import { useRegistStepsStore } from "../stores/regist-steps";
 
 function SearchSection() {
-  const updateInputFocusState = useFavoriteFoodStore((state) => {
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
+  });
+  const updateInputFocusState = useRegistFoodStore((state) => {
     return state.updateInputFocusState;
   });
 
@@ -34,7 +38,7 @@ function SearchSection() {
     >
       <FormField
         control={form.control}
-        name="favorite"
+        name={`${currentStep}.searchKeyword`}
         render={({ field }) => {
           return (
             <FormItem>
@@ -43,7 +47,7 @@ function SearchSection() {
                   type="search"
                   placeholder="ex. 꼼장어구이"
                   onDelete={() => {
-                    form.setValue("favorite", "");
+                    form.setValue(`${currentStep}.searchKeyword`, "");
                   }}
                   onFocus={() => {
                     updateInputFocusState("focus");

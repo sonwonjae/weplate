@@ -1,9 +1,13 @@
 import { cn } from "@/utils/tailwind";
 
-import { useFavoriteFoodStore } from "../stores/regist-foods";
+import { useRegistFoodStore } from "../stores/regist-foods";
+import { REGIST_STEPS, useRegistStepsStore } from "../stores/regist-steps";
 
 function StepSection() {
-  const searchActiveState = useFavoriteFoodStore((state) => {
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
+  });
+  const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
   });
 
@@ -25,8 +29,22 @@ function StepSection() {
           "animate-[collapse-in-down_0.6s_ease-in-out_forwards_0s]",
       )}
     >
-      <div className={cn("w-2", "h-2", "rounded-full", "bg-primary")} />
-      <div className={cn("w-2", "h-2", "rounded-full", "bg-slate-200")} />
+      {REGIST_STEPS.map((step) => {
+        const isActive = step === currentStep;
+
+        return (
+          <div
+            key={`${step}-${isActive}`}
+            className={cn(
+              "w-2",
+              "h-2",
+              "rounded-full",
+              isActive && "bg-primary",
+              !isActive && "bg-slate-200",
+            )}
+          />
+        );
+      })}
     </section>
   );
 }

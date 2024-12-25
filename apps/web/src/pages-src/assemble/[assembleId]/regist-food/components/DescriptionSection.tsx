@@ -3,14 +3,19 @@ import { useQuery } from "@tanstack/react-query";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
-import { useFavoriteFoodStore } from "../stores/regist-foods";
+import { useRegistFoodStore } from "../stores/regist-foods";
+import { useRegistStepsStore } from "../stores/regist-steps";
 
-function FavoriteDescriptionSection() {
+function DescriptionSection() {
   const authQuery = new RQClient({ url: "/api/user/auth/check" });
   const { data: userInfo } = useQuery(authQuery.queryOptions);
 
-  const searchActiveState = useFavoriteFoodStore((state) => {
+  const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
+  });
+
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
   });
 
   return (
@@ -57,7 +62,10 @@ function FavoriteDescriptionSection() {
               "animate-[fade-in-right_0.4s_ease-in-out_forwards_0.2s]",
           )}
         >
-          <span className={cn("text-primary")}>선호하는</span>
+          <span className={cn("text-primary")}>
+            {currentStep === "favorite" && "선호하는"}
+            {currentStep === "hate" && "선호하지 않는"}
+          </span>
           <span> 음식을 알려주세요.</span>
         </span>
       </h2>
@@ -73,7 +81,10 @@ function FavoriteDescriptionSection() {
               "animate-[fade-in-right_0.4s_ease-in-out_forwards_0.1s]",
           )}
         >
-          맛있게 먹고 싶은 음식을 최소 1개 이상 골라주세요!
+          {currentStep === "favorite" &&
+            "맛있게 먹고 싶은 음식을 최소 1개 이상 골라주세요!"}
+          {currentStep === "hate" &&
+            "먹기 꺼려지는 음식을 최소 1개 이상 골라주세요!"}
         </span>
         <br />
         <span
@@ -87,11 +98,14 @@ function FavoriteDescriptionSection() {
               "animate-[fade-in-right_0.4s_ease-in-out_forwards_0s]",
           )}
         >
-          알려주시면 모임 메뉴에 반영해 드릴게요!
+          {currentStep === "favorite" &&
+            "알려주시면 모임 메뉴에 반영해 드릴게요!"}
+          {currentStep === "hate" &&
+            "알려주시면 이번 모임 메뉴에서 제외해 드릴게요!"}
         </span>
       </span>
     </section>
   );
 }
 
-export default FavoriteDescriptionSection;
+export default DescriptionSection;

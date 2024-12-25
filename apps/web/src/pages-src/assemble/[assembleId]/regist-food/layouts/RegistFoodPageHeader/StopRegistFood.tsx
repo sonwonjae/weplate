@@ -14,12 +14,12 @@ import {
 } from "@/shad-cn/components/ui/dialog";
 import { cn } from "@/utils/tailwind";
 
-import { useFavoriteFoodStore } from "../../stores/regist-foods";
+import { useRegistFoodStore } from "../../stores/regist-foods";
 
 function StopRegistFood() {
   const router = useRouter();
 
-  const searchActiveState = useFavoriteFoodStore((state) => {
+  const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
   });
   return (

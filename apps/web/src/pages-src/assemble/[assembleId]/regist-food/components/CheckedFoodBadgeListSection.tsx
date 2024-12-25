@@ -6,22 +6,27 @@ import { Badge } from "@/shad-cn/components/ui/badge";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../layout";
-import { useFavoriteFoodStore } from "../stores/regist-foods";
+import { useRegistFoodStore } from "../stores/regist-foods";
+import { useRegistStepsStore } from "../stores/regist-steps";
 
 function CheckedFoodBadgeListSection() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
 
-  const searchActiveState = useFavoriteFoodStore((state) => {
+  const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
   });
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
+  });
 
-  const { favoriteList = [] } = useWatch<z.infer<typeof foodSurveyForm>>();
+  const { list = [] } =
+    useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
 
   if (searchActiveState === "in") {
     return;
   }
 
-  if (!favoriteList?.length) {
+  if (!list?.length) {
     return (
       <section
         className={cn(
@@ -61,19 +66,19 @@ function CheckedFoodBadgeListSection() {
       )}
     >
       <ul className={cn("inline-flex", "gap-1", "flex-wrap")}>
-        {favoriteList.map(({ id: foodId, name: foodName }) => {
+        {list.map(({ id: foodId, name: foodName }) => {
           return (
             <Badge
               key={foodId}
               outline
               onClick={() => {
-                const filteredFavoriteList = form
-                  .getValues("favoriteList")
-                  .filter((favoriteFood) => {
-                    return favoriteFood.id !== foodId;
+                const filteredList = form
+                  .getValues(`${currentStep}.list`)
+                  .filter((food) => {
+                    return food.id !== foodId;
                   });
 
-                form.setValue("favoriteList", filteredFavoriteList);
+                form.setValue(`${currentStep}.list`, filteredList);
               }}
             >
               <span>{foodName}</span>

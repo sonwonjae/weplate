@@ -6,18 +6,22 @@ import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
-import { useFavoriteFoodStore } from "../../stores/regist-foods";
+import { useRegistFoodStore } from "../../stores/regist-foods";
+import { useRegistStepsStore } from "../../stores/regist-steps";
 
 function SelectFoodList() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
-  const { preFavoriteList = [], favoriteList = [] } =
-    useWatch<z.infer<typeof foodSurveyForm>>();
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
+  });
+  const { preList = [], list = [] } =
+    useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
 
-  const searchActiveState = useFavoriteFoodStore((state) => {
+  const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
   });
 
-  const searchKeyword = useFavoriteFoodStore((state) => {
+  const searchKeyword = useRegistFoodStore((state) => {
     return state.searchKeyword;
   });
 
@@ -42,12 +46,12 @@ function SelectFoodList() {
   }
 
   const filteredFoodList = foodList.filter((searchedFood) => {
-    const preCheckedFood = preFavoriteList.find(({ id: preFavoriteFoodId }) => {
-      return preFavoriteFoodId === searchedFood.id;
+    const preCheckedFood = preList.find(({ id: preFoodId }) => {
+      return preFoodId === searchedFood.id;
     });
 
-    const checkedFood = favoriteList.find(({ id: favoriteFoodId }) => {
-      return favoriteFoodId === searchedFood.id;
+    const checkedFood = list.find(({ id: foodId }) => {
+      return foodId === searchedFood.id;
     });
 
     if (preCheckedFood?.status === "pre-unchecked") {
@@ -72,12 +76,12 @@ function SelectFoodList() {
   })();
 
   const checkAllFoodList = () => {
-    const favoriteList = form.getValues("favoriteList");
+    const list = form.getValues(`${currentStep}.list`);
 
-    const preCheckedFavoriteList = foodList
+    const preCheckedList = foodList
       .filter((searchedFood) => {
-        const checkedFood = favoriteList.find(({ id: favoriteFoodId }) => {
-          return favoriteFoodId === searchedFood.id;
+        const checkedFood = list.find(({ id: foodId }) => {
+          return foodId === searchedFood.id;
         });
 
         return !checkedFood;
@@ -90,15 +94,15 @@ function SelectFoodList() {
         };
       });
     // NOTE: pre check list만 filtering해서 set value
-    form.setValue("preFavoriteList", preCheckedFavoriteList);
+    form.setValue(`${currentStep}.preList`, preCheckedList);
   };
   const uncheckAllFoodList = () => {
-    const favoriteList = form.getValues("favoriteList");
+    const list = form.getValues(`${currentStep}.list`);
 
-    const preUncheckedFavoriteList = foodList
+    const preUncheckedList = foodList
       .filter((searchedFood) => {
-        const checkedFood = favoriteList.find(({ id: favoriteFoodId }) => {
-          return favoriteFoodId === searchedFood.id;
+        const checkedFood = list.find(({ id: foodId }) => {
+          return foodId === searchedFood.id;
         });
 
         return !!checkedFood;
@@ -111,7 +115,7 @@ function SelectFoodList() {
         };
       });
 
-    form.setValue("preFavoriteList", preUncheckedFavoriteList);
+    form.setValue(`${currentStep}.preList`, preUncheckedList);
   };
 
   const finalClickHandler = (() => {

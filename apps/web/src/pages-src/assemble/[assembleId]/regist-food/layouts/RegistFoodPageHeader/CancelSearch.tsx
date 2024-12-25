@@ -5,15 +5,19 @@ import { z } from "zod";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
-import { useFavoriteFoodStore } from "../../stores/regist-foods";
+import { useRegistFoodStore } from "../../stores/regist-foods";
+import { useRegistStepsStore } from "../../stores/regist-steps";
 
 function CancelSearch() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
 
-  const searchActiveState = useFavoriteFoodStore((state) => {
+  const currentStep = useRegistStepsStore((state) => {
+    return state.currentStep();
+  });
+  const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
   });
-  const endSearch = useFavoriteFoodStore((state) => {
+  const endSearch = useRegistFoodStore((state) => {
     return state.endSearch;
   });
 
@@ -25,8 +29,8 @@ function CancelSearch() {
           if (searchActiveState !== "in") {
             return;
           }
-          form.setValue("favorite", "");
-          form.setValue("preFavoriteList", []);
+          form.setValue(`${currentStep}.searchKeyword`, "");
+          form.setValue(`${currentStep}.preList`, []);
 
           endSearch();
         }}

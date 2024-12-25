@@ -8,52 +8,65 @@ import { Main } from "@/layouts";
 import { Form } from "@/shad-cn/components/ui/form";
 
 import { RegistFoodPageHeader, RegistFoodPageFooter } from "./layouts";
-import { useFavoriteFoodStore } from "./stores/regist-foods";
+import { useRegistFoodStore } from "./stores/regist-foods";
+import { useRegistStepsStore } from "./stores/regist-steps";
+
+const preListScheme = z.array(
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    status: z.union([z.literal("pre-checked"), z.literal("pre-unchecked")]),
+  }),
+);
+const listScheme = z.array(
+  z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
+);
 
 export const foodSurveyForm = z.object({
-  favorite: z.string(),
-  preFavoriteList: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-      status: z.union([z.literal("pre-checked"), z.literal("pre-unchecked")]),
-    }),
-  ),
-  favoriteList: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-    }),
-  ),
-  hate: z.string(),
-  hateList: z.array(
-    z.object({
-      id: z.string(),
-      name: z.string(),
-    }),
-  ),
+  favorite: z.object({
+    searchKeyword: z.string(),
+    preList: preListScheme,
+    list: listScheme,
+  }),
+  hate: z.object({
+    searchKeyword: z.string(),
+    preList: preListScheme,
+    list: listScheme,
+  }),
 });
 
 function Layout({ children }: PropsWithChildren) {
   const form = useForm<z.infer<typeof foodSurveyForm>>({
     resolver: zodResolver(foodSurveyForm),
     defaultValues: {
-      favorite: "",
-      preFavoriteList: [],
-      favoriteList: [],
-      hate: "",
-      hateList: [],
+      favorite: {
+        searchKeyword: "",
+        preList: [],
+        list: [],
+      },
+      hate: {
+        searchKeyword: "",
+        preList: [],
+        list: [],
+      },
     },
   });
 
   const router = useRouter();
-  const reset = useFavoriteFoodStore((state) => {
-    return state.reset;
+  const resetRegistFoods = useRegistFoodStore((state) => {
+    return state.resetRegistFoods;
+  });
+  const resetStep = useRegistStepsStore((state) => {
+    return state.resetStep;
   });
 
   useEffect(() => {
-    reset();
     form.reset();
+    resetRegistFoods();
+    resetStep();
   }, [router.pathname]);
 
   return (
