@@ -6,7 +6,7 @@ import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
-import { useFavoriteFoodStore } from "../../stores/regist-food";
+import { useFavoriteFoodStore } from "../../stores/regist-foods";
 
 function SelectFoodList() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();

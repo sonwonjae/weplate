@@ -1,6 +1,6 @@
 import { cn } from "@/utils/tailwind";
 
-import { useFavoriteFoodStore } from "../stores/regist-food";
+import { useFavoriteFoodStore } from "../stores/regist-foods";
 
 function StepSection() {
   const searchActiveState = useFavoriteFoodStore((state) => {

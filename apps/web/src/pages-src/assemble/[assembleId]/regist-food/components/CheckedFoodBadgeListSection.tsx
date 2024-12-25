@@ -6,7 +6,7 @@ import { Badge } from "@/shad-cn/components/ui/badge";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../layout";
-import { useFavoriteFoodStore } from "../stores/regist-food";
+import { useFavoriteFoodStore } from "../stores/regist-foods";
 
 function CheckedFoodBadgeListSection() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
