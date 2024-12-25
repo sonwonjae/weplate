@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { CheckIcon, MailPlusIcon } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/shad-cn/components/ui/button";
@@ -13,11 +14,14 @@ import { useRegistStepsStore } from "../stores/regist-steps";
 
 function FoodListSection() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
+  const allSteps = useRegistStepsStore((state) => {
+    return state.allSteps;
+  });
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
   });
-  const { preList = [], list = [] } =
-    useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
+  const foodSurveyFormValue = useWatch<z.infer<typeof foodSurveyForm>>();
+  const { preList = [], list = [] } = foodSurveyFormValue[currentStep] || {};
 
   const searchKeyword = useRegistFoodStore((state) => {
     return state.searchKeyword;
@@ -110,7 +114,28 @@ function FoodListSection() {
     );
   }
 
+  const registedFoodList = allSteps
+    .filter((step) => {
+      return step !== currentStep;
+    })
+    .map((step) => {
+      const { list = [] } = foodSurveyFormValue[step]!;
+      return list;
+    })
+    .flat();
   const combinedFootList = foodList.map((searchedFood) => {
+    const registedFood = registedFoodList.find(({ id: registedFoodId }) => {
+      return registedFoodId === searchedFood.id;
+    });
+
+    if (registedFood) {
+      return {
+        id: registedFood.id!,
+        name: registedFood.name!,
+        status: "registed" as const,
+      };
+    }
+
     const preCheckedFood = preList.find(({ id: preFoodId }) => {
       return preFoodId === searchedFood.id;
     });
@@ -143,6 +168,10 @@ function FoodListSection() {
   const changeFoodStatus = (
     food: Required<(typeof combinedFootList)[number]>,
   ) => {
+    if (food.status === "registed") {
+      return;
+    }
+
     const filteredPreList = preList.filter(
       (prevPreFood) => {
         return prevPreFood.id !== food.id;
@@ -213,8 +242,16 @@ function FoodListSection() {
                   "py-3",
                   "px-5",
                   "active:bg-slate-200",
+
+                  foodStatus === "registed" && "bg-slate-100",
+                  foodStatus === "registed" && "text-slate-400",
+                  foodStatus === "registed" && "opacity-40",
                 )}
                 onClick={() => {
+                  if (foodStatus === "registed") {
+                    toast.info("이미 등록된 음식입니다.");
+                  }
+
                   changeFoodStatus({
                     id: foodId,
                     name: foodName,

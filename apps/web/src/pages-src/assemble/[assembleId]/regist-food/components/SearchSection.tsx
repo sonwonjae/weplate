@@ -24,6 +24,15 @@ function SearchSection() {
 
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
 
+  const placeholder = (() => {
+    switch (currentStep) {
+      case "favorite":
+        return "ex. 페퍼로니 피자";
+      case "hate":
+        return "ex. 꼼장어구이";
+    }
+  })();
+
   return (
     <section
       className={cn(
@@ -45,7 +54,7 @@ function SearchSection() {
               <FormControl>
                 <FormInput
                   type="search"
-                  placeholder="ex. 꼼장어구이"
+                  placeholder={placeholder}
                   onDelete={() => {
                     form.setValue(`${currentStep}.searchKeyword`, "");
                   }}

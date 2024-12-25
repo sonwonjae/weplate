@@ -38,8 +38,10 @@ function CancelSearch() {
           "flex",
           "items-center",
           searchActiveState === "init" && "hidden",
+
           searchActiveState === "in" &&
             "animate-[fade-in-right_0.2s_ease-in-out_forwards]",
+
           searchActiveState === "out" &&
             "animate-[fade-out-left_0.2s_ease-in-out_forwards]",
         )}

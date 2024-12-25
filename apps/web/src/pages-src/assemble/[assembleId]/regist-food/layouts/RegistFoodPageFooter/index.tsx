@@ -14,6 +14,10 @@ function RegistFoodPageFooter() {
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
   });
+  const isLastStep = useRegistStepsStore((state) => {
+    return state.isLastStep();
+  });
+
   const moveNextStep = useRegistStepsStore((state) => {
     return state.moveNextStep;
   });
@@ -28,6 +32,10 @@ function RegistFoodPageFooter() {
   });
 
   const isReadyMoveToNextStep = !!list.length && searchActiveState === "out";
+
+  const submitFoodList = () => {
+    //
+  };
 
   const registFoodList = () => {
     const list = form.getValues(`${currentStep}.list`);
@@ -64,8 +72,12 @@ function RegistFoodPageFooter() {
 
   const finalClickHandler = (() => {
     if (isReadyMoveToNextStep) {
-      return moveNextStep;
+      if (!isLastStep) {
+        return moveNextStep;
+      }
+      return submitFoodList;
     }
+
     return registFoodList;
   })();
 

@@ -1,9 +1,12 @@
 import { cn } from "@/utils/tailwind";
 
 import { useRegistFoodStore } from "../stores/regist-foods";
-import { REGIST_STEPS, useRegistStepsStore } from "../stores/regist-steps";
+import { useRegistStepsStore } from "../stores/regist-steps";
 
 function StepSection() {
+  const allSteps = useRegistStepsStore((state) => {
+    return state.allSteps;
+  });
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
   });
@@ -20,7 +23,6 @@ function StepSection() {
         "w-full",
         "gap-3",
         "justify-center",
-
         "h-10",
         searchActiveState === "in" &&
           "animate-[collapse-out-up_0.6s_ease-in-out_forwards_0s]",
@@ -29,7 +31,7 @@ function StepSection() {
           "animate-[collapse-in-down_0.6s_ease-in-out_forwards_0s]",
       )}
     >
-      {REGIST_STEPS.map((step) => {
+      {allSteps.map((step) => {
         const isActive = step === currentStep;
 
         return (

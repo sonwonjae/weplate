@@ -27,6 +27,15 @@ function CheckedFoodBadgeListSection() {
   }
 
   if (!list?.length) {
+    const exampleBadgeText = (() => {
+      switch (currentStep) {
+        case "favorite":
+          return "ex. 페퍼로니 피자";
+        case "hate":
+          return "ex. 꼼장어구이";
+      }
+    })();
+
     return (
       <section
         className={cn(
@@ -43,7 +52,7 @@ function CheckedFoodBadgeListSection() {
       >
         <ul className={cn("inline-flex", "gap-1", "flex-wrap")}>
           <Badge outline color="secondary">
-            <span>ex. 꼼장어구이</span>
+            <span>{exampleBadgeText}</span>
             <XIcon size={16} />
           </Badge>
         </ul>

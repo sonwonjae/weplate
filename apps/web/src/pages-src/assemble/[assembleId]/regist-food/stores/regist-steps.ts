@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-export const REGIST_STEPS = ["favorite", "hate"] as const;
+type RegistStep = ["favorite", "hate"];
 
 interface FoodState {
+  allSteps: RegistStep;
   currentStepIndex: number;
-  currentStep: () => (typeof REGIST_STEPS)[number];
+  isLastStep: () => boolean;
+  currentStep: () => RegistStep[number];
   moveNextStep: () => void;
   resetStep: () => void;
 }
@@ -13,6 +15,7 @@ interface FoodState {
 const INIT_STEP_INDEX = 0;
 
 const FOOD_INITIAL_STATE: Partial<FoodState> = {
+  allSteps: ["favorite", "hate"],
   currentStepIndex: INIT_STEP_INDEX,
 };
 
@@ -21,12 +24,15 @@ export const useRegistStepsStore = create<FoodState>()(
     return {
       ...FOOD_INITIAL_STATE,
       currentStep: () => {
-        return REGIST_STEPS[get().currentStepIndex];
+        return get().allSteps[get().currentStepIndex];
+      },
+      isLastStep: () => {
+        return get().currentStepIndex === get().allSteps.length - 1;
       },
       moveNextStep: () => {
         return set(() => {
           const nextStepIndex = get().currentStepIndex + 1;
-          if (REGIST_STEPS.length - 1 < nextStepIndex) {
+          if (get().allSteps.length - 1 < nextStepIndex) {
             return {};
           }
 

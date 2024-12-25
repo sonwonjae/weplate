@@ -11,11 +11,14 @@ import { useRegistStepsStore } from "../../stores/regist-steps";
 
 function SelectFoodList() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
+  const allSteps = useRegistStepsStore((state) => {
+    return state.allSteps;
+  });
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
   });
-  const { preList = [], list = [] } =
-    useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
+  const foodSurveyFormValue = useWatch<z.infer<typeof foodSurveyForm>>();
+  const { preList = [], list = [] } = foodSurveyFormValue[currentStep] || {};
 
   const searchActiveState = useRegistFoodStore((state) => {
     return state.searchActiveState();
@@ -34,7 +37,7 @@ function SelectFoodList() {
   });
 
   const {
-    data: foodList,
+    data: foodList = [],
     isFetching,
     isLoading,
   } = useQuery(foodListQuery.queryOptions);
@@ -44,6 +47,24 @@ function SelectFoodList() {
   if (!foodList?.length) {
     return null;
   }
+
+  const registedFoodList = allSteps
+    .filter((step) => {
+      return step !== currentStep;
+    })
+    .map((step) => {
+      const { list = [] } = foodSurveyFormValue[step]!;
+      return list;
+    })
+    .flat();
+
+  const registedFoodListInSearchedFoodList = foodList.filter((searchedFood) => {
+    const registedFood = registedFoodList.find(({ id: registedFoodId }) => {
+      return registedFoodId === searchedFood.id;
+    });
+
+    return !!registedFood;
+  });
 
   const filteredFoodList = foodList.filter((searchedFood) => {
     const preCheckedFood = preList.find(({ id: preFoodId }) => {
@@ -61,9 +82,19 @@ function SelectFoodList() {
     return !checkedFood && !preCheckedFood;
   });
 
-  const isAllChecked = filteredFoodList.length === 0;
+  console.log(
+    filteredFoodList.length,
+    registedFoodListInSearchedFoodList.length,
+  );
+
+  const isAllChecked =
+    filteredFoodList.length === registedFoodListInSearchedFoodList.length;
 
   const finalButtonText = (() => {
+    if (registedFoodListInSearchedFoodList.length === foodList.length) {
+      return null;
+    }
+
     if (isUpdating) {
       return "불러오는 중...";
     }
@@ -86,6 +117,15 @@ function SelectFoodList() {
 
         return !checkedFood;
       })
+      .filter((filteredFood) => {
+        const registedFood = registedFoodListInSearchedFoodList.find(
+          ({ id: registedFoodId }) => {
+            return registedFoodId === filteredFood.id;
+          },
+        );
+
+        return !registedFood;
+      })
       .map((filteredFood) => {
         return {
           id: filteredFood.id,
@@ -107,6 +147,15 @@ function SelectFoodList() {
 
         return !!checkedFood;
       })
+      .filter((filteredFood) => {
+        const registedFood = registedFoodListInSearchedFoodList.find(
+          ({ id: registedFoodId }) => {
+            return registedFoodId === filteredFood.id;
+          },
+        );
+
+        return !registedFood;
+      })
       .map((filteredFood) => {
         return {
           id: filteredFood.id,
@@ -114,11 +163,14 @@ function SelectFoodList() {
           status: "pre-unchecked" as const,
         };
       });
-
     form.setValue(`${currentStep}.preList`, preUncheckedList);
   };
 
   const finalClickHandler = (() => {
+    if (registedFoodListInSearchedFoodList.length === foodList.length) {
+      return () => {};
+    }
+
     if (isUpdating) {
       return () => {};
     }
