@@ -106,7 +106,7 @@ function Layout({ children }: PropsWithChildren) {
             {children}
           </form>
         </Main>
-        <Footer className={cn("px-5")}>
+        <Footer>
           {isWithinCreationLimit && (
             <Button
               form={formId}

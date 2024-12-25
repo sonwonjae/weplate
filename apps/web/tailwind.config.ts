@@ -43,6 +43,7 @@ export default {
           "0%": {
             transform: "translateX(2rem)",
             opacity: "0",
+            display: "none",
           },
           "100%": {
             transform: "translateX(0)",
@@ -53,26 +54,29 @@ export default {
           "0%": {
             transform: "translateX(-2rem)",
             opacity: "0",
+            display: "none",
           },
           "100%": {
             transform: "translateX(0)",
             opacity: "1",
           },
         },
-        ["fade-in-top"]: {
+        ["fade-in-up"]: {
           "0%": {
             transform: "translateY(2rem)",
             opacity: "0",
+            display: "none",
           },
           "100%": {
             transform: "translateY(0)",
             opacity: "1",
           },
         },
-        ["fade-in-bottom"]: {
+        ["fade-in-down"]: {
           "0%": {
             transform: "translateY(-2rem)",
             opacity: "0",
+            display: "none",
           },
           "100%": {
             transform: "translateY(0)",
@@ -87,6 +91,7 @@ export default {
           "100%": {
             transform: "translateX(-2rem)",
             opacity: "0",
+            display: "none",
           },
         },
         ["fade-out-right"]: {
@@ -97,9 +102,10 @@ export default {
           "100%": {
             transform: "translateX(2rem)",
             opacity: "0",
+            display: "none",
           },
         },
-        ["fade-out-top"]: {
+        ["fade-out-up"]: {
           "0%": {
             transform: "translateY(0)",
             opacity: "1",
@@ -107,9 +113,10 @@ export default {
           "100%": {
             transform: "translateY(-2rem)",
             opacity: "0",
+            display: "none",
           },
         },
-        ["fade-out-bottom"]: {
+        ["fade-out-down"]: {
           "0%": {
             transform: "translateY(0)",
             opacity: "1",
@@ -117,6 +124,28 @@ export default {
           "100%": {
             transform: "translateY(2rem)",
             opacity: "0",
+            display: "none",
+          },
+        },
+        ["collapse-out-up"]: {
+          "0%": {
+            opacity: "1",
+          },
+          "100%": {
+            padding: "0",
+            height: "0",
+            opacity: "0",
+            display: "none",
+          },
+        },
+        ["collapse-in-down"]: {
+          "0%": {
+            padding: "0",
+            height: "0",
+            opacity: "0",
+          },
+          "100%": {
+            opacity: "1",
           },
         },
       },
@@ -125,12 +154,14 @@ export default {
         vibe: "vibe 1s ease-in-out infinite",
         ["fade-in-left"]: "fade-in-left 1s ease-in-out infinite",
         ["fade-in-right"]: "fade-in-right 1s ease-in-out infinite",
-        ["fade-in-top"]: "fade-in-top 1s ease-in-out infinite",
-        ["fade-in-bottom"]: "fade-in-bottom 1s ease-in-out infinite",
+        ["fade-in-up"]: "fade-in-up 1s ease-in-out infinite",
+        ["fade-in-down"]: "fade-in-down 1s ease-in-out infinite",
         ["fade-out-left"]: "fade-out-left 1s ease-in-out infinite",
         ["fade-out-right"]: "fade-out-right 1s ease-in-out infinite",
-        ["fade-out-top"]: "fade-out-top 1s ease-in-out infinite",
-        ["fade-out-bottom"]: "fade-out-bottom 1s ease-in-out infinite",
+        ["fade-out-up"]: "fade-out-up 1s ease-in-out infinite",
+        ["fade-out-down"]: "fade-out-down 1s ease-in-out infinite",
+        ["collapse-out-up"]: "collapse-out-up 1s ease-in-out infinite",
+        ["collapse-in-down"]: "collapse-in-down 1s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

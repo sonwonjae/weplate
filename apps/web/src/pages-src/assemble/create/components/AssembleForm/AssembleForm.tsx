@@ -26,6 +26,8 @@ function AssembleForm() {
             <FormControl>
               <FormInput
                 placeholder="ex. 연말 동창회, 크리스마스 파티"
+                counter
+                maxLength={20}
                 {...field}
               />
             </FormControl>

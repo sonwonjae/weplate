@@ -11,7 +11,15 @@ function Footer({
   children,
 }: PropsWithChildren<{ className?: string }>) {
   return (
-    <footer className={cn("w-full", "border-t", "border-t-slate-200")}>
+    <footer
+      className={cn(
+        "w-full",
+        "border-t",
+        "border-t-slate-200",
+        "z-50",
+        className,
+      )}
+    >
       <section
         className={cn(
           "relative",
@@ -21,7 +29,6 @@ function Footer({
           "justify-between",
           "py-3",
           "px-5",
-          className,
         )}
       >
         {children}

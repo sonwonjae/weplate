@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AssembleModule } from './assemble/assemble.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
+import { FoodModule } from './food/food.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
     SupabaseModule,
     AssembleModule,
     AuthModule,
+    FoodModule,
   ],
   controllers: [AppController],
   providers: [AppService],

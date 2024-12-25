@@ -31,10 +31,11 @@ export class RQServer<
 
   constructor({
     url,
+    params,
     res,
     customQueryOptions,
   }: RQServerParams<TQueryFnData, ReqURL>) {
-    super({ url, customQueryOptions });
+    super({ url, params, customQueryOptions });
     this.res = res;
   }
 
@@ -43,6 +44,7 @@ export class RQServer<
       try {
         const { data, headers } = await this.axiosInstance(this.url, {
           method: this.#method,
+          params: this.params,
           withCredentials: true,
         });
         const setCookieHeader = headers["set-cookie"];

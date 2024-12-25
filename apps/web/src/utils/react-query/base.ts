@@ -25,6 +25,12 @@ export type ResponseMap = {
     providerId: string;
     provider: string;
   };
+  "/api/food/search/list": Array<{
+    id: string;
+    name: string;
+    createdAt: string;
+    updatedAt: string;
+  }>;
 };
 
 export interface RQDefaultParams<
@@ -32,7 +38,8 @@ export interface RQDefaultParams<
   ReqURL extends keyof ResponseMap,
 > {
   url: ReqURL;
-  customQueryOptions?: UseQueryOptions<TQueryFnData, AxiosError>;
+  params?: Record<string, unknown>;
+  customQueryOptions?: Partial<UseQueryOptions<TQueryFnData, AxiosError>>;
 }
 
 export const apiAxios = axios.create({
@@ -54,6 +61,7 @@ export class RQ<
   #method = "GET";
 
   url: RQDefaultParams<TQueryFnData, ReqURL>["url"];
+  params: RQDefaultParams<TQueryFnData, ReqURL>["params"];
   customQueryOptions?: RQDefaultParams<
     TQueryFnData,
     ReqURL
@@ -62,9 +70,11 @@ export class RQ<
 
   constructor({
     url,
+    params,
     customQueryOptions,
   }: RQDefaultParams<TQueryFnData, ReqURL>) {
     this.url = url;
+    this.params = params;
     this.customQueryOptions = customQueryOptions;
     this.axiosInstance = (() => {
       switch (true) {
@@ -82,7 +92,7 @@ export class RQ<
   }
 
   get queryKey() {
-    return [...this.baseKey] as const;
+    return [...this.baseKey, this.params].filter(Boolean);
   }
 
   get queryFn() {
@@ -90,6 +100,7 @@ export class RQ<
       try {
         const { data } = await this.axiosInstance(this.url, {
           method: this.#method,
+          params: this.params,
           withCredentials: true,
         });
 

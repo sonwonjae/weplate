@@ -68,49 +68,47 @@ function Layout({ children }: PropsWithChildren) {
   };
 
   return (
-    <>
-      <Form {...form}>
-        <Header className={cn("w-full", "justify-center", "relative")}>
-          <Header.Title>모임 수정하기</Header.Title>
-          <Link
-            href="/"
-            replace
-            className={cn(
-              "absolute",
-              "top-0",
-              "right-5",
-              "h-full",
-              "flex",
-              "items-center",
-            )}
-          >
-            <XIcon size={20} />
-          </Link>
-        </Header>
-        <Main>
-          <form
-            id={formId}
-            onSubmit={form.handleSubmit(onSubmit)}
-            className={cn("space-y-8")}
-          >
-            {children}
-          </form>
-        </Main>
-        <Footer className={cn("px-5")}>
-          <Button
-            form={formId}
-            type="submit"
-            size="lg"
-            round
-            loading={isPending}
-            disabled={isPending}
-            className={cn("w-full")}
-          >
-            모임 수정
-          </Button>
-        </Footer>
-      </Form>
-    </>
+    <Form {...form}>
+      <Header className={cn("w-full", "justify-center", "relative")}>
+        <Header.Title>모임 수정하기</Header.Title>
+        <Link
+          href="/"
+          replace
+          className={cn(
+            "absolute",
+            "top-0",
+            "right-5",
+            "h-full",
+            "flex",
+            "items-center",
+          )}
+        >
+          <XIcon size={20} />
+        </Link>
+      </Header>
+      <Main>
+        <form
+          id={formId}
+          onSubmit={form.handleSubmit(onSubmit)}
+          className={cn("space-y-8")}
+        >
+          {children}
+        </form>
+      </Main>
+      <Footer>
+        <Button
+          form={formId}
+          type="submit"
+          size="lg"
+          round
+          loading={isPending}
+          disabled={isPending}
+          className={cn("w-full")}
+        >
+          모임 수정
+        </Button>
+      </Footer>
+    </Form>
   );
 }
 

@@ -1,13 +1,40 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { CircleXIcon, SearchIcon } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/utils/tailwind";
 
+const intputContainerVariants = cva(
+  cn(
+    "relative",
+    "flex",
+    "gap-2",
+    "items-center",
+    "w-full",
+    "h-fit",
+    "rounded-md",
+    "border",
+    "border-input",
+    "focus-within:ring-2",
+    "focus-within:ring-ring",
+    "focus-within:ring-offset-2",
+  ),
+  {
+    variants: {
+      uiSize: {
+        sm: cn("h-10", "px-3", "py-2"),
+        md: cn("h-12", "px-4", "py-3"),
+        lg: cn("h-14", "px-4", "py-3"),
+      },
+    },
+  },
+);
+
 const inputVariants = cva(
   cn(
+    "flex-1",
     "flex",
-    "w-full",
     "bg-background",
     "rounded-md",
     "text-base",
@@ -26,9 +53,9 @@ const inputVariants = cva(
   {
     variants: {
       uiSize: {
-        sm: cn("h-10", "rounded-md", "px-3", "py-2", "text-sm"),
-        md: cn("h-12", "px-4", "py-3", "text-md"),
-        lg: cn("h-14", "px-4", "py-3", "text-lg"),
+        sm: cn("rounded-md", "text-sm"),
+        md: cn("text-md"),
+        lg: cn("text-lg"),
       },
     },
   },
@@ -40,17 +67,25 @@ export interface BaseInputProps
   asChild?: boolean;
 }
 
+interface SearchInputProps extends BaseInputProps {
+  type: "search";
+  counter?: undefined;
+  onDelete: () => void;
+}
+
 interface TextInputProps extends BaseInputProps {
   type?: "text";
   counter?: boolean;
+  onDelete?: undefined;
 }
 
 interface OtherInputProps extends BaseInputProps {
-  type: Exclude<React.HTMLInputTypeAttribute, "text">;
+  type: Exclude<React.HTMLInputTypeAttribute, "text" | "search">;
   counter?: undefined;
+  onDelete?: undefined;
 }
 
-export type InputProps = TextInputProps | OtherInputProps;
+export type InputProps = SearchInputProps | TextInputProps | OtherInputProps;
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
@@ -65,7 +100,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     },
     ref,
   ) => {
-    const counterRef = React.useRef<HTMLSpanElement>(null);
     const Comp = asChild ? Slot : "input";
 
     const hasCounter = type === "text" && !!counter;
@@ -74,21 +108,24 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div
         className={cn(
-          "relative",
-          "w-full",
-          "h-fit",
-          "rounded-md",
-          "border",
-          "border-input",
-          "focus-within:ring-2",
-          "focus-within:ring-ring",
-          "focus-within:ring-offset-2",
+          intputContainerVariants({
+            uiSize,
+          }),
           className,
         )}
-        style={{
-          paddingRight: `${counterRef.current?.clientWidth || 0}px`,
-        }}
       >
+        {type === "search" && (
+          <SearchIcon
+            onClick={(e) => {
+              const $searchInput = e.currentTarget
+                .closest("div")
+                ?.querySelector('input[type="search"]') as HTMLInputElement;
+              if ($searchInput) {
+                $searchInput.focus();
+              }
+            }}
+          />
+        )}
         <Comp
           type={type}
           className={cn(inputVariants({ uiSize }))}
@@ -96,20 +133,24 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {hasCounter && (
-          <span
-            ref={counterRef}
-            className={cn(
-              "absolute",
-              "right-0",
-              "top-1/2",
-              "-translate-y-1/2",
-              uiSize === "sm" && "pr-3",
-              uiSize === "md" && "pr-4",
-              uiSize === "lg" && "pr-4",
-            )}
-          >
+          <span className={cn("whitespace-nowrap")}>
             {valueLength} / {maxLength}
           </span>
+        )}
+        {type === "search" && props.value && (
+          <CircleXIcon
+            onClick={(e) => {
+              const $searchInput = e.currentTarget
+                .closest("div")
+                ?.querySelector('input[type="search"]') as HTMLInputElement;
+              if ($searchInput) {
+                $searchInput.focus();
+              }
+              if (typeof props.onDelete === "function") {
+                props.onDelete();
+              }
+            }}
+          />
         )}
       </div>
     );
