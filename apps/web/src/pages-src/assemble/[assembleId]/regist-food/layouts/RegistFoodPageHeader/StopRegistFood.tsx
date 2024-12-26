@@ -53,7 +53,7 @@ function StopRegistFood() {
         <DialogFooter className={cn("flex-row")}>
           <Button
             type="button"
-            color="outline"
+            outline
             className={cn("w-full")}
             onClick={() => {
               router.replace("/");

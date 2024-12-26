@@ -31,8 +31,6 @@ const buttonVariants = cva(
         primary: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
@@ -55,12 +53,49 @@ const buttonVariants = cva(
         true: "[&_svg]:size-10",
         false: "",
       },
+      outline: {
+        true: "border",
+        false: "",
+      },
     },
+    compoundVariants: [
+      {
+        color: "primary",
+        outline: true,
+        className: cn(
+          "bg-background",
+          "text-primary",
+          "border-primary",
+          "hover:bg-primary/10",
+        ),
+      },
+      {
+        color: "secondary",
+        outline: true,
+        className: cn(
+          "bg-background",
+          "text-secondary",
+          "border-secondary",
+          "hover:bg-secondary/10",
+        ),
+      },
+      {
+        color: "destructive",
+        outline: true,
+        className: cn(
+          "bg-background",
+          "text-destructive",
+          "border-destructive",
+          "hover:bg-destructive/10",
+        ),
+      },
+    ],
     defaultVariants: {
       color: "primary",
       size: "md",
       round: false,
       loading: false,
+      outline: false,
     },
   },
 );
@@ -77,6 +112,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     {
       className,
       color,
+      outline,
       size,
       round,
       loading = false,
@@ -90,7 +126,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         className={cn(
-          buttonVariants({ color, size, round, loading, className }),
+          buttonVariants({ color, outline, size, round, loading, className }),
         )}
         ref={ref}
         {...props}

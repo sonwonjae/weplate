@@ -226,7 +226,7 @@ function AssembleItem({
                     <DialogClose asChild>
                       <Button
                         type="button"
-                        color="outline"
+                        outline
                         className={cn("w-full")}
                         disabled={isPending}
                       >
