@@ -1,7 +1,10 @@
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 import { useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/shad-cn/components/ui/button";
+import { apiAxios } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
@@ -9,7 +12,21 @@ import { useRegistFoodStore } from "../../stores/regist-foods";
 import { useRegistStepsStore } from "../../stores/regist-foods-steps";
 
 function SubmitFoodList() {
+  const router = useRouter();
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
+
+  const { mutateAsync: submitFoodSurvey } = useMutation({
+    mutationFn: async () => {
+      await apiAxios.post(`/api/food/${router.query.assembleId}/survey`, {
+        favoriteFoodList: form.getValues("favorite.list").map(({ id }) => {
+          return { foodId: id };
+        }),
+        hateFoodList: form.getValues("hate.list").map(({ id }) => {
+          return { foodId: id };
+        }),
+      });
+    },
+  });
 
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
@@ -31,7 +48,8 @@ function SubmitFoodList() {
   }
 
   const submitFoodList = () => {
-    console.log("last submit");
+    submitFoodSurvey();
+    router.replace(`/assemble/${router.query.assembleId}/waiting-room`);
   };
 
   return (

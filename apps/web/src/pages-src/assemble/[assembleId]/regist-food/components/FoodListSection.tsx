@@ -106,7 +106,15 @@ function FoodListSection() {
           <br />
           음식 추가를 요청해 주세요!
         </p>
-        <Button type="button" size="sm" round className={cn("font-bold")}>
+        <Button
+          type="button"
+          size="sm"
+          round
+          className={cn("font-bold")}
+          onClick={() => {
+            window.open("http://bit.ly/3VQOABC", "_blank");
+          }}
+        >
           <MailPlusIcon size={20} />
           <span>음식 추가 요청하기</span>
         </Button>

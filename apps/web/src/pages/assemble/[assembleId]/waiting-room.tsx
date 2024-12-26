@@ -4,8 +4,8 @@ import type { ServerResponse } from "http";
 import { createRouter } from "next-connect";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
-import Layout from "@/pages-src/assemble/[assembleId]/request-invite/layout";
-import middleware from "@/pages-src/assemble/[assembleId]/request-invite/middleware";
+import Layout from "@/pages-src/assemble/[assembleId]/waiting-room/layout";
+import middleware from "@/pages-src/assemble/[assembleId]/waiting-room/middleware";
 import { cn } from "@/utils/tailwind";
 
 const router = createRouter<CustomIncomingMessage, ServerResponse>();

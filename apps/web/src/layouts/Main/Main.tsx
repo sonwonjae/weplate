@@ -10,6 +10,8 @@ function Main({
     <main
       className={cn(
         "flex-1",
+        "flex",
+        "flex-col",
         "relative",
         "w-full",
         "h-full",

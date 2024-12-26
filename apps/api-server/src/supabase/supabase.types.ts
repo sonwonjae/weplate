@@ -131,6 +131,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      user__assemble__foods: {
+        Row: {
+          assembleId: string;
+          foodId: string;
+          surveyType: Database['public']['Enums']['food_survey_type'];
+          userId: string;
+        };
+        Insert: {
+          assembleId: string;
+          foodId: string;
+          surveyType?: Database['public']['Enums']['food_survey_type'];
+          userId: string;
+        };
+        Update: {
+          assembleId?: string;
+          foodId?: string;
+          surveyType?: Database['public']['Enums']['food_survey_type'];
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user__assemble__foods_assembleId_fkey';
+            columns: ['assembleId'];
+            isOneToOne: false;
+            referencedRelation: 'assembles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user__assemble__foods_foodId_fkey';
+            columns: ['foodId'];
+            isOneToOne: false;
+            referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user__assemble__foods_userId_fkey';
+            columns: ['userId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       user__assembles: {
         Row: {
           assembleId: string;
@@ -205,6 +248,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
+      food_survey_type: 'favorite' | 'hate';
       permission: 'owner' | 'member';
       provider: 'kakao';
     };

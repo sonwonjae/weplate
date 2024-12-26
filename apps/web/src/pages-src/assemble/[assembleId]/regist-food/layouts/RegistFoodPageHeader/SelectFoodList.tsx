@@ -82,11 +82,6 @@ function SelectFoodList() {
     return !checkedFood && !preCheckedFood;
   });
 
-  console.log(
-    filteredFoodList.length,
-    registedFoodListInSearchedFoodList.length,
-  );
-
   const isAllChecked =
     filteredFoodList.length === registedFoodListInSearchedFoodList.length;
 

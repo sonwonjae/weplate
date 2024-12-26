@@ -33,6 +33,7 @@ export class CheckAssemblePermissionMiddleware implements NestMiddleware {
     return next();
   }
 }
+
 @Injectable()
 export class CheckAssembleMaximumMiddleware implements NestMiddleware {
   constructor(private readonly assembleService: AssembleService) {}
@@ -42,9 +43,8 @@ export class CheckAssembleMaximumMiddleware implements NestMiddleware {
       return next();
     }
 
-    const isWithinCreationLimit = this.assembleService.checkWithinCreationLimit(
-      req.userInfo,
-    );
+    const { isWithinCreationLimit } =
+      await this.assembleService.checkWithinCreationLimit(req.userInfo);
 
     if (!isWithinCreationLimit) {
       // FIXME: 아예 별도의 Exciption으로 생성할지 고민 필요

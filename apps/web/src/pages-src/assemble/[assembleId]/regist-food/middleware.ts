@@ -22,7 +22,7 @@ const prefetch: Middleware<Req> = async (req, res) => {
   } catch {
     return {
       redirect: {
-        destination: `/assemble/${assembleId}/request-invite`,
+        destination: `/assemble/${assembleId}/waiting-room`,
         permanent: true,
       },
     };
