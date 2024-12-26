@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { UserInfo } from 'src/auth/auth.decorator';
 import { Tables } from 'src/supabase/supabase.types';
 
@@ -25,5 +33,23 @@ export class FoodController {
       assembleId,
       ...body,
     });
+  }
+
+  @Get(':assembleId/check/survey/complete')
+  async checkAlreadyRegistUser(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Param('assembleId') assembleId: Tables<'assembles'>['id'],
+  ) {
+    const isRegistedUser = await this.foodService.checkAlreadyRegistUser(
+      userInfo,
+      {
+        assembleId,
+      },
+    );
+    if (isRegistedUser) {
+      return true;
+    }
+
+    throw new HttpException('not yet regist food', 400);
   }
 }

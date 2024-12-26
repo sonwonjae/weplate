@@ -5,6 +5,8 @@ import axios, { AxiosInstance } from "axios";
 
 /** FIXME: back 로직이랑 타입 싱크 맞추기 */
 export type ResponseMap = {
+  [key in `/api/food/${string}/check/survey/complete`]: boolean;
+} & {
   [key in `/api/assemble/${string}/item`]: {
     id: string;
     title: string;

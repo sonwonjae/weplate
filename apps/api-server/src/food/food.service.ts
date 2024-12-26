@@ -65,10 +65,9 @@ export class FoodService {
       .from('user__assemble__foods')
       .select('*')
       .eq('assembleId', assembleId)
-      .eq('userId', userInfo.id)
-      .single();
+      .eq('userId', userInfo.id);
 
-    if (userAssembleFood) {
+    if (userAssembleFood?.length) {
       return true;
     } else {
       return false;

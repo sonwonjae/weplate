@@ -1,19 +1,37 @@
 import type { Middleware, CustomIncomingMessage } from "@/middlewares/type";
 
+import { QueryClient } from "@tanstack/react-query";
+
 import { pipe } from "@/middlewares/utils/pipe";
+import { RQServer } from "@/utils/react-query";
 
 type Req = CustomIncomingMessage;
 
-const prefetch: Middleware<Req> = async (req) => {
-  const assembleId = req.params?.assembleId as string;
+const prefetch: Middleware<Req> = async (req, res) => {
+  const queryClient = new QueryClient();
 
-  // FIXME: 추후에 이런 저런 권한 체크 후 알맞은 페이지로 redirect하도록 수정하기
-  return {
-    redirect: {
-      destination: `/assemble/${assembleId}/regist-food`,
-      permanent: true,
-    },
-  };
+  const assembleId = req.params?.assembleId as string;
+  const assembleQuery = new RQServer({
+    url: `/api/food/${assembleId}/check/survey/complete`,
+    res,
+  });
+
+  try {
+    await queryClient.fetchQuery(assembleQuery.queryOptions);
+    return {
+      redirect: {
+        destination: `/assemble/${assembleId}/waiting-room`,
+        permanent: true,
+      },
+    };
+  } catch {
+    return {
+      redirect: {
+        destination: `/assemble/${assembleId}/regist-food`,
+        permanent: true,
+      },
+    };
+  }
 };
 
 const middleware = pipe<Req>(prefetch);
