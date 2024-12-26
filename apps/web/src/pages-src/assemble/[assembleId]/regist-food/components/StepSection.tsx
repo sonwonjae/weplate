@@ -1,7 +1,7 @@
 import { cn } from "@/utils/tailwind";
 
 import { useRegistFoodStore } from "../stores/regist-foods";
-import { useRegistStepsStore } from "../stores/regist-steps";
+import { useRegistStepsStore } from "../stores/regist-foods-steps";
 
 function StepSection() {
   const allSteps = useRegistStepsStore((state) => {

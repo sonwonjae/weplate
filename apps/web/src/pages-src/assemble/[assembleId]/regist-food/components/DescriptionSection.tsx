@@ -4,7 +4,7 @@ import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import { useRegistFoodStore } from "../stores/regist-foods";
-import { useRegistStepsStore } from "../stores/regist-steps";
+import { useRegistStepsStore } from "../stores/regist-foods-steps";
 
 function DescriptionSection() {
   const authQuery = new RQClient({ url: "/api/user/auth/check" });

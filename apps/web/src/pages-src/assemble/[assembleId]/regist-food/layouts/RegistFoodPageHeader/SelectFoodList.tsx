@@ -7,7 +7,7 @@ import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
 import { useRegistFoodStore } from "../../stores/regist-foods";
-import { useRegistStepsStore } from "../../stores/regist-steps";
+import { useRegistStepsStore } from "../../stores/regist-foods-steps";
 
 function SelectFoodList() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();

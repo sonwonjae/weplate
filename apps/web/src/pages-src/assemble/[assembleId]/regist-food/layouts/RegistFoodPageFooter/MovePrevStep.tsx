@@ -1,4 +1,3 @@
-import { ChevronLeftIcon } from "lucide-react";
 import { useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -6,8 +5,8 @@ import { Button } from "@/shad-cn/components/ui/button";
 import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
-// import { useRegistFoodStore } from "../../stores/regist-foods";
-import { useRegistStepsStore } from "../../stores/regist-steps";
+import { useRegistFoodStore } from "../../stores/regist-foods";
+import { useRegistStepsStore } from "../../stores/regist-foods-steps";
 
 function MovePrevStep() {
   const currentStepIndex = useRegistStepsStore((state) => {
@@ -16,20 +15,19 @@ function MovePrevStep() {
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
   });
-  // const moveNextStep = useRegistStepsStore((state) => {
-  //   return state.moveNextStep;
-  // });
-  const {
-    preList = [],
-    // list = []
-  } = useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
+  const movePrevStep = useRegistStepsStore((state) => {
+    return state.movePrevStep;
+  });
+  const searchActiveState = useRegistFoodStore((state) => {
+    return state.searchActiveState();
+  });
+  const { preList = [] } =
+    useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
 
-  // const searchActiveState = useRegistFoodStore((state) => {
-  //   return state.searchActiveState();
-  // });
-  // const isReadyMoveToNextStep = !!list.length && searchActiveState === "out";
+  const isReadyMoveToPrevStep =
+    !preList.length && currentStepIndex !== 0 && searchActiveState !== "in";
 
-  if (preList.length || currentStepIndex === 0) {
+  if (!isReadyMoveToPrevStep) {
     return null;
   }
 
@@ -38,12 +36,10 @@ function MovePrevStep() {
       size="lg"
       outline
       round
-      className={cn("w-full", "justify-between")}
-      // onClick={moveNextStep}
+      className={cn("w-full")}
+      onClick={movePrevStep}
     >
-      <ChevronLeftIcon />
-      <span>선호 음식 등록하기</span>
-      <div />
+      이전 단계로 돌아가기
     </Button>
   );
 }

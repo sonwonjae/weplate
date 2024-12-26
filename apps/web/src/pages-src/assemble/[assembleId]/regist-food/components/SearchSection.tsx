@@ -12,17 +12,23 @@ import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../layout";
 import { useRegistFoodStore } from "../stores/regist-foods";
-import { useRegistStepsStore } from "../stores/regist-steps";
+import { useRegistStepsStore } from "../stores/regist-foods-steps";
 
 function SearchSection() {
+  const form = useFormContext<z.infer<typeof foodSurveyForm>>();
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
+  });
+  const searchActiveState = useRegistFoodStore((state) => {
+    return state.searchActiveState();
   });
   const updateInputFocusState = useRegistFoodStore((state) => {
     return state.updateInputFocusState;
   });
 
-  const form = useFormContext<z.infer<typeof foodSurveyForm>>();
+  const search = useRegistFoodStore((state) => {
+    return state.search;
+  });
 
   const placeholder = (() => {
     switch (currentStep) {
@@ -32,6 +38,18 @@ function SearchSection() {
         return "ex. 꼼장어구이";
     }
   })();
+
+  const searchFoodList = (formValue: z.infer<typeof foodSurveyForm>) => {
+    if (!formValue[currentStep].searchKeyword) {
+      return;
+    }
+
+    if (searchActiveState !== "in") {
+      return;
+    }
+
+    search(formValue[currentStep].searchKeyword);
+  };
 
   return (
     <section
@@ -68,6 +86,11 @@ function SearchSection() {
             </FormItem>
           );
         }}
+      />
+      <button
+        type="submit"
+        hidden
+        onClick={form.handleSubmit(searchFoodList)}
       />
     </section>
   );

@@ -8,6 +8,7 @@ interface FoodState {
   currentStepIndex: number;
   isLastStep: () => boolean;
   currentStep: () => RegistStep[number];
+  movePrevStep: () => void;
   moveNextStep: () => void;
   resetStep: () => void;
 }
@@ -28,6 +29,18 @@ export const useRegistStepsStore = create<FoodState>()(
       },
       isLastStep: () => {
         return get().currentStepIndex === get().allSteps.length - 1;
+      },
+      movePrevStep: () => {
+        return set(() => {
+          const prevStepIndex = get().currentStepIndex - 1;
+          if (prevStepIndex < 0) {
+            return {};
+          }
+
+          return {
+            currentStepIndex: prevStepIndex,
+          };
+        });
       },
       moveNextStep: () => {
         return set(() => {

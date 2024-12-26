@@ -6,10 +6,11 @@ import { z } from "zod";
 
 import { Main } from "@/layouts";
 import { Form } from "@/shad-cn/components/ui/form";
+import { cn } from "@/utils/tailwind";
 
 import { RegistFoodPageHeader, RegistFoodPageFooter } from "./layouts";
 import { useRegistFoodStore } from "./stores/regist-foods";
-import { useRegistStepsStore } from "./stores/regist-steps";
+import { useRegistStepsStore } from "./stores/regist-foods-steps";
 
 const preListScheme = z.array(
   z.object({
@@ -71,9 +72,11 @@ function Layout({ children }: PropsWithChildren) {
 
   return (
     <Form {...form}>
-      <RegistFoodPageHeader />
-      <Main>{children}</Main>
-      <RegistFoodPageFooter />
+      <form className={cn("flex", "flex-col", "h-full")}>
+        <RegistFoodPageHeader />
+        <Main>{children}</Main>
+        <RegistFoodPageFooter />
+      </form>
     </Form>
   );
 }

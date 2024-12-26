@@ -6,14 +6,14 @@ import { cn } from "@/utils/tailwind";
 
 import { foodSurveyForm } from "../../layout";
 import { useRegistFoodStore } from "../../stores/regist-foods";
-import { useRegistStepsStore } from "../../stores/regist-steps";
+import { useRegistStepsStore } from "../../stores/regist-foods-steps";
 
 function RegistFood() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
   const currentStep = useRegistStepsStore((state) => {
     return state.currentStep();
   });
-  const { preList = [], list = [] } =
+  const { preList = [] } =
     useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
 
   const searchActiveState = useRegistFoodStore((state) => {
@@ -23,7 +23,7 @@ function RegistFood() {
     return state.endSearch;
   });
 
-  const isReadyMoveToNextStep = !!list.length && searchActiveState === "out";
+  const isReadyRegistFood = preList.length && searchActiveState === "in";
 
   const registFoodList = () => {
     const list = form.getValues(`${currentStep}.list`);
@@ -58,7 +58,7 @@ function RegistFood() {
     endSearch();
   };
 
-  if (isReadyMoveToNextStep || !preList.length) {
+  if (!isReadyRegistFood) {
     return null;
   }
 
