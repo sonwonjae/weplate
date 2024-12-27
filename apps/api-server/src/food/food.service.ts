@@ -26,14 +26,24 @@ export class FoodService {
     userInfo: Tables<'users'>,
     { assembleId, favoriteFoodList, hateFoodList }: CreateFoodSurveyDto,
   ) {
+    const { data: userAssemble } = await this.supabaseService.client
+      .from('user__assembles')
+      .select('*')
+      .eq('assembleId', assembleId)
+      .eq('userId', userInfo.id)
+      .single();
+
+    if (!userAssemble) {
+      throw new HttpException('not exist user assemble', 400);
+    }
+
     const mappedFavoriteFoodList = favoriteFoodList.map<
       Tables<'user__assemble__foods'>
     >(({ foodId }) => {
       return {
         surveyType: 'favorite',
         foodId,
-        assembleId,
-        userId: userInfo.id,
+        userAssembleId: userAssemble.id,
       };
     });
     const mappedHateeFoodList = hateFoodList.map<
@@ -42,8 +52,7 @@ export class FoodService {
       return {
         surveyType: 'hate',
         foodId,
-        assembleId,
-        userId: userInfo.id,
+        userAssembleId: userAssemble.id,
       };
     });
 
@@ -61,11 +70,21 @@ export class FoodService {
     userInfo: Tables<'users'>,
     { assembleId }: CheckFoodSurveyDto,
   ) {
+    const { data: userAssemble } = await this.supabaseService.client
+      .from('user__assembles')
+      .select('*')
+      .eq('assembleId', assembleId)
+      .eq('userId', userInfo.id)
+      .single();
+
+    if (!userAssemble) {
+      throw new HttpException('not exist user assemble', 400);
+    }
+
     const { data: userAssembleFood } = await this.supabaseService.client
       .from('user__assemble__foods')
       .select('*')
-      .eq('assembleId', assembleId)
-      .eq('userId', userInfo.id);
+      .eq('userAssembleId', userAssemble.id);
 
     if (userAssembleFood?.length) {
       return true;

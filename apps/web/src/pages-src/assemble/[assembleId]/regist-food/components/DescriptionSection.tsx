@@ -101,7 +101,7 @@ function DescriptionSection() {
           {currentStep === "favorite" &&
             "알려주시면 모임 메뉴에 반영해 드릴게요!"}
           {currentStep === "hate" &&
-            "알려주시면 이번 모임 메뉴에서 제외해 드릴게요!"}
+            "선택한 음식의 추천 확률을 최소화해드릴게요!"}
         </span>
       </span>
     </section>

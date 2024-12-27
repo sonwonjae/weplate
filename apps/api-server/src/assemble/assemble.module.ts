@@ -50,6 +50,11 @@ export class AssembleModule {
           path: 'assemble/:assembleId/item',
           method: RequestMethod.DELETE,
         },
-      );
+      )
+      .apply(RequiredAuthMiddleware)
+      .forRoutes({
+        path: 'assemble/:assembleId/user/list',
+        method: RequestMethod.GET,
+      });
   }
 }

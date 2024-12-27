@@ -7,6 +7,13 @@ import axios, { AxiosInstance } from "axios";
 export type ResponseMap = {
   [key in `/api/food/${string}/check/survey/complete`]: boolean;
 } & {
+  [key in `/api/assemble/${string}/user/list`]: Array<{
+    id: string;
+    permission: "owner" | "member";
+    name: string | undefined;
+    isRegisted: boolean;
+  }>;
+} & {
   [key in `/api/assemble/${string}/item`]: {
     id: string;
     title: string;

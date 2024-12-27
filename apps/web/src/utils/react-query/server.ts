@@ -48,6 +48,7 @@ export class RQServer<
           withCredentials: true,
         });
         const setCookieHeader = headers["set-cookie"];
+        console.log({ setCookieHeader });
 
         if (setCookieHeader) {
           this.res.setHeader("Set-Cookie", setCookieHeader);
@@ -98,6 +99,7 @@ export class RQInfinityServer<
             withCredentials: true,
           });
         const setCookieHeader = headers["set-cookie"];
+        console.log({ setCookieHeader });
 
         if (setCookieHeader) {
           this.res.setHeader("Set-Cookie", setCookieHeader);

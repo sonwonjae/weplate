@@ -10,21 +10,27 @@ type Req = CustomIncomingMessage;
 const prefetch: Middleware<Req> = async (req, res) => {
   const queryClient = new QueryClient();
 
-  console.log(req.cookies);
+  const assembleId = req.params?.assembleId as string;
+
+  const assembleUserListQuery = new RQServer({
+    url: `/api/assemble/${assembleId}/user/list`,
+    res,
+  });
+  await queryClient.fetchQuery(assembleUserListQuery.queryOptions);
 
   try {
     const authQuery = new RQServer({ url: "/api/user/auth/check", res });
     await queryClient.fetchQuery(authQuery.queryOptions);
 
     return {
-      redirect: {
-        destination: "/",
-        permanent: true,
-      },
+      props: { dehydratedState: dehydrate(queryClient) },
     };
   } catch {
     return {
-      props: { dehydratedState: dehydrate(queryClient) },
+      redirect: {
+        destination: "/login",
+        permanent: true,
+      },
     };
   }
 };

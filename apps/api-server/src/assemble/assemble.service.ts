@@ -30,7 +30,11 @@ export class AssembleService {
 
     const { data: userAssemble } = await this.supabaseService.client
       .from('user__assembles')
-      .insert({ userId: userInfo.id, assembleId: assemble.id })
+      .insert({
+        userId: userInfo.id,
+        assembleId: assemble.id,
+        permission: 'owner',
+      })
       .select('*')
       .single();
 
@@ -156,5 +160,32 @@ export class AssembleService {
       .eq('id', assembleId);
 
     return true;
+  }
+
+  async getAssembleUserList(userInfo: Tables<'users'>, assembleId: string) {
+    const { data: userAssemblesWithFoodsSurvey = [] } =
+      await this.supabaseService.client
+        .from('user__assembles')
+        .select(
+          `
+            *,
+            user__assemble__foods(*),
+            users(*)
+          `,
+        )
+        .eq('assembleId', assembleId);
+
+    return (
+      userAssemblesWithFoodsSurvey?.map(
+        ({ id, permission, user__assemble__foods, users }) => {
+          return {
+            id,
+            permission,
+            name: users?.name,
+            isRegisted: !!user__assemble__foods.length,
+          };
+        },
+      ) ?? []
+    );
   }
 }

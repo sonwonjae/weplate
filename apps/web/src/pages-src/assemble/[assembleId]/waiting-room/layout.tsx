@@ -7,6 +7,7 @@ import {
   ShareIcon,
   UserRoundPlusIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Header, Footer, Main } from "@/layouts";
@@ -26,7 +27,7 @@ function Layout({ children }: PropsWithChildren) {
     <>
       <Header>
         <div className={cn("relative")}>
-          <a
+          <Link
             href="/"
             className={cn(
               "absolute",
@@ -38,7 +39,7 @@ function Layout({ children }: PropsWithChildren) {
             )}
           >
             <ChevronLeftIcon />
-          </a>
+          </Link>
         </div>
         <h1 className={cn("text-lg", "font-bold", "truncate", "max-w-36")}>
           {assemble?.title}
@@ -54,7 +55,9 @@ function Layout({ children }: PropsWithChildren) {
               "gap-2",
             )}
           >
-            <UserRoundPlusIcon />
+            <Link href={`/assemble/${router.query.assembleId}/invite-user`}>
+              <UserRoundPlusIcon />
+            </Link>
             <ShareIcon />
             <ChefHatIcon />
           </div>

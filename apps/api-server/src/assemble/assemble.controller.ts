@@ -58,4 +58,12 @@ export class AssembleController {
   remove(@Param('assembleId') assembleId: string) {
     return this.assembleService.removeAssemble(assembleId);
   }
+
+  @Get(':assembleId/user/list')
+  getAssembleUserList(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Param('assembleId') assembleId: string,
+  ) {
+    return this.assembleService.getAssembleUserList(userInfo, assembleId);
+  }
 }

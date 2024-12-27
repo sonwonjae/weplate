@@ -133,31 +133,21 @@ export type Database = {
       };
       user__assemble__foods: {
         Row: {
-          assembleId: string;
           foodId: string;
           surveyType: Database['public']['Enums']['food_survey_type'];
-          userId: string;
+          userAssembleId: string;
         };
         Insert: {
-          assembleId: string;
           foodId: string;
           surveyType?: Database['public']['Enums']['food_survey_type'];
-          userId: string;
+          userAssembleId: string;
         };
         Update: {
-          assembleId?: string;
           foodId?: string;
           surveyType?: Database['public']['Enums']['food_survey_type'];
-          userId?: string;
+          userAssembleId?: string;
         };
         Relationships: [
-          {
-            foreignKeyName: 'user__assemble__foods_assembleId_fkey';
-            columns: ['assembleId'];
-            isOneToOne: false;
-            referencedRelation: 'assembles';
-            referencedColumns: ['id'];
-          },
           {
             foreignKeyName: 'user__assemble__foods_foodId_fkey';
             columns: ['foodId'];
@@ -166,10 +156,10 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'user__assemble__foods_userId_fkey';
-            columns: ['userId'];
+            foreignKeyName: 'user__assemble__foods_userAssembleId_fkey';
+            columns: ['userAssembleId'];
             isOneToOne: false;
-            referencedRelation: 'users';
+            referencedRelation: 'user__assembles';
             referencedColumns: ['id'];
           },
         ];
@@ -177,16 +167,19 @@ export type Database = {
       user__assembles: {
         Row: {
           assembleId: string;
+          id: string;
           permission: Database['public']['Enums']['permission'];
           userId: string;
         };
         Insert: {
           assembleId?: string;
+          id?: string;
           permission?: Database['public']['Enums']['permission'];
           userId?: string;
         };
         Update: {
           assembleId?: string;
+          id?: string;
           permission?: Database['public']['Enums']['permission'];
           userId?: string;
         };
