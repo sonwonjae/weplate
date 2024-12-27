@@ -152,11 +152,6 @@ function AssembleItem({
                 disabled={activeTools}
                 color="link"
                 size="icon-md"
-                className={cn(
-                  "text-slate-600",
-                  "hover:text-primary",
-                  "active:text-primary",
-                )}
                 onClick={() => {
                   return changeActiveTools(assembleId);
                 }}
@@ -186,11 +181,6 @@ function AssembleItem({
                 disabled={toolsState === "inactive" || toolsState === "init"}
                 color="link"
                 size="icon-md"
-                className={cn(
-                  "text-slate-600",
-                  "hover:text-primary",
-                  "active:text-primary",
-                )}
                 onClick={() => {
                   router.push(`/assemble/${assembleId}/edit`);
                 }}
@@ -206,11 +196,6 @@ function AssembleItem({
                     }
                     color="link"
                     size="icon-md"
-                    className={cn(
-                      "text-slate-600",
-                      "hover:text-primary",
-                      "active:text-primary",
-                    )}
                   >
                     <TrashIcon />
                   </Button>
