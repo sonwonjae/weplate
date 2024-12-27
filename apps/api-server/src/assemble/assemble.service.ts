@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, HttpException, Injectable } from '@nestjs/common';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import { Tables } from 'src/supabase/supabase.types';
 
@@ -132,11 +132,40 @@ export class AssembleService {
   async getAssembleItem(assembleId: string) {
     const { data: assemble } = await this.supabaseService.client
       .from('assembles')
-      .select('*')
+      .select(
+        `
+          *,
+          user__assembles(*)
+        `,
+      )
       .eq('id', assembleId)
       .single();
 
-    return assemble;
+    const onwerId = assemble?.user__assembles.filter(({ permission }) => {
+      return permission === 'owner';
+    })[0].userId;
+
+    if (!onwerId) {
+      throw new HttpException('this assemble has not owner', 400);
+    }
+
+    const { data: ownerInfo } = await this.supabaseService.client
+      .from('users')
+      .select('*')
+      .eq('id', onwerId)
+      .single();
+
+    if (!ownerInfo) {
+      throw new HttpException('this assemble has not owner', 400);
+    }
+
+    return {
+      createdAt: assemble?.createdAt,
+      id: assemble?.id,
+      title: assemble?.title,
+      updatedAt: assemble?.updatedAt,
+      ownerInfo,
+    };
   }
 
   async updateAssemble(assembleId: string, { title }: UpdateAssembleDto) {
@@ -187,5 +216,33 @@ export class AssembleService {
         },
       ) ?? []
     );
+  }
+
+  async requestJoinFromInvitee(userInfo: Tables<'users'>, assembleId: string) {
+    const { data: userAssemble } = await this.supabaseService.client
+      .from('user__assembles')
+      .select('*')
+      .eq('userId', userInfo.id)
+      .eq('assembleId', assembleId)
+      .single();
+
+    if (userAssemble) {
+      throw new HttpException('already member', 400);
+    }
+
+    const { data: newUserAssemble } = await this.supabaseService.client
+      .from('user__assembles')
+      .insert({
+        userId: userInfo.id,
+        assembleId: assembleId,
+        permission: 'member',
+      })
+      .select('*')
+      .single();
+
+    if (!newUserAssemble) {
+      throw new ConflictException();
+    }
+    return true;
   }
 }

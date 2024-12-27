@@ -7,10 +7,7 @@ import {
 import { SupabaseService } from 'src/supabase/supabase.service';
 
 import { AssembleController } from './assemble.controller';
-import {
-  CheckAssemblePermissionMiddleware,
-  CheckAssembleMaximumMiddleware,
-} from './assemble.middleware';
+import { CheckAssembleMaximumMiddleware } from './assemble.middleware';
 import { AssembleService } from './assemble.service';
 
 @Module({
@@ -36,7 +33,7 @@ export class AssembleModule {
         path: 'assemble/list/my',
         method: RequestMethod.GET,
       })
-      .apply(RequiredAuthMiddleware, CheckAssemblePermissionMiddleware)
+      .apply(OptionalAuthMiddleware)
       .forRoutes(
         {
           path: 'assemble/:assembleId/item',
@@ -55,6 +52,11 @@ export class AssembleModule {
       .forRoutes({
         path: 'assemble/:assembleId/user/list',
         method: RequestMethod.GET,
+      })
+      .apply(RequiredAuthMiddleware)
+      .forRoutes({
+        path: 'assemble/:assembleId/request/join',
+        method: RequestMethod.POST,
       });
   }
 }

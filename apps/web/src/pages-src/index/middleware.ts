@@ -20,8 +20,6 @@ export type HomePageReq = CustomIncomingMessage<
 const prefetch: Middleware<HomePageReq> = async (req, res) => {
   const queryClient = new QueryClient();
 
-  console.log("req.cookies: ", req.cookies);
-
   try {
     const authQuery = new RQServer({ url: "/api/user/auth/check", res });
     await queryClient.fetchQuery(authQuery.queryOptions);

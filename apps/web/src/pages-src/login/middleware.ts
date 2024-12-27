@@ -10,8 +10,6 @@ type Req = CustomIncomingMessage;
 const prefetch: Middleware<Req> = async (req, res) => {
   const queryClient = new QueryClient();
 
-  console.log(req.cookies);
-
   try {
     const authQuery = new RQServer({ url: "/api/user/auth/check", res });
     await queryClient.fetchQuery(authQuery.queryOptions);

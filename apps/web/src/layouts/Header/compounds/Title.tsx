@@ -6,8 +6,9 @@ import { cn } from "@/utils/tailwind";
 function Title({ children }: PropsWithChildren) {
   if (!children) {
     return (
-      <Link href="/" className={cn("text-lg", "font-bold")}>
-        MOMUK
+      <Link href="/" className={cn("text-lg")}>
+        <span className={cn("font-light")}>We</span>
+        <span className={cn("font-bold")}>plate</span>
       </Link>
     );
   }

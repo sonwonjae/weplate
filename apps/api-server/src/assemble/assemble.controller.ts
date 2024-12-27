@@ -66,4 +66,12 @@ export class AssembleController {
   ) {
     return this.assembleService.getAssembleUserList(userInfo, assembleId);
   }
+
+  @Post(':assembleId/request/join')
+  requestJoinFromInvitee(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Param('assembleId') assembleId: string,
+  ) {
+    return this.assembleService.requestJoinFromInvitee(userInfo, assembleId);
+  }
 }

@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 
 import { Header, Footer, Main } from "@/layouts";
 import { RQClient } from "@/utils/react-query";
@@ -23,6 +24,29 @@ function Layout({ children }: PropsWithChildren) {
 
   const { data: assemble } = useQuery(assembleQuery.queryOptions);
 
+  const shareAssembleLink = async () => {
+    try {
+      if (navigator.canShare()) {
+        try {
+          await navigator.share({
+            url: `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/assemble/${router.query.assembleId}/invitee-room`,
+          });
+          return toast.info("공유 성공");
+        } catch {
+          return toast.error("공유 실패");
+        }
+      } else {
+        await navigator.clipboard.writeText(
+          `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/assemble/${router.query.assembleId}/invitee-room`,
+        );
+        toast.info("클립보드에 복사되었어요.", {
+          position: "bottom-left",
+        });
+      }
+    } catch {
+      return toast.error("공유 실패");
+    }
+  };
   return (
     <>
       <Header>
@@ -58,7 +82,9 @@ function Layout({ children }: PropsWithChildren) {
             <Link href={`/assemble/${router.query.assembleId}/invite-user`}>
               <UserRoundPlusIcon />
             </Link>
-            <ShareIcon />
+            <button type="button" onClick={shareAssembleLink}>
+              <ShareIcon />
+            </button>
             <ChefHatIcon />
           </div>
         </div>

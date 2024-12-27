@@ -15,11 +15,20 @@ export type ResponseMap = {
   }>;
 } & {
   [key in `/api/assemble/${string}/item`]: {
+    createdAt: string;
     id: string;
     title: string;
-    createdAt: string;
-    udpated: string;
-    provider: string;
+    updatedAt: string;
+    ownerInfo: {
+      avatarUrl: string;
+      createdAt: string;
+      email: string;
+      id: string;
+      name: string;
+      provider: "kakao";
+      providerId: string;
+      updatedAt: string;
+    };
   };
 } & {
   "/api/assemble/check/within-creation-limit": {
