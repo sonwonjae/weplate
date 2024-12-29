@@ -8,8 +8,8 @@ import { createRouter } from "next-connect";
 import { toast } from "sonner";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
-import Layout from "@/pages-src/assemble/[assembleId]/invite-user/layout";
-import middleware from "@/pages-src/assemble/[assembleId]/invite-user/middleware";
+import Layout from "@/pages-src/assemble/[assembleId]/invite-member/layout";
+import middleware from "@/pages-src/assemble/[assembleId]/invite-member/middleware";
 import { Button } from "@/shad-cn/components/ui/button";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";

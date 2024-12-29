@@ -24,16 +24,21 @@ function AssembleInviteeRoomPage() {
   });
   const { data: assemble } = useQuery(assembleQuery.queryOptions);
 
+  /** FIXME: 기획 상 풀방인 경우는 어떻게 할지 논의 필요 */
+  const checkJoinableQuery = new RQClient({
+    url: `/api/assemble/${router.query.assembleId}/check/full`,
+  });
+  const { data: checkJoinable } = useQuery(checkJoinableQuery.queryOptions);
+  const { joinable = true } = checkJoinable || {};
+
   const { mutateAsync: requestJoin } = useMutation({
     mutationFn: async () => {
       try {
         await apiAxios.post(
           `/api/assemble/${router.query.assembleId}/request/join`,
         );
-        console.log("success");
         router.replace(`/assemble/${router.query.assembleId}`);
       } catch {
-        console.log("fail");
         router.replace(
           `/login?redirectUrl=/assemble/${router.query.assembleId}/invitee-room`,
         );
@@ -86,6 +91,7 @@ function AssembleInviteeRoomPage() {
       <Button
         size="lg"
         round
+        disabled={joinable}
         className={cn("w-full")}
         onClick={() => {
           requestJoin();

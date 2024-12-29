@@ -5,6 +5,30 @@ import axios, { AxiosInstance } from "axios";
 
 /** FIXME: back 로직이랑 타입 싱크 맞추기 */
 export type ResponseMap = {
+  [key in `/api/assemble/${string}/check/full`]:
+    | {
+        readonly joinable: false;
+        readonly message: "already member";
+      }
+    | {
+        readonly joinable: false;
+        readonly message: "full assemble";
+      }
+    | {
+        readonly joinable: true;
+        readonly message: "joinable assemble";
+      };
+} & {
+  [key in `/api/food/${string}/recommend/list`]: Array<{
+    foodId: string;
+    foodName: string;
+    score: number;
+    cuisineList: Array<{
+      id: string;
+      name: string;
+    }>;
+  }>;
+} & {
   [key in `/api/food/${string}/check/survey/complete`]: boolean;
 } & {
   [key in `/api/assemble/${string}/user/list`]: Array<{
@@ -29,6 +53,16 @@ export type ResponseMap = {
       providerId: string;
       updatedAt: string;
     };
+    memberList: {
+      avatarUrl: string;
+      createdAt: string;
+      email: string;
+      id: string;
+      name: string;
+      provider: "kakao";
+      providerId: string;
+      updatedAt: string;
+    }[];
   };
 } & {
   "/api/assemble/check/within-creation-limit": {

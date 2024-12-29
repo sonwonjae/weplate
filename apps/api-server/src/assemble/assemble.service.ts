@@ -159,12 +159,31 @@ export class AssembleService {
       throw new HttpException('this assemble has not owner', 400);
     }
 
+    const { data: userAssemble = [] } = await this.supabaseService.client
+      .from('user__assembles')
+      .select(
+        `
+        *,
+        users(*)
+      `,
+      )
+      .eq('assembleId', assembleId);
+
+    const memberList = userAssemble
+      ?.filter(({ permission }) => {
+        return permission === 'member';
+      })
+      ?.map(({ users }) => {
+        return users;
+      });
+
     return {
       createdAt: assemble?.createdAt,
       id: assemble?.id,
       title: assemble?.title,
       updatedAt: assemble?.updatedAt,
       ownerInfo,
+      memberList,
     };
   }
 
@@ -218,7 +237,7 @@ export class AssembleService {
     );
   }
 
-  async requestJoinFromInvitee(userInfo: Tables<'users'>, assembleId: string) {
+  async checkJoinable(userInfo: Tables<'users'>, assembleId: string) {
     const { data: userAssemble } = await this.supabaseService.client
       .from('user__assembles')
       .select('*')
@@ -227,9 +246,34 @@ export class AssembleService {
       .single();
 
     if (userAssemble) {
-      throw new HttpException('already member', 400);
+      return {
+        joinable: false,
+        message: 'already member',
+      } as const;
     }
 
+    const { data: userAssembleList } = await this.supabaseService.client
+      .from('user__assembles')
+      .select('*')
+      .eq('assembleId', assembleId);
+
+    if (
+      (userAssembleList ?? []).length >
+      Number(process.env.ASSEMBLE_MAX_USER_COUNT)
+    ) {
+      return {
+        joinable: false,
+        message: 'full assemble',
+      } as const;
+    }
+
+    return {
+      joinable: true,
+      message: 'joinable assemble',
+    } as const;
+  }
+
+  async requestJoinFromInvitee(userInfo: Tables<'users'>, assembleId: string) {
     const { data: newUserAssemble } = await this.supabaseService.client
       .from('user__assembles')
       .insert({

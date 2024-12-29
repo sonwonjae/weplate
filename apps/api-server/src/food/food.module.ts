@@ -29,6 +29,11 @@ export class FoodModule {
       .forRoutes({
         path: 'food/:assembleId/check/survey/complete',
         method: RequestMethod.GET,
+      })
+      .apply(RequiredAuthMiddleware)
+      .forRoutes({
+        path: 'food/:assembleId/recommend/list',
+        method: RequestMethod.GET,
       });
   }
 }

@@ -12,15 +12,31 @@ const prefetch: Middleware<Req> = async (req, res) => {
 
   const assembleId = req.params?.assembleId as string;
 
-  const assembleUserListQuery = new RQServer({
-    url: `/api/assemble/${assembleId}/user/list`,
-    res,
-  });
-  await queryClient.fetchQuery(assembleUserListQuery.queryOptions);
-
   try {
     const authQuery = new RQServer({ url: "/api/user/auth/check", res });
-    await queryClient.fetchQuery(authQuery.queryOptions);
+    const userInfo = await queryClient.fetchQuery(authQuery.queryOptions);
+
+    const assembleUserListQuery = new RQServer({
+      url: `/api/assemble/${assembleId}/user/list`,
+      res,
+    });
+    await queryClient.fetchQuery(assembleUserListQuery.queryOptions);
+
+    const assembleQuery = new RQServer({
+      url: `/api/assemble/${assembleId}/item`,
+      res,
+    });
+    const assemble = await queryClient.fetchQuery(assembleQuery.queryOptions);
+    const isOwner = assemble.ownerInfo.id === userInfo.id;
+
+    if (!isOwner) {
+      return {
+        redirect: {
+          destination: `/assemble/${assembleId}`,
+          permanent: true,
+        },
+      };
+    }
 
     return {
       props: { dehydratedState: dehydrate(queryClient) },

@@ -67,6 +67,14 @@ export class AssembleController {
     return this.assembleService.getAssembleUserList(userInfo, assembleId);
   }
 
+  @Get(':assembleId/check/full')
+  checkFullAssemble(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Param('assembleId') assembleId: string,
+  ) {
+    return this.assembleService.checkJoinable(userInfo, assembleId);
+  }
+
   @Post(':assembleId/request/join')
   requestJoinFromInvitee(
     @UserInfo() userInfo: Tables<'users'>,

@@ -11,23 +11,35 @@ const prefetch: Middleware<Req> = async (req, res) => {
   const queryClient = new QueryClient();
 
   const assembleId = req.params?.assembleId as string;
-  const assembleQuery = new RQServer({
-    url: `/api/food/${assembleId}/check/survey/complete`,
-    res,
-  });
 
   try {
-    await queryClient.fetchQuery(assembleQuery.queryOptions);
-    return {
-      redirect: {
-        destination: `/assemble/${assembleId}/waiting-room`,
-        permanent: true,
-      },
-    };
+    const authQuery = new RQServer({ url: "/api/user/auth/check", res });
+    await queryClient.fetchQuery(authQuery.queryOptions);
+
+    try {
+      const assembleQuery = new RQServer({
+        url: `/api/food/${assembleId}/check/survey/complete`,
+        res,
+      });
+      await queryClient.fetchQuery(assembleQuery.queryOptions);
+      return {
+        redirect: {
+          destination: `/assemble/${assembleId}/waiting-room`,
+          permanent: true,
+        },
+      };
+    } catch {
+      return {
+        redirect: {
+          destination: `/assemble/${assembleId}/regist-food`,
+          permanent: true,
+        },
+      };
+    }
   } catch {
     return {
       redirect: {
-        destination: `/assemble/${assembleId}/regist-food`,
+        destination: "/login",
         permanent: true,
       },
     };

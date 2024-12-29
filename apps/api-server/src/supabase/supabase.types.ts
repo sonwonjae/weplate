@@ -131,23 +131,75 @@ export type Database = {
         };
         Relationships: [];
       };
-      user__assemble__foods: {
+      recommended__assemble_foods: {
         Row: {
+          assembleId: string;
+          createdAt: string;
           foodId: string;
-          surveyType: Database['public']['Enums']['food_survey_type'];
-          userAssembleId: string;
+          id: string;
         };
         Insert: {
+          assembleId: string;
+          createdAt?: string;
           foodId: string;
-          surveyType?: Database['public']['Enums']['food_survey_type'];
-          userAssembleId: string;
+          id?: string;
         };
         Update: {
+          assembleId?: string;
+          createdAt?: string;
           foodId?: string;
-          surveyType?: Database['public']['Enums']['food_survey_type'];
-          userAssembleId?: string;
+          id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'recommended__assemble_foods_assembleId_fkey';
+            columns: ['assembleId'];
+            isOneToOne: false;
+            referencedRelation: 'assembles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recommended__assemble_foods_foodId_fkey';
+            columns: ['foodId'];
+            isOneToOne: false;
+            referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      user__assemble__foods: {
+        Row: {
+          assembleId: string;
+          foodId: string;
+          id: string;
+          surveyType: Database['public']['Enums']['food_survey_type'];
+          userAssembleId: string;
+          userId: string;
+        };
+        Insert: {
+          assembleId: string;
+          foodId: string;
+          id?: string;
+          surveyType?: Database['public']['Enums']['food_survey_type'];
+          userAssembleId: string;
+          userId: string;
+        };
+        Update: {
+          assembleId?: string;
+          foodId?: string;
+          id?: string;
+          surveyType?: Database['public']['Enums']['food_survey_type'];
+          userAssembleId?: string;
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user__assemble__foods_assembleId_fkey';
+            columns: ['assembleId'];
+            isOneToOne: false;
+            referencedRelation: 'assembles';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'user__assemble__foods_foodId_fkey';
             columns: ['foodId'];
@@ -160,6 +212,13 @@ export type Database = {
             columns: ['userAssembleId'];
             isOneToOne: false;
             referencedRelation: 'user__assembles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'user__assemble__foods_userId_fkey';
+            columns: ['userId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
             referencedColumns: ['id'];
           },
         ];

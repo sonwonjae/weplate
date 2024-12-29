@@ -53,3 +53,25 @@ export class CheckAssembleMaximumMiddleware implements NestMiddleware {
     return next();
   }
 }
+
+@Injectable()
+export class CheckFullAssembleMiddleware implements NestMiddleware {
+  constructor(private readonly assembleService: AssembleService) {}
+
+  async use(req: RequestWithUserInfo, _: Response, next: NextFunction) {
+    if (!req.userInfo) {
+      return next();
+    }
+    const assembleId = req.params.assembleId as string;
+
+    const { joinable, message } = await this.assembleService.checkJoinable(
+      req.userInfo,
+      assembleId,
+    );
+
+    if (!joinable) {
+      throw new HttpException(message, 400);
+    }
+    return next();
+  }
+}

@@ -4,36 +4,68 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useMemo, useState } from "react";
 
 export interface AnimatedListProps {
+  initLength?: number;
+  maxLength?: number;
+  isInfinite?: boolean;
+  isPaused?: boolean;
   className?: string;
   children: React.ReactNode;
   delay?: number;
 }
 
 export const AnimatedList = React.memo(
-  ({ className, children, delay = 1000 }: AnimatedListProps) => {
-    const [index, setIndex] = useState(0);
+  ({
+    initLength = 0,
+    maxLength = Infinity,
+    isInfinite = false,
+    isPaused = false,
+    className,
+    children,
+    delay = 1500,
+  }: AnimatedListProps) => {
+    const [index, setIndex] = useState(initLength);
     const childrenArray = useMemo(() => {
-      return React.Children.toArray(children);
-    }, [children]);
+      const baseChildrenArray = React.Children.toArray(children);
+      if (index > maxLength && isInfinite) {
+        const preAddChildrenArray = Array.from({
+          length: index + 1 - (baseChildrenArray.length - 1),
+        }).map((_, index) => {
+          const childrenIndex = index % baseChildrenArray.length;
+          return baseChildrenArray[childrenIndex];
+        });
+        return [...baseChildrenArray, ...preAddChildrenArray];
+      }
+
+      return baseChildrenArray;
+    }, [children, index, maxLength, isInfinite]);
 
     useEffect(() => {
       if (index < childrenArray.length - 1) {
-        const timeout = setTimeout(() => {
-          setIndex((prevIndex) => {
-            return prevIndex + 1;
-          });
-        }, delay);
+        const timeout =
+          !isPaused &&
+          setTimeout(() => {
+            setIndex((prevIndex) => {
+              return prevIndex + 1;
+            });
+          }, delay);
 
         return () => {
-          return clearTimeout(timeout);
+          if (typeof timeout !== "boolean") {
+            return clearTimeout(timeout);
+          }
         };
       }
-    }, [index, delay, childrenArray.length]);
+    }, [index, delay, childrenArray.length, isPaused]);
 
     const itemsToShow = useMemo(() => {
-      const result = childrenArray.slice(0, index + 1).reverse();
+      const result = childrenArray
+        .slice(0, index + 1)
+        .reverse()
+        .slice(0, maxLength)
+        .reverse();
+
       return result;
-    }, [index, childrenArray]);
+    }, [index, childrenArray, maxLength]);
 
     return (
       <div className={`flex flex-col items-center gap-4 ${className}`}>
@@ -56,8 +88,19 @@ AnimatedList.displayName = "AnimatedList";
 export function AnimatedListItem({ children }: { children: React.ReactNode }) {
   const animations = {
     initial: { scale: 0, opacity: 0 },
-    animate: { scale: 1, opacity: 1, originY: 0 },
-    exit: { scale: 0, opacity: 0 },
+    animate: {
+      scale: 1,
+      opacity: 1,
+      originY: "bottom",
+    },
+    exit: {
+      marginBottom: -16,
+      width: 0,
+      height: 0,
+      scale: 0,
+      opacity: 0,
+      originY: "bottom",
+    },
     transition: { type: "spring", stiffness: 350, damping: 40 },
   };
 

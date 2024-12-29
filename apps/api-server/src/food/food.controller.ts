@@ -52,4 +52,11 @@ export class FoodController {
 
     throw new HttpException('not yet regist food', 400);
   }
+
+  @Get(':assembleId/recommend/list')
+  async recommendFoodList(
+    @Param('assembleId') assembleId: Tables<'assembles'>['id'],
+  ) {
+    return this.foodService.recommendFoodList({ assembleId });
+  }
 }

@@ -6,23 +6,45 @@ import {
   ChevronLeftIcon,
   ShareIcon,
   UserRoundPlusIcon,
+  UsersRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 
 import { Header, Footer, Main } from "@/layouts";
+import { Button } from "@/shad-cn/components/ui/button";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
+import { useRecommendFoodStore } from "./stores/recommend-food";
+
 function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
+
+  const authQuery = new RQClient({ url: "/api/user/auth/check" });
+  const { data: userInfo } = useQuery(authQuery.queryOptions);
 
   const assembleQuery = new RQClient({
     url: `/api/assemble/${router.query.assembleId}/item`,
   });
 
   const { data: assemble } = useQuery(assembleQuery.queryOptions);
+
+  const isOwner =
+    !!assemble?.ownerInfo.id &&
+    !!userInfo?.id &&
+    assemble?.ownerInfo.id === userInfo?.id;
+
+  const animationStatus = useRecommendFoodStore((state) => {
+    return state.animationStatus;
+  });
+  const recommendStatus = useRecommendFoodStore((state) => {
+    return state.recommendStatus;
+  });
+  const changeRecommendStatus = useRecommendFoodStore((state) => {
+    return state.changeRecommendStatus;
+  });
 
   const shareAssembleLink = async () => {
     try {
@@ -47,6 +69,16 @@ function Layout({ children }: PropsWithChildren) {
       return toast.error("공유 실패");
     }
   };
+  const recommendedFoodListQuery = new RQClient({
+    url: `/api/food/${router.query.assembleId}/recommend/list`,
+    customQueryOptions: {
+      enabled: recommendStatus === "start",
+      retry: 0,
+    },
+  });
+
+  useQuery(recommendedFoodListQuery.queryOptions);
+
   return (
     <>
       <Header>
@@ -79,9 +111,16 @@ function Layout({ children }: PropsWithChildren) {
               "gap-2",
             )}
           >
-            <Link href={`/assemble/${router.query.assembleId}/invite-user`}>
-              <UserRoundPlusIcon />
-            </Link>
+            {isOwner && (
+              <Link href={`/assemble/${router.query.assembleId}/invite-member`}>
+                <UserRoundPlusIcon />
+              </Link>
+            )}
+            {!isOwner && (
+              <button type="button">
+                <UsersRoundIcon />
+              </button>
+            )}
             <button type="button" onClick={shareAssembleLink}>
               <ShareIcon />
             </button>
@@ -90,10 +129,37 @@ function Layout({ children }: PropsWithChildren) {
         </div>
       </Header>
       <Main className={cn("flex", "flex-col")}>{children}</Main>
+
       <Footer>
-        <Footer.HomePageLink />
-        <Footer.CreateAssembleButton />
-        <Footer.MyInfoPageLink />
+        <Button
+          size="lg"
+          round
+          disabled={
+            !(animationStatus === "wait" && recommendStatus === "not-yet")
+          }
+          className={cn("w-full")}
+          onClick={async () => {
+            if (
+              !(animationStatus === "wait" && recommendStatus === "not-yet")
+            ) {
+              return;
+            }
+
+            if (recommendStatus === "not-yet") {
+              return changeRecommendStatus("start");
+            }
+          }}
+        >
+          {animationStatus === "wait" &&
+            recommendStatus === "not-yet" &&
+            "메뉴 추천 시작"}
+          {(animationStatus === "loading-start" ||
+            recommendStatus === "start") &&
+            "메뉴 추천 중"}
+          {animationStatus === "loading-end" &&
+            recommendStatus === "end" &&
+            "메뉴 추천 완료"}
+        </Button>
       </Footer>
     </>
   );
