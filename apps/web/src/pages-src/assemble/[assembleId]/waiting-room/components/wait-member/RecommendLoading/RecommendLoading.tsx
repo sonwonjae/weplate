@@ -1,3 +1,6 @@
+import { shuffle } from "es-toolkit";
+import { useMemo } from "react";
+
 import { AnimatedList } from "@/shad-cn/components/ui/animated-list";
 import { cn } from "@/utils/tailwind";
 
@@ -12,6 +15,10 @@ function RecommendLoading() {
   const animationStatus = useRecommendFoodStore((state) => {
     return state.animationStatus;
   });
+
+  const shuffledWritingList = useMemo(() => {
+    return shuffle(WRITING_LIST);
+  }, []);
 
   return (
     <div
@@ -32,7 +39,7 @@ function RecommendLoading() {
         isPaused={animationStatus === "loading-end"}
         className={cn("w-full", "list-none")}
       >
-        {WRITING_LIST.map((WRITING, index) => {
+        {shuffledWritingList.map((WRITING, index) => {
           return (
             <li
               key={index}

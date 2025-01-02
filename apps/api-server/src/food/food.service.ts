@@ -194,6 +194,10 @@ export class FoodService {
     if (!userAssembleFoodList) {
       throw new HttpException('has not user assemble food', 400);
     }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
     const { data: alreadyRecommendedAssembleFoodList } =
       await this.supabaseService.client
@@ -204,7 +208,9 @@ export class FoodService {
             foods!inner(*)
           `,
         )
-        .eq('assembleId', assembleId);
+        .eq('assembleId', assembleId)
+        .gte('createdAt', today.toISOString())
+        .lt('createdAt', tomorrow.toISOString());
 
     const scoredAlreadyRecommendedAssembleFoodList =
       alreadyRecommendedAssembleFoodList?.reduce(
@@ -413,11 +419,6 @@ export class FoodService {
         return b.score - a.score;
       });
     const fusionCuisineFood = fusionCuisineFoodList[0];
-    console.log(
-      'single food query: ',
-      [mostFavoriteFood.cuisineList[0].id],
-      [mostFavoriteFood.foodId],
-    );
 
     // NOTE [B]: A또는 D에서 나온 cuisine을 제외하고 cuisine이 한개인 음식 뽑아서 싫어하는 음식 score 계산 후 제공
     const singleCuisineFoodList = (
