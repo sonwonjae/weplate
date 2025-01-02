@@ -1,38 +1,7 @@
-import type { Middleware, CustomIncomingMessage } from "@/middlewares/type";
-
-import { dehydrate, QueryClient } from "@tanstack/react-query";
-
+import { checkWithInCreationLimit } from "@/middlewares/pages/assemble";
+import { checkAuth } from "@/middlewares/pages/auth";
 import { pipe } from "@/middlewares/utils/pipe";
-import { RQServer } from "@/utils/react-query";
 
-type Req = CustomIncomingMessage;
-
-const prefetch: Middleware<Req> = async (req, res) => {
-  const queryClient = new QueryClient();
-
-  try {
-    const authQuery = new RQServer({ url: "/api/user/auth/check", res });
-    await queryClient.fetchQuery(authQuery.queryOptions);
-
-    const isWithinCreationLimitQuery = new RQServer({
-      url: "/api/assemble/check/within-creation-limit",
-      res,
-    });
-    await queryClient.fetchQuery(isWithinCreationLimitQuery.queryOptions);
-
-    return {
-      props: { dehydratedState: dehydrate(queryClient) },
-    };
-  } catch {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: true,
-      },
-    };
-  }
-};
-
-const middleware = pipe<Req>(prefetch);
+const middleware = pipe(checkAuth(), checkWithInCreationLimit());
 
 export default middleware;

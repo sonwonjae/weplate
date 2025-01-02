@@ -137,18 +137,21 @@ export type Database = {
           createdAt: string;
           foodId: string;
           id: string;
+          type: Database['public']['Enums']['recommend_type'];
         };
         Insert: {
           assembleId: string;
           createdAt?: string;
           foodId: string;
           id?: string;
+          type?: Database['public']['Enums']['recommend_type'];
         };
         Update: {
           assembleId?: string;
           createdAt?: string;
           foodId?: string;
           id?: string;
+          type?: Database['public']['Enums']['recommend_type'];
         };
         Relationships: [
           {
@@ -303,6 +306,7 @@ export type Database = {
       food_survey_type: 'favorite' | 'hate';
       permission: 'owner' | 'member';
       provider: 'kakao';
+      recommend_type: 'single-cuisine' | 'multi-cuisine' | 'most-favorite';
     };
     CompositeTypes: {
       [_ in never]: never;

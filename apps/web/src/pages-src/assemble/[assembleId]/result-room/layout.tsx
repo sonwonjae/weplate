@@ -17,8 +17,6 @@ import { Button } from "@/shad-cn/components/ui/button";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
-import { useRecommendFoodStore } from "./stores/recommend-food";
-
 function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
 
@@ -35,16 +33,6 @@ function Layout({ children }: PropsWithChildren) {
     !!assemble?.ownerInfo.id &&
     !!userInfo?.id &&
     assemble?.ownerInfo.id === userInfo?.id;
-
-  const animationStatus = useRecommendFoodStore((state) => {
-    return state.animationStatus;
-  });
-  const recommendStatus = useRecommendFoodStore((state) => {
-    return state.recommendStatus;
-  });
-  const changeRecommendStatus = useRecommendFoodStore((state) => {
-    return state.changeRecommendStatus;
-  });
 
   const shareAssembleLink = async () => {
     try {
@@ -70,13 +58,8 @@ function Layout({ children }: PropsWithChildren) {
     }
   };
   const recommendedFoodListQuery = new RQClient({
-    url: `/api/food/${router.query.assembleId}/recommend/list`,
-    customQueryOptions: {
-      enabled: recommendStatus === "start",
-      retry: 0,
-    },
+    url: `/api/food/${router.query.assembleId}/recommend/result`,
   });
-
   useQuery(recommendedFoodListQuery.queryOptions);
 
   return (
@@ -129,36 +112,16 @@ function Layout({ children }: PropsWithChildren) {
         </div>
       </Header>
       <Main className={cn("flex", "flex-col")}>{children}</Main>
-
       <Footer>
         <Button
           size="lg"
           round
-          disabled={
-            !(animationStatus === "wait" && recommendStatus === "not-yet")
-          }
           className={cn("w-full")}
-          onClick={async () => {
-            if (
-              !(animationStatus === "wait" && recommendStatus === "not-yet")
-            ) {
-              return;
-            }
-
-            if (recommendStatus === "not-yet") {
-              return changeRecommendStatus("start");
-            }
+          onClick={() => {
+            console.log("hello");
           }}
         >
-          {animationStatus === "wait" &&
-            recommendStatus === "not-yet" &&
-            "메뉴 추천 시작"}
-          {(animationStatus === "loading-start" ||
-            recommendStatus === "start") &&
-            "메뉴 추천 중"}
-          {animationStatus === "loading-end" &&
-            recommendStatus === "end" &&
-            "메뉴 추천 완료"}
+          메뉴 공유하기
         </Button>
       </Footer>
     </>

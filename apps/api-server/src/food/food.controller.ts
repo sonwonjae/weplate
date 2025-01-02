@@ -59,4 +59,11 @@ export class FoodController {
   ) {
     return this.foodService.recommendFoodList({ assembleId });
   }
+
+  @Get(':assembleId/recommend/result')
+  async getLatestRecommendFoodList(
+    @Param('assembleId') assembleId: Tables<'assembles'>['id'],
+  ) {
+    return this.foodService.getLatestRecommendFoodList({ assembleId });
+  }
 }

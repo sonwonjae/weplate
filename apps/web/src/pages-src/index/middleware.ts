@@ -5,11 +5,13 @@ import type {
   Query,
 } from "@/middlewares/type";
 
-import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { dehydrate } from "@tanstack/react-query";
 
 import { checkSingleQuery } from "@/middlewares/common/queryValidation";
+import { checkWithInCreationLimit } from "@/middlewares/pages/assemble";
+import { checkAuth } from "@/middlewares/pages/auth";
 import { pipe } from "@/middlewares/utils/pipe";
-import { RQInfinityServer, RQServer } from "@/utils/react-query";
+import { RQInfinityServer } from "@/utils/react-query";
 import { RQInfinityRequestParams } from "@/utils/react-query/infinity";
 
 export type HomePageReq = CustomIncomingMessage<
@@ -18,39 +20,21 @@ export type HomePageReq = CustomIncomingMessage<
 >;
 
 const prefetch: Middleware<HomePageReq> = async (req, res) => {
-  const queryClient = new QueryClient();
+  const myAssembleListQuery = new RQInfinityServer({
+    url: "/api/assemble/list/my",
+    params: req.query,
+    res,
+  });
+  await req.queryClient.fetchInfiniteQuery(myAssembleListQuery.queryOptions);
 
-  try {
-    const authQuery = new RQServer({ url: "/api/user/auth/check", res });
-    await queryClient.fetchQuery(authQuery.queryOptions);
-
-    const myAssembleListQuery = new RQInfinityServer({
-      url: "/api/assemble/list/my",
-      params: req.query,
-      res,
-    });
-    await queryClient.fetchInfiniteQuery(myAssembleListQuery.queryOptions);
-
-    const isWithinCreationLimitQuery = new RQServer({
-      url: "/api/assemble/check/within-creation-limit",
-      res,
-    });
-    await queryClient.fetchQuery(isWithinCreationLimitQuery.queryOptions);
-
-    return {
-      props: { dehydratedState: dehydrate(queryClient) },
-    };
-  } catch {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: true,
-      },
-    };
-  }
+  return {
+    props: { dehydratedState: dehydrate(req.queryClient) },
+  };
 };
 
 const middleware = pipe<HomePageReq>(
+  checkAuth(),
+  checkWithInCreationLimit(),
   checkSingleQuery({
     queryName: "search",
   }),

@@ -458,14 +458,17 @@ export class FoodService {
       .insert(
         [
           mostFavoriteFood && {
+            type: 'most-favorite' as const,
             foodId: mostFavoriteFood.foodId,
             assembleId,
           },
           fusionCuisineFood && {
+            type: 'multi-cuisine' as const,
             foodId: fusionCuisineFood.foodId,
             assembleId,
           },
           singleCuisineFood && {
+            type: 'single-cuisine' as const,
             foodId: singleCuisineFood.foodId,
             assembleId,
           },
@@ -473,5 +476,68 @@ export class FoodService {
       );
 
     return [mostFavoriteFood, fusionCuisineFood, singleCuisineFood];
+  }
+
+  async getLatestRecommendFoodList({ assembleId }: RecommendFoodListDto) {
+    const mostFavoriteFoodQuery = this.supabaseService.client
+      .from('recommended__assemble_foods')
+      .select(
+        `
+            *,
+            foods!inner(*)
+          `,
+      )
+      .eq('type', 'most-favorite')
+      .eq('assembleId', assembleId)
+      .order('createdAt', { ascending: false });
+    const multiCuisineFoodQuery = this.supabaseService.client
+      .from('recommended__assemble_foods')
+      .select(
+        `
+            *,
+            foods!inner(*)
+          `,
+      )
+      .eq('type', 'multi-cuisine')
+      .eq('assembleId', assembleId)
+      .order('createdAt', { ascending: false });
+    const singleCuisineFoodQuery = this.supabaseService.client
+      .from('recommended__assemble_foods')
+      .select(
+        `
+            *,
+            foods!inner(*)
+          `,
+      )
+      .eq('type', 'single-cuisine')
+      .eq('assembleId', assembleId)
+      .order('createdAt', { ascending: false });
+
+    const [
+      { data: mostFavoriteFood },
+      { data: multiCuisineFood },
+      { data: singleCuisineFood },
+    ] = await Promise.all([
+      mostFavoriteFoodQuery,
+      multiCuisineFoodQuery,
+      singleCuisineFoodQuery,
+    ]);
+
+    if (
+      !mostFavoriteFood?.[0] ||
+      !multiCuisineFood?.[0] ||
+      !singleCuisineFood?.[0]
+    ) {
+      throw new HttpException('fail load recommend food list', 400);
+    }
+
+    return [mostFavoriteFood[0], multiCuisineFood[0], singleCuisineFood[0]].map(
+      ({ foodId, foods }) => {
+        return {
+          foodId,
+          foodName: foods.name,
+        };
+      },
+    );
   }
 }

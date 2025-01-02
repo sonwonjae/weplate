@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 
+import { QueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsResult } from "next";
 import { createRouter } from "next-connect";
 
@@ -19,6 +20,25 @@ export type CustomIncomingMessage<
   query: TQuery;
   pathname: string;
   cookies: Record<string, string | undefined>;
+  queryClient: QueryClient;
+} & {
+  userInfo?: {
+    id: string;
+    avatarUrl: string;
+    name: string;
+    email: string;
+    providerId: string;
+    provider: string;
+  };
+} & {
+  userInfo: {
+    id: string;
+    avatarUrl: string;
+    name: string;
+    email: string;
+    providerId: string;
+    provider: string;
+  };
 };
 
 export type Middleware<

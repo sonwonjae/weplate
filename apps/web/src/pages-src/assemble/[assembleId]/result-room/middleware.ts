@@ -5,6 +5,7 @@ import { dehydrate } from "@tanstack/react-query";
 import {
   checkAssembleMember,
   checkFoodSurveyStatus,
+  checkRecommendedFoodListStatus,
 } from "@/middlewares/pages/assemble";
 import { checkAuth } from "@/middlewares/pages/auth";
 import { pipe } from "@/middlewares/utils/pipe";
@@ -30,6 +31,7 @@ const middleware = pipe<Req>(
   checkAuth(),
   checkAssembleMember(),
   checkFoodSurveyStatus({ permission: "complete" }),
+  checkRecommendedFoodListStatus({ permission: "complete" }),
   prefetch,
 );
 

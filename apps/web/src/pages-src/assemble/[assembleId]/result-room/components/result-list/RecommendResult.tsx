@@ -1,27 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-import HyperText from "@/shad-cn/components/ui/hyper-text";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
-
-import { useRecommendFoodStore } from "../../stores/recommend-food";
 
 function RecommendResult() {
   const router = useRouter();
 
-  const recommendStatus = useRecommendFoodStore((state) => {
-    return state.recommendStatus;
-  });
-
   const recommendedFoodListQuery = new RQClient({
-    url: `/api/food/${router.query.assembleId}/recommend/list`,
-    customQueryOptions: {
-      enabled: recommendStatus === "start",
-      retry: 0,
-    },
+    url: `/api/food/${router.query.assembleId}/recommend/result`,
   });
-
   const { data: recommendedFoodList } = useQuery(
     recommendedFoodListQuery.queryOptions,
   );
@@ -74,20 +62,12 @@ function RecommendResult() {
                 "[box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
               )}
             >
-              <HyperText>{foodName}</HyperText>
+              {foodName}
             </li>
           );
         })}
       </ul>
-      <p
-        className={cn(
-          "text-slate-600",
-          "text-sm",
-          "text-center",
-          "w-full",
-          "animate-[fade-in-up_0.4s_ease-in-out_forwards_0.2s]",
-        )}
-      >
+      <p className={cn("text-slate-600", "text-sm", "text-center", "w-full")}>
         모임원 취향을 반영한 메뉴 3가지를 추천드렸습니다.
         <br />새 메뉴를 원하시면 &lsquo;다른 메뉴 추천 받기&lsquo; 버튼을
         눌러주세요.

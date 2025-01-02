@@ -1,8 +1,6 @@
-import type {
-  Middleware,
-  CustomIncomingMessage,
-} from "@/middlewares/type";
+import type { Middleware, CustomIncomingMessage } from "@/middlewares/type";
 
+import { QueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsResult } from "next";
 
 export const pipe = <
@@ -13,7 +11,11 @@ export const pipe = <
     Middleware<CustomIncomingMessage & Req, Props | object>
   >
 ): Middleware<CustomIncomingMessage & Req, Props> => {
-  return async (...args) => {
+  return async (req, res, next) => {
+    if (!req.queryClient) {
+      req.queryClient = new QueryClient();
+    }
+
     let accProps: UnionToIntersection<
       GetServerSidePropsResult<Props>
     >["props"] = {} as Props;
@@ -23,8 +25,12 @@ export const pipe = <
         throw new Error("pipe 함수 파라미터에는 함수 타입만 허용합니다.");
       }
 
+      if (!req.queryClient) {
+        req.queryClient = new QueryClient();
+      }
+
       const { props, redirect, notFound } =
-        ((await middleware(...args)) as UnionToIntersection<
+        ((await middleware(req, res, next)) as UnionToIntersection<
           GetServerSidePropsResult<Props>
         >) || {};
 

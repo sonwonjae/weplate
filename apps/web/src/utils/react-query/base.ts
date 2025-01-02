@@ -29,6 +29,11 @@ export type ResponseMap = {
     }>;
   }>;
 } & {
+  [key in `/api/food/${string}/recommend/result`]: Array<{
+    foodId: string;
+    foodName: string;
+  }>;
+} & {
   [key in `/api/food/${string}/check/survey/complete`]: boolean;
 } & {
   [key in `/api/assemble/${string}/user/list`]: Array<{
