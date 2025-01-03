@@ -32,7 +32,7 @@ function Layout({ children }: PropsWithChildren) {
       <StepFooter>
         <MoveNextStep />
         <RegistFood />
-        <SubmitFoodList type="regist" />
+        <SubmitFoodList type="update" />
         <MovePrevStep />
       </StepFooter>
     </form>

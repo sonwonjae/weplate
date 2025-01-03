@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useEffect, type PropsWithChildren } from "react";
 import { useForm } from "react-hook-form";
@@ -8,25 +9,34 @@ import { foodSurveyForm } from "@/features/food-survey-form/scheme";
 import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
 import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { Form } from "@/shad-cn/components/ui/form";
+import { RQClient } from "@/utils/react-query";
 
 function EditFoodSurveyFormLayer({ children }: PropsWithChildren) {
+  const router = useRouter();
+
+  const foodSurveyQuery = new RQClient({
+    url: `/api/food/${router.query.assembleId}/survey`,
+  });
+  const { data: { favorite = [], hate = [] } = {} } = useQuery(
+    foodSurveyQuery.queryOptions,
+  );
+
   const form = useForm<z.infer<typeof foodSurveyForm>>({
     resolver: zodResolver(foodSurveyForm),
     defaultValues: {
       favorite: {
         searchKeyword: "",
         preList: [],
-        list: [],
+        list: favorite,
       },
       hate: {
         searchKeyword: "",
         preList: [],
-        list: [],
+        list: hate,
       },
     },
   });
 
-  const router = useRouter();
   const resetSearchFoods = useSearchFoodStore((state) => {
     return state.resetSearchFoods;
   });

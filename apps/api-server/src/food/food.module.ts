@@ -16,22 +16,23 @@ export class FoodModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(RequiredAuthMiddleware)
-      .forRoutes({
-        path: 'food/search/list',
-        method: RequestMethod.GET,
-      })
-      .apply(RequiredAuthMiddleware, CheckFoodAlreadyRegistUser)
-      .forRoutes({
-        path: 'food/:assembleId/survey',
-        method: RequestMethod.POST,
-      })
-      .apply(RequiredAuthMiddleware)
-      .forRoutes({
-        path: 'food/:assembleId/check/survey/complete',
-        method: RequestMethod.GET,
-      })
-      .apply(RequiredAuthMiddleware)
       .forRoutes(
+        {
+          path: 'food/search/list',
+          method: RequestMethod.GET,
+        },
+        {
+          path: 'food/:assembleId/survey',
+          method: RequestMethod.GET,
+        },
+        {
+          path: 'food/:assembleId/survey',
+          method: RequestMethod.PATCH,
+        },
+        {
+          path: 'food/:assembleId/check/survey/complete',
+          method: RequestMethod.GET,
+        },
         {
           path: 'food/:assembleId/recommend/food',
           method: RequestMethod.POST,
@@ -40,6 +41,11 @@ export class FoodModule {
           path: 'food/:assembleId/recommend/result',
           method: RequestMethod.GET,
         },
-      );
+      )
+      .apply(RequiredAuthMiddleware, CheckFoodAlreadyRegistUser)
+      .forRoutes({
+        path: 'food/:assembleId/survey',
+        method: RequestMethod.POST,
+      });
   }
 }

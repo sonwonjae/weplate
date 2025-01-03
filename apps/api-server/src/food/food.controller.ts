@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -23,6 +24,15 @@ export class FoodController {
     return this.foodService.searchFoodList(query);
   }
 
+  @Get(':assembleId/survey')
+  async getFoodListSurvey(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Param('assembleId') assembleId: Tables<'assembles'>['id'],
+  ) {
+    return await this.foodService.getFoodListSurvey(userInfo, {
+      assembleId,
+    });
+  }
   @Post(':assembleId/survey')
   async registFoodListSurvey(
     @UserInfo() userInfo: Tables<'users'>,
@@ -30,6 +40,17 @@ export class FoodController {
     @Body() body: Omit<CreateFoodSurveyDto, 'assembleId'>,
   ) {
     return await this.foodService.registFoodListSurvey(userInfo, {
+      assembleId,
+      ...body,
+    });
+  }
+  @Patch(':assembleId/survey')
+  async updateFoodListSurvey(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Param('assembleId') assembleId: Tables<'assembles'>['id'],
+    @Body() body: Omit<CreateFoodSurveyDto, 'assembleId'>,
+  ) {
+    return await this.foodService.updateFoodListSurvey(userInfo, {
       assembleId,
       ...body,
     });

@@ -24,6 +24,17 @@ export type ResponseMap = {
     foodName: string;
   }>;
 } & {
+  [key in `/api/food/${string}/survey`]: {
+    favorite: Array<{
+      id: string;
+      name: string;
+    }>;
+    hate: Array<{
+      id: string;
+      name: string;
+    }>;
+  };
+} & {
   [key in `/api/food/${string}/check/survey/complete`]: boolean;
 } & {
   [key in `/api/assemble/${string}/user/list`]: Array<{

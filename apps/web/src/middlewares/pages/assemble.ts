@@ -176,6 +176,7 @@ export const checkFoodSurveyStatus = ({
       switch (permission) {
         case "none":
         case "not-yet":
+          console.log("come here? 1");
           return {
             redirect: {
               destination: `/assemble/${assembleId}/waiting-room`,
@@ -183,6 +184,7 @@ export const checkFoodSurveyStatus = ({
             },
           };
         case "complete":
+          console.log("come here? 2");
           return {
             props: { dehydratedState: dehydrate(req.queryClient) },
           };
@@ -190,11 +192,13 @@ export const checkFoodSurveyStatus = ({
     } catch {
       switch (permission) {
         case "not-yet":
+          console.log("come here? 3");
           return {
             props: { dehydratedState: dehydrate(req.queryClient) },
           };
         case "none":
         case "complete":
+          console.log("come here? 4");
           return {
             redirect: {
               destination: `/assemble/${assembleId}/regist-food-survey`,

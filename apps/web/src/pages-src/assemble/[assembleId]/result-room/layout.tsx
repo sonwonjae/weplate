@@ -5,7 +5,6 @@ import {
   ChevronLeftIcon,
   ShareIcon,
   UserRoundPlusIcon,
-  UsersRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -133,15 +132,14 @@ function Layout({ children }: PropsWithChildren) {
                 <UserRoundPlusIcon />
               </Link>
             )}
-            {!isOwner && (
-              <button type="button">
-                <UsersRoundIcon />
-              </button>
-            )}
             <button type="button" onClick={shareAssembleLink}>
               <ShareIcon />
             </button>
-            <ChefHatIcon />
+            <Link
+              href={`/assemble/${router.query.assembleId}/update-food-survey`}
+            >
+              <ChefHatIcon />
+            </Link>
           </div>
         </div>
       </Header>

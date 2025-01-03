@@ -11,16 +11,16 @@ import {
   CheckedFoodBadgeListSection,
 } from "@/features/food-survey-form/components";
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
-import Layer from "@/pages-src/assemble/[assembleId]/regist-food-survey/layer";
-import Layout from "@/pages-src/assemble/[assembleId]/regist-food-survey/layout";
-import middleware from "@/pages-src/assemble/[assembleId]/regist-food-survey/middleware";
+import Layer from "@/pages-src/assemble/[assembleId]/update-food-survey/layer";
+import Layout from "@/pages-src/assemble/[assembleId]/update-food-survey/layout";
+import middleware from "@/pages-src/assemble/[assembleId]/update-food-survey/middleware";
 
 const router = createRouter<CustomIncomingMessage, ServerResponse>();
 router.get(middleware);
 
 export const getServerSideProps = makeGetServerSideProps(router);
 
-function AssembleRegistFoodSurveyPage() {
+function AssembleUpdateFoodSurveyPage() {
   return (
     <>
       <StepSection />
@@ -32,7 +32,7 @@ function AssembleRegistFoodSurveyPage() {
   );
 }
 
-AssembleRegistFoodSurveyPage.Layer = Layer;
-AssembleRegistFoodSurveyPage.Layout = Layout;
+AssembleUpdateFoodSurveyPage.Layer = Layer;
+AssembleUpdateFoodSurveyPage.Layout = Layout;
 
-export default AssembleRegistFoodSurveyPage;
+export default AssembleUpdateFoodSurveyPage;

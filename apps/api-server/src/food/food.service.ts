@@ -4,8 +4,11 @@ import { Tables } from 'src/supabase/supabase.types';
 
 import { CheckFoodSurveyDto } from './dto/check-food-survey.dto';
 import { CreateFoodSurveyDto } from './dto/create-food-survey.dto';
+import { DeleteFoodSurveyDto } from './dto/delete-food-survey.dto';
+import { GetFoodSurveyDto } from './dto/get-food-survey.dto';
 import { RecommendFoodListDto } from './dto/recommend-food-list.dto';
 import { SearchFoodListDto } from './dto/search-food-list.dto';
+import { UpdateFoodSurveyDto } from './dto/update-food-survey.dto';
 
 @Injectable()
 export class FoodService {
@@ -21,6 +24,50 @@ export class FoodService {
     const { data: foodList } = await query;
 
     return foodList ?? [];
+  }
+
+  async getFoodListSurvey(
+    userInfo: Tables<'users'>,
+    { assembleId }: GetFoodSurveyDto,
+  ) {
+    const { data: userAssembleFoodList } = await this.supabaseService.client
+      .from('user__assemble__foods')
+      .select(
+        `
+          *,
+          foods!inner(*)
+        `,
+      )
+      .eq('assembleId', assembleId)
+      .eq('userId', userInfo.id);
+
+    const favoriteFoodList =
+      userAssembleFoodList
+        ?.filter(({ surveyType }) => {
+          return surveyType === 'favorite';
+        })
+        .map(({ foodId, foods: { name } }) => {
+          return {
+            id: foodId,
+            name,
+          };
+        }) ?? [];
+    const hateFoodList =
+      userAssembleFoodList
+        ?.filter(({ surveyType }) => {
+          return surveyType === 'hate';
+        })
+        .map(({ foodId, foods: { name } }) => {
+          return {
+            id: foodId,
+            name,
+          };
+        }) ?? [];
+
+    return {
+      favorite: favoriteFoodList,
+      hate: hateFoodList,
+    };
   }
 
   async registFoodListSurvey(
@@ -69,6 +116,29 @@ export class FoodService {
     } catch (error) {
       throw error as HttpException;
     }
+  }
+
+  async deleteFoodListSurvey(
+    userInfo: Tables<'users'>,
+    { assembleId }: DeleteFoodSurveyDto,
+  ) {
+    await this.supabaseService.client
+      .from('user__assemble__foods')
+      .delete()
+      .eq('assembleId', assembleId)
+      .eq('userId', userInfo.id);
+  }
+
+  async updateFoodListSurvey(
+    userInfo: Tables<'users'>,
+    { assembleId, favoriteFoodList, hateFoodList }: UpdateFoodSurveyDto,
+  ) {
+    await this.deleteFoodListSurvey(userInfo, { assembleId });
+    await this.registFoodListSurvey(userInfo, {
+      assembleId,
+      favoriteFoodList,
+      hateFoodList,
+    });
   }
 
   async checkAlreadyRegistUser(

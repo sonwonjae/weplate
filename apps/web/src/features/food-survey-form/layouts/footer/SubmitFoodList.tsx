@@ -10,13 +10,26 @@ import { Button } from "@/shad-cn/components/ui/button";
 import { apiAxios } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
-function SubmitFoodList() {
+interface SubmitFoodListProps {
+  type: "regist" | "update";
+}
+
+function SubmitFoodList({ type }: SubmitFoodListProps) {
   const router = useRouter();
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
 
   const { mutateAsync: submitFoodSurvey } = useMutation({
     mutationFn: async () => {
-      await apiAxios.post(`/api/food/${router.query.assembleId}/survey`, {
+      const method = (() => {
+        switch (type) {
+          case "regist":
+            return "post";
+          case "update":
+            return "patch";
+        }
+      })();
+
+      await apiAxios[method](`/api/food/${router.query.assembleId}/survey`, {
         favoriteFoodList: form.getValues("favorite.list").map(({ id }) => {
           return { foodId: id };
         }),
