@@ -1,20 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 
+import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
+import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
-
-import { useRegistFoodStore } from "../stores/regist-foods";
-import { useRegistStepsStore } from "../stores/regist-foods-steps";
 
 function DescriptionSection() {
   const authQuery = new RQClient({ url: "/api/user/auth/check" });
   const { data: userInfo } = useQuery(authQuery.queryOptions);
 
-  const searchActiveState = useRegistFoodStore((state) => {
+  const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
   });
 
-  const currentStep = useRegistStepsStore((state) => {
+  const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
 

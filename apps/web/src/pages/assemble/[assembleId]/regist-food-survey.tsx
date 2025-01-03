@@ -3,14 +3,15 @@ import type { ServerResponse } from "http";
 
 import { createRouter } from "next-connect";
 
-import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
 import {
   DescriptionSection,
   StepSection,
   SearchSection,
   FoodListSection,
   CheckedFoodBadgeListSection,
-} from "@/pages-src/assemble/[assembleId]/regist-food-survey/components";
+} from "@/features/food-survey-form/components";
+import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
+import Layer from "@/pages-src/assemble/[assembleId]/regist-food-survey/layer";
 import Layout from "@/pages-src/assemble/[assembleId]/regist-food-survey/layout";
 import middleware from "@/pages-src/assemble/[assembleId]/regist-food-survey/middleware";
 
@@ -31,6 +32,7 @@ function AssembleRegistFoodPage() {
   );
 }
 
+AssembleRegistFoodPage.Layer = Layer;
 AssembleRegistFoodPage.Layout = Layout;
 
 export default AssembleRegistFoodPage;

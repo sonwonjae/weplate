@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
-type RegistStep = ["favorite", "hate"];
+type FoodSurveySteps = ["favorite", "hate"];
 
-interface RegistFoodsStepsState {
-  allSteps: RegistStep;
+interface FoodSurveyStepsState {
+  allSteps: FoodSurveySteps;
   currentStepIndex: number;
   isLastStep: () => boolean;
-  currentStep: () => RegistStep[number];
+  currentStep: () => FoodSurveySteps[number];
   movePrevStep: () => void;
   moveNextStep: () => void;
   resetStep: () => void;
@@ -15,15 +15,15 @@ interface RegistFoodsStepsState {
 
 const INIT_STEP_INDEX = 0;
 
-const REGIST_FOODS_STEPS_INITIAL_STATE: Partial<RegistFoodsStepsState> = {
+const FOOD_SURVEY_STEPS_INITIAL_STATE: Partial<FoodSurveyStepsState> = {
   allSteps: ["favorite", "hate"],
   currentStepIndex: INIT_STEP_INDEX,
 };
 
-export const useRegistStepsStore = create<RegistFoodsStepsState>()(
+export const useFoodSurveyStepsStore = create<FoodSurveyStepsState>()(
   devtools((set, get) => {
     return {
-      ...REGIST_FOODS_STEPS_INITIAL_STATE,
+      ...FOOD_SURVEY_STEPS_INITIAL_STATE,
       currentStep: () => {
         return get().allSteps[get().currentStepIndex];
       },
@@ -55,7 +55,7 @@ export const useRegistStepsStore = create<RegistFoodsStepsState>()(
         });
       },
       resetStep: () => {
-        return set(REGIST_FOODS_STEPS_INITIAL_STATE);
+        return set(FOOD_SURVEY_STEPS_INITIAL_STATE);
       },
     };
   }),

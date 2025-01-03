@@ -2,21 +2,20 @@ import { PropsWithChildren } from "react";
 import { useWatch } from "react-hook-form";
 import { z } from "zod";
 
+import { foodSurveyForm } from "@/features/food-survey-form/scheme";
+import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
+import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { Footer } from "@/layouts";
 import { cn } from "@/utils/tailwind";
 
-import { foodSurveyForm } from "../../layout";
-import { useRegistFoodStore } from "../../stores/regist-foods";
-import { useRegistStepsStore } from "../../stores/regist-foods-steps";
-
 function StepFooter({ children }: PropsWithChildren) {
-  const currentStep = useRegistStepsStore((state) => {
+  const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
   const { preList = [] } =
     useWatch<z.infer<typeof foodSurveyForm>>()?.[currentStep] || {};
 
-  const searchActiveState = useRegistFoodStore((state) => {
+  const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
   });
 

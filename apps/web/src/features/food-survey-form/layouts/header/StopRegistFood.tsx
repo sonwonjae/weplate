@@ -1,6 +1,7 @@
 import { XIcon } from "lucide-react";
 import { useRouter } from "next/router";
 
+import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { Button } from "@/shad-cn/components/ui/button";
 import {
   Dialog,
@@ -14,12 +15,10 @@ import {
 } from "@/shad-cn/components/ui/dialog";
 import { cn } from "@/utils/tailwind";
 
-import { useRegistFoodStore } from "../../stores/regist-foods";
-
 function StopRegistFood() {
   const router = useRouter();
 
-  const searchActiveState = useRegistFoodStore((state) => {
+  const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
   });
   return (

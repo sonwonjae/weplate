@@ -4,25 +4,25 @@ import { devtools } from "zustand/middleware";
 type InputFocusState = "init" | "focus" | "blur";
 type SearchActiveState = "init" | "out" | "in";
 
-interface RegistFoodState {
+interface SearchFoodState {
   searchKeyword: string;
   search: (newSearchKeyword: string) => void;
   endSearch: () => void;
   inputFocusState: InputFocusState;
   updateInputFocusState: (newInputFocusState: InputFocusState) => void;
   searchActiveState: () => SearchActiveState;
-  resetRegistFoods: () => void;
+  resetSearchFoods: () => void;
 }
 
-const REGIST_FOOD_INITIAL_STATE: Partial<RegistFoodState> = {
+const SEARCH_FOOD_INITIAL_STATE: Partial<SearchFoodState> = {
   searchKeyword: "",
   inputFocusState: "init",
 };
 
-export const useRegistFoodStore = create<RegistFoodState>()(
+export const useSearchFoodStore = create<SearchFoodState>()(
   devtools((set, get) => {
     return {
-      ...REGIST_FOOD_INITIAL_STATE,
+      ...SEARCH_FOOD_INITIAL_STATE,
       search: (newSearchKeyword) => {
         return set(() => {
           return {
@@ -62,8 +62,8 @@ export const useRegistFoodStore = create<RegistFoodState>()(
 
         return "init";
       },
-      resetRegistFoods: () => {
-        return set(REGIST_FOOD_INITIAL_STATE);
+      resetSearchFoods: () => {
+        return set(SEARCH_FOOD_INITIAL_STATE);
       },
     };
   }),

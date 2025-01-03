@@ -2,20 +2,19 @@ import { XIcon } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 
+import { foodSurveyForm } from "@/features/food-survey-form/scheme";
+import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
+import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { Badge } from "@/shad-cn/components/ui/badge";
 import { cn } from "@/utils/tailwind";
-
-import { foodSurveyForm } from "../layout";
-import { useRegistFoodStore } from "../stores/regist-foods";
-import { useRegistStepsStore } from "../stores/regist-foods-steps";
 
 function CheckedFoodBadgeListSection() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
 
-  const searchActiveState = useRegistFoodStore((state) => {
+  const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
   });
-  const currentStep = useRegistStepsStore((state) => {
+  const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
 

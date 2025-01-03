@@ -1,24 +1,23 @@
 import { useWatch } from "react-hook-form";
 import { z } from "zod";
 
+import { foodSurveyForm } from "@/features/food-survey-form/scheme";
+import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
+import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { Button } from "@/shad-cn/components/ui/button";
 import { cn } from "@/utils/tailwind";
 
-import { foodSurveyForm } from "../../layout";
-import { useRegistFoodStore } from "../../stores/regist-foods";
-import { useRegistStepsStore } from "../../stores/regist-foods-steps";
-
 function MovePrevStep() {
-  const currentStepIndex = useRegistStepsStore((state) => {
+  const currentStepIndex = useFoodSurveyStepsStore((state) => {
     return state.currentStepIndex;
   });
-  const currentStep = useRegistStepsStore((state) => {
+  const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
-  const movePrevStep = useRegistStepsStore((state) => {
+  const movePrevStep = useFoodSurveyStepsStore((state) => {
     return state.movePrevStep;
   });
-  const searchActiveState = useRegistFoodStore((state) => {
+  const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
   });
   const { preList = [] } =

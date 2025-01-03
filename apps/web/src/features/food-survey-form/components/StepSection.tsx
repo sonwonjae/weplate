@@ -1,16 +1,15 @@
+import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
+import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { cn } from "@/utils/tailwind";
 
-import { useRegistFoodStore } from "../stores/regist-foods";
-import { useRegistStepsStore } from "../stores/regist-foods-steps";
-
 function StepSection() {
-  const allSteps = useRegistStepsStore((state) => {
+  const allSteps = useFoodSurveyStepsStore((state) => {
     return state.allSteps;
   });
-  const currentStep = useRegistStepsStore((state) => {
+  const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
-  const searchActiveState = useRegistFoodStore((state) => {
+  const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
   });
 

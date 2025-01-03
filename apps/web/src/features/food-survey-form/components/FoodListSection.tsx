@@ -4,26 +4,25 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { foodSurveyForm } from "@/features/food-survey-form/scheme";
+import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
+import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { Button } from "@/shad-cn/components/ui/button";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
-import { foodSurveyForm } from "../layout";
-import { useRegistFoodStore } from "../stores/regist-foods";
-import { useRegistStepsStore } from "../stores/regist-foods-steps";
-
 function FoodListSection() {
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
-  const allSteps = useRegistStepsStore((state) => {
+  const allSteps = useFoodSurveyStepsStore((state) => {
     return state.allSteps;
   });
-  const currentStep = useRegistStepsStore((state) => {
+  const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
   const foodSurveyFormValue = useWatch<z.infer<typeof foodSurveyForm>>();
   const { preList = [], list = [] } = foodSurveyFormValue[currentStep] || {};
 
-  const searchKeyword = useRegistFoodStore((state) => {
+  const searchKeyword = useSearchFoodStore((state) => {
     return state.searchKeyword;
   });
 

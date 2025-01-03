@@ -15,6 +15,9 @@ import { Toaster } from "@/shad-cn/components/ui/sonner";
 import { cn } from "@/utils/tailwind";
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  Layer: React.ExoticComponent<{
+    children?: React.ReactNode | undefined;
+  }>;
   Layout: React.ExoticComponent<{
     children?: React.ReactNode | undefined;
   }>;
@@ -40,6 +43,7 @@ export default function MyApp({
     });
   });
 
+  const PageLayer = PageComponent.Layer ?? React.Fragment;
   const PageLayout = PageComponent.Layout ?? React.Fragment;
 
   return (
@@ -61,9 +65,11 @@ export default function MyApp({
             "flex-col",
           )}
         >
-          <PageLayout>
-            <PageComponent {...pageProps} />
-          </PageLayout>
+          <PageLayer>
+            <PageLayout>
+              <PageComponent {...pageProps} />
+            </PageLayout>
+          </PageLayer>
         </div>
 
         <Toaster position="top-right" />
