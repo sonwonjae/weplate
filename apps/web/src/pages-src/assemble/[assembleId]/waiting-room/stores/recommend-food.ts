@@ -1,63 +1,32 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 
+// 1. 추천 대기
+// 2. marquee가 보이는 로딩 시작
+// 3. marquee가 보이는 로딩 끝
+// 4. 세 개 아이템 리스트 보이는 로딩 시작
+// 5. 세 개 아이템 리스트 보이는 로딩 끝
+// 6. 결과 제공
+
 interface RecommendFoodState {
-  duration: number;
-  animationStatus: "wait" | "loading-start" | "loading-end";
-  recommendStatus: "not-yet" | "start" | "end";
+  steps: ["wait", "marquee-loading", "recommend-loading", "end"];
+  recommendStatus: RecommendFoodState["steps"][number];
   changeRecommendStatus: (
-    newRecommendStatus: Exclude<
-      RecommendFoodState["recommendStatus"],
-      "not-yet"
-    >,
+    newRecommendStatus: RecommendFoodState["steps"][number],
   ) => void;
   resetRecommendFood: () => void;
 }
 
 const RECOMMEND_FOOD_INITIAL_STATE: Partial<RecommendFoodState> = {
-  duration: 1000,
-  animationStatus: "wait",
-  recommendStatus: "not-yet",
+  steps: ["wait", "marquee-loading", "recommend-loading", "end"],
+  recommendStatus: "wait",
 };
 
 export const useRecommendFoodStore = create<RecommendFoodState>()(
-  devtools((set, get) => {
+  devtools((set) => {
     return {
       ...RECOMMEND_FOOD_INITIAL_STATE,
-      changeRecommendStatus: (
-        newRecommendStatus: Exclude<
-          RecommendFoodState["recommendStatus"],
-          "not-yet"
-        >,
-      ) => {
-        if (
-          newRecommendStatus === "start" &&
-          get().animationStatus === "wait"
-        ) {
-          setTimeout(() => {
-            set(() => {
-              setTimeout(() => {
-                set(() => {
-                  setTimeout(() => {
-                    set(() => {
-                      return {
-                        recommendStatus: "end",
-                      };
-                    });
-                  }, 1500);
-
-                  return {
-                    animationStatus: "loading-end",
-                  };
-                });
-              }, 2000);
-
-              return {
-                animationStatus: "loading-start",
-              };
-            });
-          }, 2250);
-        }
+      changeRecommendStatus: (newRecommendStatus) => {
         return set(() => {
           return {
             recommendStatus: newRecommendStatus,

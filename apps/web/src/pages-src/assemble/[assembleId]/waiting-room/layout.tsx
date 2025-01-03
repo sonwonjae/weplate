@@ -1,6 +1,5 @@
-import type { PropsWithChildren } from "react";
-
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import {
   ChefHatIcon,
   ChevronLeftIcon,
@@ -10,11 +9,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { toast } from "sonner";
+import { type PropsWithChildren } from "react";
 
 import { Header, Footer, Main } from "@/layouts";
+import { useReRecommendFoodStore } from "@/pages-src/assemble/[assembleId]/result-room/stores/re-recommend-food";
 import { Button } from "@/shad-cn/components/ui/button";
-import { RQClient } from "@/utils/react-query";
+import { apiAxios, RQClient } from "@/utils/react-query";
+import { shareLink } from "@/utils/share";
+import { sleep } from "@/utils/sleep";
 import { cn } from "@/utils/tailwind";
 
 import { useRecommendFoodStore } from "./stores/recommend-food";
@@ -28,7 +30,6 @@ function Layout({ children }: PropsWithChildren) {
   const assembleQuery = new RQClient({
     url: `/api/assemble/${router.query.assembleId}/item`,
   });
-
   const { data: assemble } = useQuery(assembleQuery.queryOptions);
 
   const isOwner =
@@ -36,48 +37,55 @@ function Layout({ children }: PropsWithChildren) {
     !!userInfo?.id &&
     assemble?.ownerInfo.id === userInfo?.id;
 
-  const animationStatus = useRecommendFoodStore((state) => {
-    return state.animationStatus;
-  });
   const recommendStatus = useRecommendFoodStore((state) => {
     return state.recommendStatus;
   });
   const changeRecommendStatus = useRecommendFoodStore((state) => {
     return state.changeRecommendStatus;
   });
-
-  const shareAssembleLink = async () => {
-    try {
-      if (navigator.canShare()) {
-        try {
-          await navigator.share({
-            url: `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/assemble/${router.query.assembleId}`,
-          });
-          return toast.info("공유 성공");
-        } catch {
-          return toast.error("공유 실패");
-        }
-      } else {
-        await navigator.clipboard.writeText(
-          `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/assemble/${router.query.assembleId}`,
-        );
-        toast.info("클립보드에 복사되었어요.", {
-          position: "bottom-left",
-        });
-      }
-    } catch {
-      return toast.error("공유 실패");
-    }
-  };
-  const recommendedFoodListQuery = new RQClient({
-    url: `/api/food/${router.query.assembleId}/recommend/list`,
-    customQueryOptions: {
-      enabled: recommendStatus === "start",
-      retry: 0,
-    },
+  const changeReRecommendStatus = useReRecommendFoodStore((state) => {
+    return state.changeReRecommendStatus;
   });
 
-  useQuery(recommendedFoodListQuery.queryOptions);
+  const shareAssembleLink = async () => {
+    await shareLink({
+      url: `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/assemble/${router.query.assembleId}`,
+    });
+  };
+
+  const { mutateAsync: recommendFoodList } = useMutation({
+    mutationFn: async () => {
+      try {
+        // NOTE: 1. 음식 큐 로딩 시작
+        changeRecommendStatus("marquee-loading");
+
+        await Promise.all([
+          (async () => {
+            // NOTE: 2-1. 음식 추천 시작
+            return await apiAxios.post(
+              `/api/food/${router.query.assembleId}/recommend/food`,
+            );
+          })(),
+          (async () => {
+            // NOTE: 2-2. 최소 2000ms 후 음식 문구 로딩 시작
+            await sleep(2000);
+            changeRecommendStatus("recommend-loading");
+          })(),
+        ]);
+
+        // NOTE: 3. 3000ms 후 음식 문구 로딩 종료
+        await sleep(3000);
+        changeRecommendStatus("end");
+
+        // NOTE: 4. 1000ms 후 애니메이션 보여주며 결과 페이지로 이동
+        await sleep(1000);
+        changeReRecommendStatus("end");
+        router.replace(`/assemble/${router.query.assembleId}/result-room`);
+      } catch (error) {
+        throw error as AxiosError;
+      }
+    },
+  });
 
   return (
     <>
@@ -130,35 +138,43 @@ function Layout({ children }: PropsWithChildren) {
       </Header>
       <Main className={cn("flex", "flex-col")}>{children}</Main>
 
-      <Footer>
+      <Footer
+        className={cn(
+          recommendStatus !== "wait" &&
+            "animate-[fade-out-down_0.4s_ease-in-out_forwards]",
+        )}
+      >
         <Button
           size="lg"
           round
-          disabled={
-            !(animationStatus === "wait" && recommendStatus === "not-yet")
-          }
+          disabled={recommendStatus !== "wait"}
           className={cn("w-full")}
-          onClick={async () => {
-            if (
-              !(animationStatus === "wait" && recommendStatus === "not-yet")
-            ) {
+          onClick={() => {
+            if (recommendStatus !== "wait") {
               return;
             }
 
-            if (recommendStatus === "not-yet") {
-              return changeRecommendStatus("start");
-            }
+            // NOTE: 1. 음식 큐 로딩 시작
+            changeRecommendStatus("marquee-loading");
+
+            setTimeout(async () => {
+              // NOTE: 2. 2000ms 후 음식 문구 로딩 시작
+              changeRecommendStatus("recommend-loading");
+
+              // NOTE: 3. 문구 로딩 시작과 동시에 음식 추천 시작
+              await recommendFoodList();
+
+              setTimeout(() => {
+                // NOTE: 3. 1000ms 후 음식 문구 로딩 시작
+                changeRecommendStatus("end");
+                setTimeout(() => {
+                  changeReRecommendStatus("end");
+                }, 1000);
+              }, 2000);
+            }, 2000);
           }}
         >
-          {animationStatus === "wait" &&
-            recommendStatus === "not-yet" &&
-            "메뉴 추천 시작"}
-          {(animationStatus === "loading-start" ||
-            recommendStatus === "start") &&
-            "메뉴 추천 중"}
-          {animationStatus === "loading-end" &&
-            recommendStatus === "end" &&
-            "메뉴 추천 완료"}
+          메뉴 추천 시작
         </Button>
       </Footer>
     </>

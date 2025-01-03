@@ -33,8 +33,8 @@ export class FoodModule {
       .apply(RequiredAuthMiddleware)
       .forRoutes(
         {
-          path: 'food/:assembleId/recommend/list',
-          method: RequestMethod.GET,
+          path: 'food/:assembleId/recommend/food',
+          method: RequestMethod.POST,
         },
         {
           path: 'food/:assembleId/recommend/result',

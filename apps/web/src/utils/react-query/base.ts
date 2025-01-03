@@ -19,16 +19,6 @@ export type ResponseMap = {
         readonly message: "joinable assemble";
       };
 } & {
-  [key in `/api/food/${string}/recommend/list`]: Array<{
-    foodId: string;
-    foodName: string;
-    score: number;
-    cuisineList: Array<{
-      id: string;
-      name: string;
-    }>;
-  }>;
-} & {
   [key in `/api/food/${string}/recommend/result`]: Array<{
     foodId: string;
     foodName: string;

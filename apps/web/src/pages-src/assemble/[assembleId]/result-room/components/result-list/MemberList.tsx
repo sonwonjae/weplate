@@ -18,6 +18,7 @@ function MemberList() {
   const registedMemberCount = assembleUserList.filter(({ isRegisted }) => {
     return isRegisted;
   }).length;
+
   return (
     <div className={cn("flex", "flex-col", "gap-4")}>
       <h2 className={cn("pt-8", "px-5", "font-bold", "text-lg")}>

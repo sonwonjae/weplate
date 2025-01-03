@@ -49,6 +49,7 @@ export const checkAssembleMember = (
   { required = true }: CheckAssembleMember = { required: true },
 ): Middleware<CustomIncomingMessage> => {
   return pipe(checkAssembleParams(), async (req, res) => {
+    console.log("member middleware");
     const assembleId = req.params?.assembleId as string;
 
     if (!required) {
@@ -123,6 +124,7 @@ export const checkAssembleOwner = (): Middleware<
 
 export const checkAssembleGuest = (): Middleware<CustomIncomingMessage> => {
   return pipe(checkAssembleParams(), async (req, res) => {
+    console.log("guest middleware");
     const assembleId = req.params?.assembleId as string;
 
     const assembleQuery = new RQServer({
@@ -155,7 +157,7 @@ export const checkAssembleGuest = (): Middleware<CustomIncomingMessage> => {
 };
 
 interface CheckFoodSurveyStatus {
-  permission: "not-yet" | "complete";
+  permission: "not-yet" | "complete" | "none";
 }
 
 export const checkFoodSurveyStatus = ({
@@ -172,6 +174,7 @@ export const checkFoodSurveyStatus = ({
       await req.queryClient.fetchQuery(foodSurveyCompleteQuery.queryOptions);
 
       switch (permission) {
+        case "none":
         case "not-yet":
           return {
             redirect: {
@@ -190,6 +193,7 @@ export const checkFoodSurveyStatus = ({
           return {
             props: { dehydratedState: dehydrate(req.queryClient) },
           };
+        case "none":
         case "complete":
           return {
             redirect: {
@@ -213,12 +217,14 @@ export const checkRecommendedFoodListStatus = ({
     const assembleId = req.params?.assembleId as string;
 
     try {
-      const recommendedFoodListQuery = new RQServer({
+      const recommendedFoodResultQuery = new RQServer({
         url: `/api/food/${assembleId}/recommend/result`,
         res,
       });
       const hasRecommendedFoodList = !!(
-        await req.queryClient.fetchQuery(recommendedFoodListQuery.queryOptions)
+        await req.queryClient.fetchQuery(
+          recommendedFoodResultQuery.queryOptions,
+        )
       )?.filter(Boolean)?.length;
 
       if (!hasRecommendedFoodList) {

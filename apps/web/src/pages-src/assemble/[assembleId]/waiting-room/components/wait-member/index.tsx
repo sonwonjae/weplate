@@ -5,11 +5,11 @@ import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import { useRecommendFoodStore } from "../../stores/recommend-food";
+import { useSkipInviteMemberStore } from "../../stores/skip-invite-member";
 
 import FoodMarquee from "./FoodMarquee";
 import MemberList from "./MemberList";
-import RecommendLoading from "./RecommendLoading/RecommendLoading";
-import RecommendResult from "./RecommendResult";
+import RecommendLoading from "./RecommendLoading";
 
 function WaitMember() {
   const router = useRouter();
@@ -17,8 +17,8 @@ function WaitMember() {
   const recommendStatus = useRecommendFoodStore((state) => {
     return state.recommendStatus;
   });
-  const animationStatus = useRecommendFoodStore((state) => {
-    return state.animationStatus;
+  const isSkipInviteMember = useSkipInviteMemberStore((state) => {
+    return state.isSkipInviteMember;
   });
 
   const authQuery = new RQClient({ url: "/api/user/auth/check" });
@@ -37,23 +37,19 @@ function WaitMember() {
 
   const hasMember = !!assemble?.memberList.length;
 
-  if (isOwner && !hasMember) {
+  const isShowInviteMemberPage = isOwner && !hasMember && !isSkipInviteMember;
+
+  if (isShowInviteMemberPage) {
     return null;
   }
-
-  const isLoadingAnimation =
-    (animationStatus === "loading-start" ||
-      animationStatus === "loading-end") &&
-    recommendStatus !== "end";
 
   return (
     <section className={cn("h-full", "flex", "flex-col", "gap-8")}>
       <MemberList />
-      {animationStatus === "wait" && <FoodMarquee />}
-      {isLoadingAnimation && <RecommendLoading />}
-      {animationStatus === "loading-end" && recommendStatus === "end" && (
-        <RecommendResult />
-      )}
+      {(recommendStatus === "wait" ||
+        recommendStatus === "marquee-loading") && <FoodMarquee />}
+      {(recommendStatus === "recommend-loading" ||
+        recommendStatus === "end") && <RecommendLoading />}
     </section>
   );
 }

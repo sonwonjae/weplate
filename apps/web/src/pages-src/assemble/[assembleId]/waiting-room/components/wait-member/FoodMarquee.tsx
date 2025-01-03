@@ -1,39 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter } from "next/router";
 
 import Marquee from "@/shad-cn/components/ui/marquee";
-import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 import { useRecommendFoodStore } from "../../stores/recommend-food";
 
 function FoodMarquee() {
-  const router = useRouter();
-
-  const authQuery = new RQClient({ url: "/api/user/auth/check" });
-  const { data: userInfo } = useQuery(authQuery.queryOptions);
-
-  const assembleQuery = new RQClient({
-    url: `/api/assemble/${router.query.assembleId}/item`,
-  });
-
-  const { data: assemble } = useQuery(assembleQuery.queryOptions);
-
-  const isOwner =
-    !!assemble?.ownerInfo.id &&
-    !!userInfo?.id &&
-    assemble?.ownerInfo.id === userInfo?.id;
-
-  const hasMember = !!assemble?.memberList.length;
-
   const recommendStatus = useRecommendFoodStore((state) => {
     return state.recommendStatus;
   });
-
-  if (isOwner && !hasMember) {
-    return null;
-  }
 
   return (
     <div className={cn("overflow-hidden")}>
@@ -41,7 +16,7 @@ function FoodMarquee() {
         const isReverse = page % 2 !== 0;
 
         const repeat = (() => {
-          if (isReverse && recommendStatus === "start") {
+          if (isReverse && recommendStatus === "marquee-loading") {
             return 4;
           }
           return 2;
@@ -56,11 +31,15 @@ function FoodMarquee() {
             className={cn(
               "[--duration:15s]",
               "opacity-80",
-              recommendStatus === "start" && "transition-all",
-              recommendStatus === "start" && "duration-5000",
-              recommendStatus === "start" && "overflow-visible",
-              recommendStatus === "start" && isReverse && "ml-[4000px]",
-              recommendStatus === "start" && !isReverse && "-ml-[4000px]",
+              recommendStatus === "marquee-loading" && "transition-all",
+              recommendStatus === "marquee-loading" && "duration-5000",
+              recommendStatus === "marquee-loading" && "overflow-visible",
+              recommendStatus === "marquee-loading" &&
+                isReverse &&
+                "ml-[4000px]",
+              recommendStatus === "marquee-loading" &&
+                !isReverse &&
+                "-ml-[4000px]",
             )}
           >
             {Array.from({ length: 8 }, (_, index) => {
@@ -70,9 +49,9 @@ function FoodMarquee() {
                 <li
                   key={imageName}
                   className={cn(
-                    recommendStatus === "start" && "transition-all",
-                    recommendStatus === "start" && "duration-3000",
-                    recommendStatus === "start" && "opacity-0",
+                    recommendStatus === "marquee-loading" && "transition-all",
+                    recommendStatus === "marquee-loading" && "duration-3000",
+                    recommendStatus === "marquee-loading" && "opacity-0",
                   )}
                 >
                   <Image
@@ -97,12 +76,13 @@ function FoodMarquee() {
         className={cn(
           "pt-4",
           "px-5",
-          "text-slate-400",
+          "text-slate-600",
+          "text-sm",
           "break-keep",
           "text-center",
-          recommendStatus === "start" && "transition-all",
-          recommendStatus === "start" && "duration-3000",
-          recommendStatus === "start" && "opacity-0",
+          recommendStatus === "marquee-loading" && "transition-all",
+          recommendStatus === "marquee-loading" && "duration-3000",
+          recommendStatus === "marquee-loading" && "opacity-0",
         )}
       >
         모임원이 음식 정보를 등록하고 있어요.
