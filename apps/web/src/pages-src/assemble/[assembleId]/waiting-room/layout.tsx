@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren } from "react";
 
 import { Header, Footer, Main } from "@/layouts";
 import { useReRecommendFoodStore } from "@/pages-src/assemble/[assembleId]/result-room/stores/re-recommend-food";
@@ -39,11 +39,17 @@ function Layout({ children }: PropsWithChildren) {
   const recommendStatus = useRecommendFoodStore((state) => {
     return state.recommendStatus;
   });
+  const resetRecommendFood = useRecommendFoodStore((state) => {
+    return state.resetRecommendFood;
+  });
   const changeRecommendStatus = useRecommendFoodStore((state) => {
     return state.changeRecommendStatus;
   });
   const changeReRecommendStatus = useReRecommendFoodStore((state) => {
     return state.changeReRecommendStatus;
+  });
+  const resetReRecommendFood = useReRecommendFoodStore((state) => {
+    return state.resetReRecommendFood;
   });
 
   const shareAssembleLink = async () => {
@@ -85,6 +91,11 @@ function Layout({ children }: PropsWithChildren) {
       }
     },
   });
+
+  useEffect(() => {
+    resetRecommendFood();
+    resetReRecommendFood();
+  }, [router.pathname]);
 
   return (
     <>

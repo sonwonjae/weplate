@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { type PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren } from "react";
 
 import { Header, Footer, Main } from "@/layouts";
 import { Button } from "@/shad-cn/components/ui/button";
@@ -56,6 +56,9 @@ function Layout({ children }: PropsWithChildren) {
   const changeReRecommendStatus = useReRecommendFoodStore((state) => {
     return state.changeReRecommendStatus;
   });
+  const resetReRecommendFood = useReRecommendFoodStore((state) => {
+    return state.resetReRecommendFood;
+  });
 
   const recommendedFoodResultQuery = new RQClient({
     url: `/api/food/${router.query.assembleId}/recommend/result`,
@@ -94,6 +97,10 @@ function Layout({ children }: PropsWithChildren) {
       }
     },
   });
+
+  useEffect(() => {
+    resetReRecommendFood();
+  }, [router.pathname]);
 
   return (
     <>
