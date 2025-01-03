@@ -197,7 +197,7 @@ export const checkFoodSurveyStatus = ({
         case "complete":
           return {
             redirect: {
-              destination: `/assemble/${assembleId}/regist-food`,
+              destination: `/assemble/${assembleId}/regist-food-survey`,
               permanent: true,
             },
           };

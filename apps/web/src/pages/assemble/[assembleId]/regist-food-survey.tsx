@@ -10,9 +10,9 @@ import {
   SearchSection,
   FoodListSection,
   CheckedFoodBadgeListSection,
-} from "@/pages-src/assemble/[assembleId]/regist-food/components";
-import Layout from "@/pages-src/assemble/[assembleId]/regist-food/layout";
-import middleware from "@/pages-src/assemble/[assembleId]/regist-food/middleware";
+} from "@/pages-src/assemble/[assembleId]/regist-food-survey/components";
+import Layout from "@/pages-src/assemble/[assembleId]/regist-food-survey/layout";
+import middleware from "@/pages-src/assemble/[assembleId]/regist-food-survey/middleware";
 
 const router = createRouter<CustomIncomingMessage, ServerResponse>();
 router.get(middleware);
