@@ -268,25 +268,25 @@ export class FoodService {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const { data: alreadyRecommendedAssembleFood } =
-      await this.supabaseService.client
-        .from('recommends')
-        .select(
-          `
+    const { data: alreadyRecommendedList } = await this.supabaseService.client
+      .from('recommends')
+      .select(
+        `
             *,
             recommend__foods!inner(
               *,
               foods!inner(*)
             )
           `,
-        )
-        .eq('assembleId', assembleId)
-        .gte('createdAt', today.toISOString())
-        .lt('createdAt', tomorrow.toISOString())
-        .single();
+      )
+      .eq('assembleId', assembleId)
+      .gte('createdAt', today.toISOString())
+      .lt('createdAt', tomorrow.toISOString());
 
     const alreadyRecommendedAssembleFoodList =
-      alreadyRecommendedAssembleFood?.recommend__foods ?? [];
+      alreadyRecommendedList?.flatMap(({ recommend__foods }) => {
+        return recommend__foods;
+      }) ?? [];
 
     const scoredAlreadyRecommendedAssembleFoodList =
       alreadyRecommendedAssembleFoodList?.reduce(
@@ -580,7 +580,7 @@ export class FoodService {
   }
 
   async getLatestRecommendFoodList({ assembleId }: RecommendFoodListDto) {
-    const { data: recommend } = await this.supabaseService.client
+    const { data: recommendList } = await this.supabaseService.client
       .from('recommends')
       .select(
         `
@@ -592,8 +592,10 @@ export class FoodService {
         `,
       )
       .eq('assembleId', assembleId)
-      .order('createdAt', { ascending: false })
-      .single();
+      .order('createdAt', { ascending: false });
+    // .single();
+
+    const recommend = recommendList?.[0];
 
     if (!recommend) {
       throw new HttpException('has not recommend', 400);

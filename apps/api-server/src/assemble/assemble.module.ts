@@ -61,6 +61,16 @@ export class AssembleModule {
         path: 'assemble/:assembleId/check/full',
         method: RequestMethod.GET,
       })
+      .apply(RequiredAuthMiddleware)
+      .forRoutes({
+        path: 'assemble/:assembleId/check/new-registed-food-member',
+        method: RequestMethod.GET,
+      })
+      .apply(RequiredAuthMiddleware)
+      .forRoutes({
+        path: 'assemble/:assembleId/check/countdown',
+        method: RequestMethod.GET,
+      })
       .apply(RequiredAuthMiddleware, CheckFullAssembleMiddleware)
       .forRoutes({
         path: 'assemble/:assembleId/request/join',

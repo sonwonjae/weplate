@@ -22,11 +22,11 @@ const prefetch: Middleware<Req> = async (req, res) => {
   });
   await req.queryClient.fetchQuery(assembleUserListQuery.queryOptions);
 
-  const newRegistedFoodMemberListQuery = new RQServer({
-    url: `/api/assemble/${assembleId}/check/new-registed-food-member`,
+  const recommendCountdownQuery = new RQServer({
+    url: `/api/assemble/${assembleId}/check/countdown`,
     res,
   });
-  await req.queryClient.fetchQuery(newRegistedFoodMemberListQuery.queryOptions);
+  await req.queryClient.fetchQuery(recommendCountdownQuery.queryOptions);
 
   return {
     props: { dehydratedState: dehydrate(req.queryClient) },

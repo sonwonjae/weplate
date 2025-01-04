@@ -90,4 +90,9 @@ export class AssembleController {
   ) {
     return this.assembleService.checkRegistedFoodMember(userInfo, assembleId);
   }
+
+  @Get(':assembleId/check/countdown')
+  countdownRecommendChance(@Param('assembleId') assembleId: string) {
+    return this.assembleService.countdownRecommendChance(assembleId);
+  }
 }

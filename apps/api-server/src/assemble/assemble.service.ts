@@ -291,7 +291,7 @@ export class AssembleService {
   }
 
   async checkRegistedFoodMember(userInfo: Tables<'users'>, assembleId: string) {
-    const { data: latestRecommend } = await this.supabaseService.client
+    const { data: latestRecommendList } = await this.supabaseService.client
       .from('recommends')
       .select(
         `
@@ -302,8 +302,9 @@ export class AssembleService {
         `,
       )
       .eq('assembleId', assembleId)
-      .order('createdAt', { ascending: false })
-      .single();
+      .order('createdAt', { ascending: false });
+
+    const latestRecommend = latestRecommendList?.[0];
 
     const latestRecommendUsers =
       latestRecommend?.recommend__users.map(({ userId }) => {
@@ -333,5 +334,24 @@ export class AssembleService {
         }) ?? [];
 
     return newRegistedFoodMemberList;
+  }
+
+  async countdownRecommendChance(assembleId: string) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const { data: recommendList } = await this.supabaseService.client
+      .from('recommends')
+      .select('*')
+      .eq('assembleId', assembleId)
+      .gte('createdAt', today.toISOString())
+      .lt('createdAt', tomorrow.toISOString());
+
+    const max = Number(process.env.TODAY_MAX_RECOMMEND_FOOD_COUNT) ?? 0;
+    const remainCount = max - (recommendList?.length ?? 0);
+
+    return remainCount >= 0 ? remainCount : 0;
   }
 }

@@ -19,6 +19,7 @@ import { sleep } from "@/utils/sleep";
 import { cn } from "@/utils/tailwind";
 
 import { useRecommendFoodStore } from "./stores/recommend-food";
+import { useSkipInviteMemberStore } from "./stores/skip-invite-member";
 
 function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
@@ -97,6 +98,13 @@ function Layout({ children }: PropsWithChildren) {
     resetReRecommendFood();
   }, [router.pathname]);
 
+  const isSkipInviteMember = useSkipInviteMemberStore((state) => {
+    return state.isSkipInviteMember;
+  });
+  const hasMember = !!assemble?.memberList.length;
+
+  const isShowInviteMemberPage = isOwner && !hasMember && !isSkipInviteMember;
+
   return (
     <>
       <Header>
@@ -146,46 +154,54 @@ function Layout({ children }: PropsWithChildren) {
         </div>
       </Header>
       <Main className={cn("flex", "flex-col")}>{children}</Main>
-
-      <Footer
-        className={cn(
-          recommendStatus !== "wait" &&
-            "animate-[fade-out-down_0.4s_ease-in-out_forwards]",
-        )}
-      >
-        <Button
-          size="lg"
-          round
-          disabled={recommendStatus !== "wait"}
-          className={cn("w-full")}
-          onClick={() => {
-            if (recommendStatus !== "wait") {
-              return;
-            }
-
-            // NOTE: 1. 음식 큐 로딩 시작
-            changeRecommendStatus("marquee-loading");
-
-            setTimeout(async () => {
-              // NOTE: 2. 2000ms 후 음식 문구 로딩 시작
-              changeRecommendStatus("recommend-loading");
-
-              // NOTE: 3. 문구 로딩 시작과 동시에 음식 추천 시작
-              await recommendFoodList();
-
-              setTimeout(() => {
-                // NOTE: 3. 1000ms 후 음식 문구 로딩 시작
-                changeRecommendStatus("end");
-                setTimeout(() => {
-                  changeReRecommendStatus("end");
-                }, 1000);
-              }, 2000);
-            }, 2000);
-          }}
+      {isShowInviteMemberPage && (
+        <Footer>
+          <Footer.HomePageLink />
+          <Footer.CreateAssembleButton />
+          <Footer.MyInfoPageLink />
+        </Footer>
+      )}
+      {!isShowInviteMemberPage && (
+        <Footer
+          className={cn(
+            recommendStatus !== "wait" &&
+              "animate-[fade-out-down_0.4s_ease-in-out_forwards]",
+          )}
         >
-          메뉴 추천 시작
-        </Button>
-      </Footer>
+          <Button
+            size="lg"
+            round
+            disabled={recommendStatus !== "wait"}
+            className={cn("w-full")}
+            onClick={() => {
+              if (recommendStatus !== "wait") {
+                return;
+              }
+
+              // NOTE: 1. 음식 큐 로딩 시작
+              changeRecommendStatus("marquee-loading");
+
+              setTimeout(async () => {
+                // NOTE: 2. 2000ms 후 음식 문구 로딩 시작
+                changeRecommendStatus("recommend-loading");
+
+                // NOTE: 3. 문구 로딩 시작과 동시에 음식 추천 시작
+                await recommendFoodList();
+
+                setTimeout(() => {
+                  // NOTE: 3. 1000ms 후 음식 문구 로딩 시작
+                  changeRecommendStatus("end");
+                  setTimeout(() => {
+                    changeReRecommendStatus("end");
+                  }, 1000);
+                }, 2000);
+              }, 2000);
+            }}
+          >
+            메뉴 추천 시작
+          </Button>
+        </Footer>
+      )}
     </>
   );
 }

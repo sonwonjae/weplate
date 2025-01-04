@@ -1,5 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { useQuery } from "@tanstack/react-query";
 import {
   ChefHatIcon,
   ChevronLeftIcon,
@@ -12,17 +11,15 @@ import { useEffect, type PropsWithChildren } from "react";
 
 import { Header, Footer, Main } from "@/layouts";
 import { Button } from "@/shad-cn/components/ui/button";
-import { apiAxios, RQClient } from "@/utils/react-query";
+import { RQClient } from "@/utils/react-query";
 import { shareLink } from "@/utils/share";
-import { sleep } from "@/utils/sleep";
 import { cn } from "@/utils/tailwind";
 
-import { Notice } from "./layouts";
+import { Notice, ReRecommendFoodButton } from "./layouts";
 import { useReRecommendFoodStore } from "./stores/re-recommend-food";
 
 function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const authQuery = new RQClient({ url: "/api/user/auth/check" });
   const { data: userInfo } = useQuery(authQuery.queryOptions);
@@ -54,49 +51,8 @@ function Layout({ children }: PropsWithChildren) {
   const reRecommendStatus = useReRecommendFoodStore((state) => {
     return state.reRecommendStatus;
   });
-  const changeReRecommendStatus = useReRecommendFoodStore((state) => {
-    return state.changeReRecommendStatus;
-  });
   const resetReRecommendFood = useReRecommendFoodStore((state) => {
     return state.resetReRecommendFood;
-  });
-
-  const recommendedFoodResultQuery = new RQClient({
-    url: `/api/food/${router.query.assembleId}/recommend/result`,
-  });
-
-  const { mutateAsync: reRecommendFoodList } = useMutation({
-    mutationFn: async () => {
-      try {
-        // NOTE: 1. 음식 문구 로딩 시작
-        changeReRecommendStatus("loading-start");
-
-        // NOTE: 2. 음식 추천 시작
-        await apiAxios.post(
-          `/api/food/${router.query.assembleId}/recommend/food`,
-        );
-
-        await Promise.all([
-          (async () => {
-            // NOTE: 3-1. 음식 추천 리스트 새로고침
-            await queryClient.refetchQueries({
-              queryKey: recommendedFoodResultQuery.queryKey,
-            });
-          })(),
-          (async () => {
-            // NOTE: 3-2. 최소 3000ms 후 음식 문구 로딩 종료
-            await sleep(3000);
-            changeReRecommendStatus("loading-end");
-          })(),
-        ]);
-
-        // NOTE: 4. 1000ms 후 결과 제공
-        await sleep(1000);
-        changeReRecommendStatus("end");
-      } catch (error) {
-        throw error as AxiosError;
-      }
-    },
   });
 
   useEffect(() => {
@@ -168,17 +124,7 @@ function Layout({ children }: PropsWithChildren) {
           >
             메뉴 공유하기
           </Button>
-          <Button
-            size="lg"
-            round
-            outline
-            className={cn("w-full")}
-            onClick={() => {
-              reRecommendFoodList();
-            }}
-          >
-            다른 메뉴 추천 받기
-          </Button>
+          <ReRecommendFoodButton />
         </div>
       </Footer>
     </>
