@@ -84,22 +84,6 @@ function SelectFoodList() {
   const isAllChecked =
     filteredFoodList.length === registedFoodListInSearchedFoodList.length;
 
-  const finalButtonText = (() => {
-    if (registedFoodListInSearchedFoodList.length === foodList.length) {
-      return null;
-    }
-
-    if (isUpdating) {
-      return "불러오는 중...";
-    }
-
-    if (isAllChecked) {
-      return "선택 해제";
-    }
-
-    return "모두 선택";
-  })();
-
   const checkAllFoodList = () => {
     const list = form.getValues(`${currentStep}.list`);
 
@@ -159,6 +143,22 @@ function SelectFoodList() {
       });
     form.setValue(`${currentStep}.preList`, preUncheckedList);
   };
+
+  const finalButtonText = (() => {
+    if (registedFoodListInSearchedFoodList.length === foodList.length) {
+      return null;
+    }
+
+    if (isUpdating) {
+      return "불러오는 중...";
+    }
+
+    if (isAllChecked) {
+      return "선택 해제";
+    }
+
+    return "모두 선택";
+  })();
 
   const finalClickHandler = (() => {
     if (registedFoodListInSearchedFoodList.length === foodList.length) {

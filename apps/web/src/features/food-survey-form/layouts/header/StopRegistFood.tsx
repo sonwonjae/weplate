@@ -17,10 +17,10 @@ import { cn } from "@/utils/tailwind";
 
 function StopRegistFood() {
   const router = useRouter();
-
   const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
   });
+
   return (
     <Dialog>
       <DialogTrigger asChild>

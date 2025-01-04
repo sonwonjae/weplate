@@ -28,7 +28,6 @@ function Layout({ children }: PropsWithChildren) {
         </div>
       </Header>
       <Main>{children}</Main>
-
       <StepFooter>
         <MoveNextStep />
         <RegistFood />
