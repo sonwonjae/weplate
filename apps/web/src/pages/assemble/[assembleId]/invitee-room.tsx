@@ -91,7 +91,7 @@ function AssembleInviteeRoomPage() {
       <Button
         size="lg"
         round
-        disabled={joinable}
+        disabled={!joinable}
         className={cn("w-full")}
         onClick={() => {
           requestJoin();

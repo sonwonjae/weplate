@@ -249,7 +249,7 @@ export class FoodService {
         `
           *,
           users!inner(*),
-          foods(
+          foods!inner(
             *,
             food__cuisine!inner(
               *,
@@ -371,7 +371,7 @@ export class FoodService {
             return preScoredFood.foodId === userAssembleFood.foodId;
           });
 
-          const cuisineList = userAssembleFood.foods!.food__cuisine.map(
+          const cuisineList = userAssembleFood.foods.food__cuisine.map(
             ({ cuisine }) => {
               return cuisine!;
             },
