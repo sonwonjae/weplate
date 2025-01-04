@@ -82,4 +82,12 @@ export class AssembleController {
   ) {
     return this.assembleService.requestJoinFromInvitee(userInfo, assembleId);
   }
+
+  @Get(':assembleId/check/new-registed-food-member')
+  checkRegistedFoodMember(
+    @UserInfo() userInfo: Tables<'users'>,
+    @Param('assembleId') assembleId: string,
+  ) {
+    return this.assembleService.checkRegistedFoodMember(userInfo, assembleId);
+  }
 }

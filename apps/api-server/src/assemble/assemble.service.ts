@@ -289,4 +289,49 @@ export class AssembleService {
     }
     return true;
   }
+
+  async checkRegistedFoodMember(userInfo: Tables<'users'>, assembleId: string) {
+    const { data: latestRecommend } = await this.supabaseService.client
+      .from('recommends')
+      .select(
+        `
+          *,
+          recommend__users!inner(
+            *
+          )
+        `,
+      )
+      .eq('assembleId', assembleId)
+      .order('createdAt', { ascending: false })
+      .single();
+
+    const latestRecommendUsers =
+      latestRecommend?.recommend__users.map(({ userId }) => {
+        return userId;
+      }) ?? [];
+
+    const { data: assembleUsers } = await this.supabaseService.client
+      .from('user__assembles')
+      .select(
+        `
+        *,
+        user__assemble__foods(*)
+      `,
+      )
+      .eq('assembleId', assembleId);
+
+    const newRegistedFoodMemberList =
+      assembleUsers
+        ?.filter(({ user__assemble__foods }) => {
+          return !!user__assemble__foods.length;
+        })
+        .filter(({ userId }) => {
+          return !latestRecommendUsers.includes(userId);
+        })
+        .map(({ userId }) => {
+          return userId;
+        }) ?? [];
+
+    return newRegistedFoodMemberList;
+  }
 }

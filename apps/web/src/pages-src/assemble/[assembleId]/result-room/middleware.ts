@@ -22,6 +22,12 @@ const prefetch: Middleware<Req> = async (req, res) => {
   });
   await req.queryClient.fetchQuery(assembleUserListQuery.queryOptions);
 
+  const newRegistedFoodMemberListQuery = new RQServer({
+    url: `/api/assemble/${assembleId}/check/new-registed-food-member`,
+    res,
+  });
+  await req.queryClient.fetchQuery(newRegistedFoodMemberListQuery.queryOptions);
+
   return {
     props: { dehydratedState: dehydrate(req.queryClient) },
   };

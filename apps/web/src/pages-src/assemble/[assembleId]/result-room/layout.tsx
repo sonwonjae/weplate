@@ -17,6 +17,7 @@ import { shareLink } from "@/utils/share";
 import { sleep } from "@/utils/sleep";
 import { cn } from "@/utils/tailwind";
 
+import { Notice } from "./layouts";
 import { useReRecommendFoodStore } from "./stores/re-recommend-food";
 
 function Layout({ children }: PropsWithChildren) {
@@ -150,6 +151,7 @@ function Layout({ children }: PropsWithChildren) {
           </div>
         </div>
       </Header>
+      <Notice />
       <Main className={cn("flex", "flex-col")}>{children}</Main>
       <Footer
         className={cn(

@@ -131,41 +131,97 @@ export type Database = {
         };
         Relationships: [];
       };
-      recommended__assemble_foods: {
+      recommend__foods: {
         Row: {
-          assembleId: string;
-          createdAt: string;
           foodId: string;
           id: string;
+          recommendId: string;
           type: Database['public']['Enums']['recommend_type'];
         };
         Insert: {
-          assembleId: string;
-          createdAt?: string;
           foodId: string;
           id?: string;
+          recommendId: string;
           type?: Database['public']['Enums']['recommend_type'];
         };
         Update: {
-          assembleId?: string;
-          createdAt?: string;
           foodId?: string;
           id?: string;
+          recommendId?: string;
           type?: Database['public']['Enums']['recommend_type'];
         };
         Relationships: [
           {
-            foreignKeyName: 'recommended__assemble_foods_assembleId_fkey';
-            columns: ['assembleId'];
-            isOneToOne: false;
-            referencedRelation: 'assembles';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'recommended__assemble_foods_foodId_fkey';
+            foreignKeyName: 'recommend__foods_foodId_fkey';
             columns: ['foodId'];
             isOneToOne: false;
             referencedRelation: 'foods';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recommend__foods_recommendId_fkey';
+            columns: ['recommendId'];
+            isOneToOne: false;
+            referencedRelation: 'recommends';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      recommend__users: {
+        Row: {
+          id: string;
+          recommendId: string;
+          userId: string;
+        };
+        Insert: {
+          id?: string;
+          recommendId: string;
+          userId: string;
+        };
+        Update: {
+          id?: string;
+          recommendId?: string;
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'recommend__users_recommendId_fkey';
+            columns: ['recommendId'];
+            isOneToOne: false;
+            referencedRelation: 'recommends';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recommend__users_userId_fkey';
+            columns: ['userId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      recommends: {
+        Row: {
+          assembleId: string;
+          createdAt: string;
+          id: string;
+        };
+        Insert: {
+          assembleId: string;
+          createdAt?: string;
+          id?: string;
+        };
+        Update: {
+          assembleId?: string;
+          createdAt?: string;
+          id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'recommends_assembleId_fkey';
+            columns: ['assembleId'];
+            isOneToOne: false;
+            referencedRelation: 'assembles';
             referencedColumns: ['id'];
           },
         ];

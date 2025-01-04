@@ -19,6 +19,8 @@ export type ResponseMap = {
         readonly message: "joinable assemble";
       };
 } & {
+  [key in `/api/assemble/${string}/check/new-registed-food-member`]: Array<string>;
+} & {
   [key in `/api/food/${string}/recommend/result`]: Array<{
     foodId: string;
     foodName: string;
