@@ -8,7 +8,11 @@ import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-fo
 import { Footer } from "@/layouts";
 import { cn } from "@/utils/tailwind";
 
-function StepFooter({ children }: PropsWithChildren) {
+interface StepFooterProps extends PropsWithChildren {
+  type: "regist" | "update";
+}
+
+function StepFooter({ type, children }: StepFooterProps) {
   const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
@@ -23,10 +27,12 @@ function StepFooter({ children }: PropsWithChildren) {
 
   return (
     <Footer
-      aria-hidden={searchActiveState !== "in"}
       className={cn(
-        searchActiveState === "init" && "hidden",
-        !isHideFooter && "animate-[fade-in-up_0.2s_ease-in-out_forwards]",
+        type === "regist" && searchActiveState === "init" && "hidden",
+        !(type === "update" && searchActiveState === "init") &&
+          !isHideFooter &&
+          "animate-[fade-in-up_0.2s_ease-in-out_forwards]",
+
         isHideFooter && "animate-[fade-out-down_0.2s_ease-in-out_forwards]",
       )}
     >

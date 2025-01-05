@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
@@ -7,7 +7,7 @@ import { foodSurveyForm } from "@/features/food-survey-form/scheme";
 import { useFoodSurveyStepsStore } from "@/features/food-survey-form/stores/food-survey-steps";
 import { useSearchFoodStore } from "@/features/food-survey-form/stores/search-food";
 import { Button } from "@/shad-cn/components/ui/button";
-import { apiAxios } from "@/utils/react-query";
+import { apiAxios, RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 interface SubmitFoodListProps {
@@ -16,7 +16,12 @@ interface SubmitFoodListProps {
 
 function SubmitFoodList({ type }: SubmitFoodListProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const form = useFormContext<z.infer<typeof foodSurveyForm>>();
+
+  const foodSurveyQuery = new RQClient({
+    url: `/api/food/${router.query.assembleId}/survey`,
+  });
 
   const { mutateAsync: submitFoodSurvey } = useMutation({
     mutationFn: async () => {
@@ -37,6 +42,9 @@ function SubmitFoodList({ type }: SubmitFoodListProps) {
           return { foodId: id };
         }),
       });
+      await queryClient.refetchQueries({
+        queryKey: foodSurveyQuery.queryKey,
+      });
     },
   });
 
@@ -53,7 +61,7 @@ function SubmitFoodList({ type }: SubmitFoodListProps) {
     return state.isLastStep();
   });
   const isReadySubmitFoodList =
-    isLastStep && !!list.length && searchActiveState === "out";
+    isLastStep && !!list.length && searchActiveState !== "in";
 
   if (!isReadySubmitFoodList) {
     return null;

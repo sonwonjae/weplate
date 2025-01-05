@@ -23,12 +23,12 @@ function Layout({ children }: PropsWithChildren) {
       >
         <CancelSearch />
         <div className={cn("relative", "h-6")}>
-          <StopRegistFood />
+          <StopRegistFood type="regist" />
           <SelectFoodList />
         </div>
       </Header>
       <Main>{children}</Main>
-      <StepFooter>
+      <StepFooter type="regist">
         <MoveNextStep />
         <RegistFood />
         <SubmitFoodList type="regist" />

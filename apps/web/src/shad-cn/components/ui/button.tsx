@@ -116,6 +116,7 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
+      type = "button",
       className,
       color,
       outline,
@@ -135,6 +136,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           buttonVariants({ color, outline, size, round, loading, className }),
         )}
         ref={ref}
+        type={type}
         {...props}
       >
         {loading && <ThreeDots />}

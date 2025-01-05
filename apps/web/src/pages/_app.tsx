@@ -11,7 +11,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { NextPage } from "next";
 import React, { useState } from "react";
 
-import { Toaster } from "@/shad-cn/components/ui/sonner";
 import { cn } from "@/utils/tailwind";
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
@@ -71,8 +70,6 @@ export default function MyApp({
             </PageLayout>
           </PageLayer>
         </div>
-
-        <Toaster position="top-right" />
       </HydrationBoundary>
     </QueryClientProvider>
   );

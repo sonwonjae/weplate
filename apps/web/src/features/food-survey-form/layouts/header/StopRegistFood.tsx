@@ -15,7 +15,11 @@ import {
 } from "@/shad-cn/components/ui/dialog";
 import { cn } from "@/utils/tailwind";
 
-function StopRegistFood() {
+interface StopRegistFoodProps {
+  type: "regist" | "update";
+}
+
+function StopRegistFood({ type }: StopRegistFoodProps) {
   const router = useRouter();
   const searchActiveState = useSearchFoodStore((state) => {
     return state.searchActiveState();
@@ -55,7 +59,12 @@ function StopRegistFood() {
             outline
             className={cn("w-full")}
             onClick={() => {
-              router.replace("/");
+              switch (type) {
+                case "regist":
+                  return router.replace("/");
+                case "update":
+                  return router.replace(`/assemble/${router.query.assembleId}`);
+              }
             }}
           >
             나가기

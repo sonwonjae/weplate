@@ -49,9 +49,6 @@ function Layout({ children }: PropsWithChildren) {
   const changeReRecommendStatus = useReRecommendFoodStore((state) => {
     return state.changeReRecommendStatus;
   });
-  const resetReRecommendFood = useReRecommendFoodStore((state) => {
-    return state.resetReRecommendFood;
-  });
 
   const shareAssembleLink = async () => {
     await shareLink({
@@ -68,9 +65,10 @@ function Layout({ children }: PropsWithChildren) {
         await Promise.all([
           (async () => {
             // NOTE: 2-1. 음식 추천 시작
-            return await apiAxios.post(
+            await apiAxios.post(
               `/api/food/${router.query.assembleId}/recommend/food`,
             );
+            return;
           })(),
           (async () => {
             // NOTE: 2-2. 최소 2000ms 후 음식 문구 로딩 시작
@@ -95,7 +93,6 @@ function Layout({ children }: PropsWithChildren) {
 
   useEffect(() => {
     resetRecommendFood();
-    resetReRecommendFood();
   }, [router.pathname]);
 
   const isSkipInviteMember = useSkipInviteMemberStore((state) => {
@@ -178,24 +175,7 @@ function Layout({ children }: PropsWithChildren) {
                 return;
               }
 
-              // NOTE: 1. 음식 큐 로딩 시작
-              changeRecommendStatus("marquee-loading");
-
-              setTimeout(async () => {
-                // NOTE: 2. 2000ms 후 음식 문구 로딩 시작
-                changeRecommendStatus("recommend-loading");
-
-                // NOTE: 3. 문구 로딩 시작과 동시에 음식 추천 시작
-                await recommendFoodList();
-
-                setTimeout(() => {
-                  // NOTE: 3. 1000ms 후 음식 문구 로딩 시작
-                  changeRecommendStatus("end");
-                  setTimeout(() => {
-                    changeReRecommendStatus("end");
-                  }, 1000);
-                }, 2000);
-              }, 2000);
+              recommendFoodList();
             }}
           >
             메뉴 추천 시작

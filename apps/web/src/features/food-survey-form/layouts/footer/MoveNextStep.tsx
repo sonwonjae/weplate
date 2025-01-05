@@ -24,7 +24,7 @@ function MoveNextStep() {
     return state.searchActiveState();
   });
   const isReadyMoveToNextStep =
-    !isLastStep && !!list.length && searchActiveState === "out";
+    !isLastStep && !!list.length && searchActiveState !== "in";
 
   if (!isReadyMoveToNextStep) {
     return null;

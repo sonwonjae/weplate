@@ -56,7 +56,9 @@ function Layout({ children }: PropsWithChildren) {
   });
 
   useEffect(() => {
-    resetReRecommendFood();
+    if (!/(waiting-room|result-room)$/.test(router.pathname)) {
+      resetReRecommendFood();
+    }
   }, [router.pathname]);
 
   return (
