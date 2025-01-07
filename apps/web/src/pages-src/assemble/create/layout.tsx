@@ -39,7 +39,11 @@ function Layout({ children }: PropsWithChildren) {
     },
   });
 
-  const { mutateAsync: createAssemble, isPending } = useMutation({
+  const {
+    mutateAsync: createAssemble,
+    isPending,
+    isSuccess,
+  } = useMutation({
     mutationFn: async ({ title }: { title: string }) => {
       // FIXME: 유틸화 하기
       const { data: createdAssemble } = await apiAxios.post<{
@@ -71,7 +75,7 @@ function Layout({ children }: PropsWithChildren) {
   });
 
   const onSubmit = async (values: z.infer<typeof assembleFormSchema>) => {
-    if (isPending) {
+    if (isPending || isSuccess) {
       return;
     }
     await createAssemble(values);
@@ -114,7 +118,7 @@ function Layout({ children }: PropsWithChildren) {
               size="lg"
               round
               loading={isPending}
-              disabled={isPending}
+              disabled={isPending || isSuccess}
               className={cn("w-full")}
             >
               모임 생성

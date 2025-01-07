@@ -67,7 +67,10 @@ function UpdateUserInfoForm() {
                       placeholder="닉네임은여덟글자"
                       counter
                       maxLength={8}
-                      className={cn("border-primary", "border-2")}
+                      className={cn(
+                        isUpdatable && "border-primary",
+                        "border-2",
+                      )}
                       {...field}
                     />
                   </FormControl>

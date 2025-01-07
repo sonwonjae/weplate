@@ -10,6 +10,7 @@ import { SupabaseService } from 'src/supabase/supabase.service';
 
 import { AssembleService } from './assemble.service';
 
+/** FIXME: 기능은 정상동작하지만 해당 로직 auth 서버로 이전하기 */
 @Injectable()
 export class CheckAssemblePermissionMiddleware implements NestMiddleware {
   constructor(private readonly supabaseService: SupabaseService) {}
@@ -65,8 +66,8 @@ export class CheckFullAssembleMiddleware implements NestMiddleware {
     const assembleId = req.params.assembleId as string;
 
     const { joinable, message } = await this.assembleService.checkJoinable(
-      req.userInfo,
       assembleId,
+      req.userInfo,
     );
 
     if (!joinable) {

@@ -13,6 +13,8 @@ import { Input } from "@/shad-cn/components/ui/input";
 import { Label } from "@/shad-cn/components/ui/label";
 import { cn } from "@/utils/tailwind";
 
+import { Textarea } from "./textarea";
+
 const Form = FormProvider;
 
 type FormFieldContextValue<
@@ -153,6 +155,39 @@ const FormInput = React.forwardRef<
 });
 FormInput.displayName = "FormInput";
 
+const FormTextarea = React.forwardRef<
+  React.ElementRef<typeof Textarea>,
+  React.ComponentPropsWithoutRef<typeof Textarea>
+>(({ className, ...props }, ref) => {
+  const { trigger } = useFormContext();
+  const { name, error } = useFormField();
+
+  /** NOTE: maxLength가 있는 경우 trigger 활성화 */
+  React.useEffect(() => {
+    if (props.value) {
+      trigger(name);
+    }
+  }, [
+    typeof props.value === "string" &&
+      typeof props.maxLength === "number" &&
+      props.value.length > props.maxLength,
+    name,
+  ]);
+
+  return (
+    <Textarea
+      ref={ref}
+      className={cn(
+        error && "border-destructive",
+        error && "animate-[vibe_0.2s_ease-in-out]",
+        className,
+      )}
+      {...props}
+    />
+  );
+});
+FormTextarea.displayName = "FormInput";
+
 const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
@@ -223,6 +258,7 @@ export {
   FormItem,
   FormLabel,
   FormInput,
+  FormTextarea,
   FormControl,
   FormDescription,
   FormMessage,

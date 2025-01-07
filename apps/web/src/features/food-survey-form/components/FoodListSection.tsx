@@ -249,6 +249,7 @@ function FoodListSection() {
                   "py-3",
                   "px-5",
                   "active:bg-slate-200",
+                  "cursor-pointer",
 
                   foodStatus === "registed" && "bg-slate-100",
                   foodStatus === "registed" && "text-slate-400",

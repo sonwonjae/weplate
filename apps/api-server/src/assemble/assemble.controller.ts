@@ -69,10 +69,10 @@ export class AssembleController {
 
   @Get(':assembleId/check/full')
   checkFullAssemble(
-    @UserInfo() userInfo: Tables<'users'>,
     @Param('assembleId') assembleId: string,
+    @UserInfo() userInfo?: Tables<'users'>,
   ) {
-    return this.assembleService.checkJoinable(userInfo, assembleId);
+    return this.assembleService.checkJoinable(assembleId, userInfo);
   }
 
   @Post(':assembleId/request/join')
@@ -94,5 +94,10 @@ export class AssembleController {
   @Get(':assembleId/check/countdown')
   countdownRecommendChance(@Param('assembleId') assembleId: string) {
     return this.assembleService.countdownRecommendChance(assembleId);
+  }
+
+  @Delete('exit/all')
+  exitAllAssemble(@UserInfo() userInfo: Tables<'users'>) {
+    return this.assembleService.exitAllAssemble(userInfo.id);
   }
 }

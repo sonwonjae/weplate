@@ -4,9 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssembleModule } from './assemble/assemble.module';
-import { SupabaseModule } from './supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
 import { FoodModule } from './food/food.module';
+import { SupabaseModule } from './supabase/supabase.module';
 
 @Module({
   imports: [

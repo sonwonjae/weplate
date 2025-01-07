@@ -15,6 +15,7 @@ export const checkAuth = (
     try {
       const authQuery = new RQServer({ url: "/api/user/auth/check", res });
       const userInfo = await req.queryClient.fetchQuery(authQuery.queryOptions);
+      req.userInfo = userInfo;
 
       return {
         props: { dehydratedState: dehydrate(req.queryClient) },

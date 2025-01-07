@@ -1,7 +1,10 @@
 import type { CustomIncomingMessage } from "@/middlewares/type";
 import type { ServerResponse } from "http";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { cva } from "class-variance-authority";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
@@ -9,12 +12,19 @@ import { Profile } from "@/pages-src/my/info/components";
 import { UpdateUserInfoForm } from "@/pages-src/my/info/components";
 import Layout from "@/pages-src/my/info/layout";
 import middleware from "@/pages-src/my/info/middleware";
-import { cn } from "@/utils/tailwind";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTrigger } from "@/shad-cn/components/ui/dialog";
 import { Button } from "@/shad-cn/components/ui/button";
-import { authAxios, RQClient } from "@/utils/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from "@/shad-cn/components/ui/dialog";
+import { MoveRequestNewFoodForm } from "@/ui/move-form";
+import { authAxios } from "@/utils/react-query";
+import { cn } from "@/utils/tailwind";
 
 const router = createRouter<CustomIncomingMessage, ServerResponse>();
 router.get(middleware);
@@ -35,17 +45,25 @@ const titleVariants = cva(
   ),
 );
 const itemVariants = cva(
-  cn("border-b", "border-l-slate-200", "w-full", "py-4", "px-5", 'text-left'),
+  cn(
+    "block",
+    "w-full",
+    "border-b",
+    "border-l-slate-200",
+    "w-full",
+    "py-4",
+    "px-5",
+    "text-left",
+  ),
 );
 
 function MyInfo() {
-  const router = useRouter()
-  const queryClient = useQueryClient()
-  const authQuery = new RQClient({ url: "/api/user/auth/check" });
-
+  const router = useRouter();
+  const queryClient = useQueryClient();
 
   return (
     <>
+      <MoveRequestNewFoodForm />
       <Profile />
       <UpdateUserInfoForm />
       <section className={cn("w-full", "bg-background")}>
@@ -68,18 +86,13 @@ function MyInfo() {
           <li>
             <Dialog>
               <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className={cn(itemVariants())}
-                >
+                <button type="button" className={cn(itemVariants())}>
                   로그아웃
                 </button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogDescription>
-                    로그아웃 하시겠어요?
-                  </DialogDescription>
+                  <DialogDescription>로그아웃 하시겠어요?</DialogDescription>
                 </DialogHeader>
                 <DialogFooter className={cn("flex-row")}>
                   <DialogClose asChild>
@@ -91,9 +104,9 @@ function MyInfo() {
                     type="button"
                     className={cn("w-full")}
                     onClick={async () => {
-                        await authAxios.get('/api/user/auth/logout');
-                        queryClient.removeQueries()
-                        router.replace('/login')
+                      await authAxios.get("/api/user/auth/logout");
+                      queryClient.removeQueries();
+                      router.replace("/login");
                     }}
                   >
                     로그아웃
@@ -102,7 +115,14 @@ function MyInfo() {
               </DialogContent>
             </Dialog>
           </li>
-          <li className={cn(itemVariants(), "text-slate-400")}>회원탈퇴</li>
+          <li>
+            <Link
+              href="/my/quit"
+              className={cn(itemVariants(), "text-slate-400")}
+            >
+              회원탈퇴
+            </Link>
+          </li>
         </ul>
       </section>
     </>

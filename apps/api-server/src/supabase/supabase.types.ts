@@ -30,6 +30,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      auth_quit_survey: {
+        Row: {
+          createdAt: string;
+          id: string;
+          reason: string;
+          suggestion: string;
+          userProviderId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id?: string;
+          reason?: string;
+          suggestion?: string;
+          userProviderId?: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          reason?: string;
+          suggestion?: string;
+          userProviderId?: string;
+        };
+        Relationships: [];
+      };
       auth_tokens: {
         Row: {
           accessToken: string;
@@ -285,18 +309,21 @@ export type Database = {
       user__assembles: {
         Row: {
           assembleId: string;
+          createdAt: string;
           id: string;
           permission: Database['public']['Enums']['permission'];
           userId: string;
         };
         Insert: {
           assembleId?: string;
+          createdAt?: string;
           id?: string;
           permission?: Database['public']['Enums']['permission'];
           userId?: string;
         };
         Update: {
           assembleId?: string;
+          createdAt?: string;
           id?: string;
           permission?: Database['public']['Enums']['permission'];
           userId?: string;

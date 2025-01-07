@@ -48,7 +48,7 @@ interface CheckAssembleMember {
 export const checkAssembleMember = (
   { required = true }: CheckAssembleMember = { required: true },
 ): Middleware<CustomIncomingMessage> => {
-  return pipe(checkAssembleParams(), async (req, res) => {
+  return pipe(checkAuth(), checkAssembleParams(), async (req, res) => {
     const assembleId = req.params?.assembleId as string;
 
     if (!required) {

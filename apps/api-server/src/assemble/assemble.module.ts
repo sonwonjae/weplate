@@ -56,7 +56,7 @@ export class AssembleModule {
         path: 'assemble/:assembleId/user/list',
         method: RequestMethod.GET,
       })
-      .apply(RequiredAuthMiddleware)
+      .apply(OptionalAuthMiddleware)
       .forRoutes({
         path: 'assemble/:assembleId/check/full',
         method: RequestMethod.GET,
@@ -75,6 +75,11 @@ export class AssembleModule {
       .forRoutes({
         path: 'assemble/:assembleId/request/join',
         method: RequestMethod.POST,
+      })
+      .apply(RequiredAuthMiddleware)
+      .forRoutes({
+        path: 'assemble/exit/all',
+        method: RequestMethod.DELETE,
       });
   }
 }

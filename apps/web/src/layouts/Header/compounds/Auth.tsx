@@ -20,7 +20,12 @@ function Auth() {
     );
   }
 
-  return <span>{userInfo.name}님 안녕하세요!</span>;
+  return (
+    <span>
+      <span className={cn("text-primary", "font-bold")}>{userInfo.name}</span>님
+      안녕하세요!
+    </span>
+  );
 }
 
 export default Auth;

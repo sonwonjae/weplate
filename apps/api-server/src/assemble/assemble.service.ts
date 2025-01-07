@@ -34,6 +34,7 @@ export class AssembleService {
         userId: userInfo.id,
         assembleId: assemble.id,
         permission: 'owner',
+        createdAt: new Date().toISOString(),
       })
       .select('*')
       .single();
@@ -237,19 +238,21 @@ export class AssembleService {
     );
   }
 
-  async checkJoinable(userInfo: Tables<'users'>, assembleId: string) {
-    const { data: userAssemble } = await this.supabaseService.client
-      .from('user__assembles')
-      .select('*')
-      .eq('userId', userInfo.id)
-      .eq('assembleId', assembleId)
-      .single();
+  async checkJoinable(assembleId: string, userInfo?: Tables<'users'>) {
+    if (userInfo) {
+      const { data: userAssemble } = await this.supabaseService.client
+        .from('user__assembles')
+        .select('*')
+        .eq('userId', userInfo.id)
+        .eq('assembleId', assembleId)
+        .single();
 
-    if (userAssemble) {
-      return {
-        joinable: false,
-        message: 'already member',
-      } as const;
+      if (userAssemble) {
+        return {
+          joinable: false,
+          message: 'already member',
+        } as const;
+      }
     }
 
     const { data: userAssembleList } = await this.supabaseService.client
@@ -280,6 +283,7 @@ export class AssembleService {
         userId: userInfo.id,
         assembleId: assembleId,
         permission: 'member',
+        createdAt: new Date().toISOString(),
       })
       .select('*')
       .single();
@@ -353,5 +357,94 @@ export class AssembleService {
     const remainCount = max - (recommendList?.length ?? 0);
 
     return remainCount >= 0 ? remainCount : 0;
+  }
+
+  async checkAssemblePermission(assembleId: string, userId: string) {
+    const { data: userAssemble } = await this.supabaseService.client
+      .from('user__assembles')
+      .select('*')
+      .eq('userId', userId)
+      .eq('assembleId', assembleId)
+      .single();
+
+    if (!userAssemble) {
+      throw new HttpException('is not assemble user', 400);
+    }
+
+    return userAssemble.permission;
+  }
+
+  async delegateOwnerToOldestMember(assembleId: string, userId: string) {
+    const permission = await this.checkAssemblePermission(assembleId, userId);
+
+    if (permission !== 'owner') {
+      return {
+        delegatable: false,
+        code: -1,
+        message: 'has not permission',
+      } as const;
+    }
+
+    const { data: userAssembleList } = await this.supabaseService.client
+      .from('user__assembles')
+      .select('*')
+      .eq('permission', 'member')
+      .order('createdAt', { ascending: true });
+
+    const oldestMember = userAssembleList?.[0];
+    if (!oldestMember) {
+      return {
+        delegatable: false,
+        code: -2,
+        message: 'has not member',
+      } as const;
+    }
+
+    await this.supabaseService.client
+      .from('user__assembles')
+      .update({ permission: 'member' })
+      .eq('userId', userId)
+      .eq('assembleId', assembleId);
+
+    await this.supabaseService.client
+      .from('user__assembles')
+      .update({ permission: 'owner' })
+      .eq('userId', oldestMember.userId)
+      .eq('assembleId', assembleId);
+
+    return {
+      delegatable: true,
+      code: 1,
+      message: 'success delegate',
+    } as const;
+  }
+
+  async exitAllAssemble(userId: string) {
+    const { data: userAssembleList } = await this.supabaseService.client
+      .from('user__assembles')
+      .select('*')
+      .eq('userId', userId);
+
+    const assembleIdList =
+      userAssembleList?.map(({ assembleId }) => {
+        return assembleId;
+      }) ?? [];
+
+    for await (const assembleId of assembleIdList) {
+      const { code, delegatable } = await this.delegateOwnerToOldestMember(
+        assembleId,
+        userId,
+      );
+      if (!delegatable && code === -1) {
+        await this.removeAssemble(assembleId);
+      }
+
+      if (delegatable) {
+        await this.supabaseService.client
+          .from('user__assembles')
+          .delete()
+          .eq('userId', userId);
+      }
+    }
   }
 }
