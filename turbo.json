@@ -4,6 +4,7 @@
     "globalEnv": [
         "PORT",
         "HOST",
+        "MODE",
 
         "AUTH_PROVIDER_COOKIE_NAME",
         "AUTH_ACCESS_TOKEN_COOKIE_NAME",

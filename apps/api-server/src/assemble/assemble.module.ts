@@ -1,3 +1,5 @@
+import { Agent } from 'node:https';
+
 import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import {
@@ -14,7 +16,13 @@ import {
 import { AssembleService } from './assemble.service';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    HttpModule.register({
+      httpsAgent: new Agent({
+        rejectUnauthorized: process.env.MODE !== 'dev',
+      }),
+    }),
+  ],
   controllers: [AssembleController],
   providers: [AssembleService, SupabaseService],
 })

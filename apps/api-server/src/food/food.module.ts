@@ -13,7 +13,7 @@ import { FoodService } from './food.service';
   imports: [
     HttpModule.register({
       httpsAgent: new Agent({
-        rejectUnauthorized: false,
+        rejectUnauthorized: process.env.MODE !== 'dev',
       }),
     }),
   ],
