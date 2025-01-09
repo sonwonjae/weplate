@@ -176,7 +176,6 @@ function MyQuit() {
             return (
               <FormItem>
                 <FormControl>
-                  {/* FIXME: FormTextarea 만들어서 교체하기 */}
                   <FormTextarea
                     rows={7}
                     maxLength={500}
