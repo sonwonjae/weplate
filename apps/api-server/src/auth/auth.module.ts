@@ -1,3 +1,5 @@
+import { Agent } from 'node:https';
+
 import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { AssembleService } from 'src/assemble/assemble.service';
@@ -8,7 +10,13 @@ import { RequiredAuthMiddleware } from './auth.middleware';
 import { AuthService } from './auth.service';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    HttpModule.register({
+      httpsAgent: new Agent({
+        rejectUnauthorized: false,
+      }),
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, AssembleService, SupabaseService],
 })

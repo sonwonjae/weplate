@@ -14,7 +14,7 @@ function MyInfoPageLink() {
   if (!userInfo) {
     return (
       <Link
-        href={`${process.env.NEXT_PUBLIC_AUTH_SERVER_HOST}/api/user/kakao/login?redirectUrl=${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}`}
+        href={`${process.env.HOST}/api/user/kakao/login?redirectUrl=${process.env.HOST}`}
         className={cn(
           "flex",
           "flex-col",

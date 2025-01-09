@@ -26,7 +26,7 @@ export class AuthController {
     await this.assembleService.exitAllAssemble(userInfo.id);
     await firstValueFrom(
       this.httpService
-        .delete(`${process.env.AUTH_SERVER_HOST}/api/user/auth/quit`, {
+        .delete(`${process.env.HOST}/api/user/auth/quit`, {
           headers: {
             // FIXME: 자동화 유틸 만들어서 공통화 또는 자동화 하기
             Cookie: Object.entries(req.cookies)

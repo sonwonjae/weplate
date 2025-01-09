@@ -1,3 +1,5 @@
+import { Agent } from 'node:https';
+
 import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { RequiredAuthMiddleware } from 'src/auth/auth.middleware';
@@ -8,7 +10,13 @@ import { CheckFoodAlreadyRegistUser } from './food.middleware';
 import { FoodService } from './food.service';
 
 @Module({
-  imports: [HttpModule],
+  imports: [
+    HttpModule.register({
+      httpsAgent: new Agent({
+        rejectUnauthorized: false,
+      }),
+    }),
+  ],
   controllers: [FoodController],
   providers: [FoodService, SupabaseService],
 })

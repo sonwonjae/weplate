@@ -1,5 +1,7 @@
 import type { AxiosError } from "axios";
 
+import https from "https";
+
 import { UseQueryOptions } from "@tanstack/react-query";
 import axios, { AxiosInstance } from "axios";
 
@@ -105,15 +107,21 @@ export interface RQDefaultParams<
 }
 
 export const apiAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_SERVER_HOST,
+  baseURL: process.env.HOST,
   timeout: 1000 * 60,
   withCredentials: true,
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
 });
 
 export const authAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_AUTH_SERVER_HOST,
+  baseURL: process.env.HOST,
   timeout: 1000 * 60,
   withCredentials: true,
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false,
+  }),
 });
 
 export class RQ<

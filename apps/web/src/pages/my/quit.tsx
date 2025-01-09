@@ -107,7 +107,7 @@ function MyQuit() {
         )}
         {!isVerified && (
           <Link
-            href={`${process.env.NEXT_PUBLIC_AUTH_SERVER_HOST}/api/user/kakao/check?redirectUrl=${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/my/quit`}
+            href={`${process.env.HOST}/api/user/kakao/check?redirectUrl=${process.env.HOST}/my/quit`}
             className={cn(
               buttonVariants({
                 outline: true,

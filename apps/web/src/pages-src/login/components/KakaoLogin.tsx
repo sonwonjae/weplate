@@ -9,24 +9,20 @@ function KakaoLogin() {
     const baseRedirectUrl = router.query.redirectUrl;
 
     if (typeof baseRedirectUrl !== "string") {
-      return `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}`;
+      return `${process.env.HOST}`;
     }
     if (/^\/.*/.test(baseRedirectUrl)) {
-      return `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}${baseRedirectUrl}`;
+      return `${process.env.HOST}${baseRedirectUrl}`;
     }
-    if (
-      new RegExp(`/^${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}`).test(
-        baseRedirectUrl,
-      )
-    ) {
+    if (new RegExp(`/^${process.env.HOST}`).test(baseRedirectUrl)) {
       return baseRedirectUrl;
     }
-    return `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}${baseRedirectUrl}`;
+    return `${process.env.HOST}${baseRedirectUrl}`;
   })();
 
   return (
     <a
-      href={`${process.env.NEXT_PUBLIC_AUTH_SERVER_HOST}/api/user/kakao/login?redirectUrl=${redirectUrl}`}
+      href={`${process.env.HOST}/api/user/kakao/login?redirectUrl=${redirectUrl}`}
       className={cn(
         "flex",
         "items-center",

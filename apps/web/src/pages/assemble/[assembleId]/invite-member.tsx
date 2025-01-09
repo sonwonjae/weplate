@@ -33,7 +33,7 @@ function AssembleInviteUserPage() {
       if (navigator.canShare()) {
         try {
           await navigator.share({
-            url: `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/assemble/${router.query.assembleId}/invitee-room`,
+            url: `${process.env.HOST}/assemble/${router.query.assembleId}/invitee-room`,
           });
           return toast.info("공유 성공");
         } catch {
@@ -41,7 +41,7 @@ function AssembleInviteUserPage() {
         }
       } else {
         await navigator.clipboard.writeText(
-          `${process.env.NEXT_PUBLIC_WEB_SERVER_HOST}/assemble/${router.query.assembleId}/invitee-room`,
+          `${process.env.HOST}/assemble/${router.query.assembleId}/invitee-room`,
         );
         toast.info("클립보드에 복사되었어요.", {
           position: "bottom-left",
