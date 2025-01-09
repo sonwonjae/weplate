@@ -6,6 +6,7 @@
         "HOST",
         "MODE",
 
+        "NEXT_PUBLIC_MODE",
         "AUTH_PROVIDER_COOKIE_NAME",
         "AUTH_ACCESS_TOKEN_COOKIE_NAME",
         "AUTH_REFRESH_TOKEN_COOKIE_NAME",
