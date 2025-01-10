@@ -8,18 +8,18 @@
   "scripts": {
     "set:env": "dotenv -e .env",
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 pnpm set:env -- nest start --watch",
     "start": "nest start",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix --config ./.eslintrc.js",
+    "lint:all": "pnpm run format && pnpm run lint",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "generate:type": "node ./bin/generate-type.js && npx eslint --ext .ts src/supabase/supabase.types.ts --fix"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/axios": "^3.1.2",
@@ -50,6 +50,7 @@
     "@types/supertest": "^6.0.0",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "@package/types": "workspace:*",
     "dotenv": "^16.4.5",
     "dotenv-cli": "^7.4.4",
     "eslint": "^8.0.0",

@@ -19,10 +19,6 @@ export class KakaoService {
           'https://kapi.kakao.com/v2/user/me',
           {
             target_id_type: 'user_id',
-
-            // target_id: '3865394988', // 테스터 계정 - 회원 탈퇴
-            // target_id: '3811905639', // 손원재 계정 - 연결 해제
-            // target_id: '3840532092', // 김유라 계정 - 정상 유저
             target_id: providerId,
           },
           {

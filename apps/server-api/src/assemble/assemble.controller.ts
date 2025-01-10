@@ -8,8 +8,8 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { UserInfo } from 'src/auth/auth.decorator';
-import { Tables } from 'src/supabase/supabase.types';
 
 import { AssembleService } from './assemble.service';
 import { CreateAssembleDto } from './dto/create-assemble.dto';

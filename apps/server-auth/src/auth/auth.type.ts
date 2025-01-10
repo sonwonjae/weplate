@@ -1,4 +1,4 @@
-import { Tables } from 'src/supabase/supabase.types';
+import { Tables } from '@package/types';
 
 export interface UserInfo extends Partial<Tables<'users'>> {
   name: string;

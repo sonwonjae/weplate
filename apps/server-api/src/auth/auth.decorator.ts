@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Tables } from 'src/supabase/supabase.types';
+import { Tables } from '@package/types';
 
 export const UserInfo = createParamDecorator(
   (data: unknown, ctx: ExecutionContext) => {

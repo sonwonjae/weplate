@@ -14,9 +14,9 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { AxiosError } from 'axios';
 import { KakaoService } from 'src/kakao/kakao.service';
-import { Tables } from 'src/supabase/supabase.types';
 
 import { AuthService } from './auth.service';
 import { DeleteAuthDto } from './dto/delete-auth.dto';

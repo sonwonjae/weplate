@@ -5,6 +5,7 @@
         "PORT",
         "HOST",
         "MODE",
+        "DOMAIN",
 
         "NEXT_PUBLIC_MODE",
         "AUTH_PROVIDER_COOKIE_NAME",
@@ -24,7 +25,16 @@
         "NEXT_PUBLIC_AUTH_REFRESH_TOKEN_COOKIE_NAME",
         "NEXT_PUBLIC_AUTH_CHECK_COOKIE_NAME",
         "NEXT_PUBLIC_ASSEMBLE_PAGE_LIMIT",
-        "NEXT_PUBLIC_ASSEMBLE_MAX_USER_COUNT"
+        "NEXT_PUBLIC_ASSEMBLE_MAX_USER_COUNT",
+
+        "KAKAO_ADMIN_APP_KEY",
+        "KAKAO_REST_APP_KEY",
+        "KAKAO_LOGIN_REDIRECT_URI",
+        "KAKAO_CHECK_REDIRECT_URI",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_SECRET",
+        "GOOGLE_REDIRECT_URI",
+        "AUTH_CHECK_COOKIE_NAME"
     ],
     "tasks": {
         "dev": {

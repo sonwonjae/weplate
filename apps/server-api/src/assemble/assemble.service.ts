@@ -1,6 +1,6 @@
 import { ConflictException, HttpException, Injectable } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { SupabaseService } from 'src/supabase/supabase.service';
-import { Tables } from 'src/supabase/supabase.types';
 
 import { CreateAssembleDto } from './dto/create-assemble.dto';
 import { GetAssembleInfinityListParamsDto } from './dto/get-assemble-infinity-list.dto';

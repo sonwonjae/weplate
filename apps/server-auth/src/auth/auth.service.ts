@@ -5,8 +5,8 @@ import type {
 } from 'express';
 
 import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { SupabaseService } from 'src/supabase/supabase.service';
-import { Tables } from 'src/supabase/supabase.types';
 import { v4 as uuidv4 } from 'uuid';
 
 import { DeleteAuthDto } from './dto/delete-auth.dto';

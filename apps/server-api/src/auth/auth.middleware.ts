@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { HttpException, Injectable, NestMiddleware } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { Request, Response, NextFunction } from 'express';
 import { catchError, firstValueFrom } from 'rxjs';
-import { Tables } from 'src/supabase/supabase.types';
 
 export interface RequestWithUserInfo extends Request {
   userInfo: Tables<'users'>;

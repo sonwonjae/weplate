@@ -8,8 +8,8 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { UserInfo } from 'src/auth/auth.decorator';
-import { Tables } from 'src/supabase/supabase.types';
 
 import { CreateFoodSurveyDto } from './dto/create-food-survey.dto';
 import { SearchFoodListDto } from './dto/search-food-list.dto';

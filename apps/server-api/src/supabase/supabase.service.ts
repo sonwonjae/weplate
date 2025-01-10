@@ -1,4 +1,4 @@
-import type { Database } from './supabase.types';
+import type { Database } from '@package/types';
 
 import { Injectable } from '@nestjs/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';

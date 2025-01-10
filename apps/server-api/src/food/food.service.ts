@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { SupabaseService } from 'src/supabase/supabase.service';
-import { Tables } from 'src/supabase/supabase.types';
 
 import { CheckFoodSurveyDto } from './dto/check-food-survey.dto';
 import { CreateFoodSurveyDto } from './dto/create-food-survey.dto';

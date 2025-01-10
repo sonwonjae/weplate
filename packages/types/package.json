@@ -1,0 +1,24 @@
+{
+  "name": "@package/types",
+  "version": "0.0.2",
+  "private": true,
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "generate:type": "node ./bin/generate-type.js && npx eslint --ext .ts src/supabase.ts --fix"
+  },
+  "devDependencies": {
+    "@sonwonjae/eslint-config": "^1.0.2",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.4",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "ts-loader": "^9.4.3",
+    "typescript": "^5.7.3"
+  }
+}

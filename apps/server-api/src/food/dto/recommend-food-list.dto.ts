@@ -1,6 +1,6 @@
+import { Tables } from '@package/types';
 import { Transform } from 'class-transformer';
 import { IsString } from 'class-validator';
-import { Tables } from 'src/supabase/supabase.types';
 
 export class RecommendFoodListDto {
   @IsString()

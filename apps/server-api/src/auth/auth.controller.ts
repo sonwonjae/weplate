@@ -2,9 +2,9 @@ import type { Request as ExpressRequest } from 'express';
 
 import { HttpService } from '@nestjs/axios';
 import { Body, Controller, Delete, Req } from '@nestjs/common';
+import { Tables } from '@package/types';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AssembleService } from 'src/assemble/assemble.service';
-import { Tables } from 'src/supabase/supabase.types';
 
 import { UserInfo } from './auth.decorator';
 import { AuthService } from './auth.service';
