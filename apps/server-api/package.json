@@ -1,6 +1,6 @@
 {
-  "name": "api-server",
-  "version": "0.0.1",
+  "name": "server-api",
+  "version": "0.1.0",
   "description": "",
   "author": "",
   "private": true,
