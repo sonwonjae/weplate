@@ -33,7 +33,7 @@ function AssembleInviteUserPage() {
       if (navigator.canShare()) {
         try {
           await navigator.share({
-            url: `${process.env.HOST}/assemble/${router.query.assembleId}/invitee-room`,
+            url: `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/invitee-room`,
           });
           return toast.info("공유 성공");
         } catch {
@@ -41,7 +41,7 @@ function AssembleInviteUserPage() {
         }
       } else {
         await navigator.clipboard.writeText(
-          `${process.env.HOST}/assemble/${router.query.assembleId}/invitee-room`,
+          `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/invitee-room`,
         );
         toast.info("클립보드에 복사되었어요.", {
           position: "bottom-left",
@@ -105,7 +105,7 @@ function AssembleInviteUserPage() {
           </span>
         </h4>
         <ul className={cn("flex", "flex-col", "gap-5", "py-5")}>
-          {assembleUserList.map(({ id, permission, name, isRegisted }) => {
+          {assembleUserList.map(({ id, permission, nickname, isRegisted }) => {
             return (
               <li key={id} className={cn("flex", "items-center", "gap-2")}>
                 <div
@@ -133,7 +133,7 @@ function AssembleInviteUserPage() {
                     />
                   )}
                 </div>
-                <div className={cn("flex-1", "font-bold")}>{name}</div>
+                <div className={cn("flex-1", "font-bold")}>{nickname}</div>
                 <CheckCircle2Icon
                   size={28}
                   className={cn(

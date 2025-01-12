@@ -1,7 +1,7 @@
 import { Tables } from '@package/types';
 
 export interface UserInfo extends Partial<Tables<'users'>> {
-  name: string;
+  nickname: string;
   email: string;
   providerId: string;
 }

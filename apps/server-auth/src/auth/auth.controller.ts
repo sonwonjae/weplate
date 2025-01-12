@@ -50,8 +50,6 @@ export class AuthController {
 
     if (userInfo) {
       res.cookie(process.env.AUTH_CHECK_COOKIE_NAME as string, 'success', {
-        domain: process.env.DOMAIN as string,
-        httpOnly: true,
         sameSite: 'none',
         secure: true,
         path: '/',
@@ -77,7 +75,7 @@ export class AuthController {
           );
       }
     })();
-    const userInfo = await this.authService.addUserWithProviderId(
+    const userInfo = await this.authService.registUserWithProviderId(
       oauthUserInfo.providerId,
       oauthUserInfo,
     );

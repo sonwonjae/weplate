@@ -83,8 +83,7 @@ export class KakaoService {
 
       return {
         avatarUrl: userInfo?.kakao_account?.profile?.profile_image_url ?? '',
-        name: userInfo?.kakao_account?.name ?? '손원재',
-        email: userInfo?.kakao_account?.email ?? 'sonwj091552@gmail.com',
+        email: userInfo?.kakao_account?.email,
         providerId: String(userInfo.id),
         provider: 'kakao',
       } as const;

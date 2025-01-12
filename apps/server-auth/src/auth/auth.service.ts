@@ -6,9 +6,11 @@ import type {
 
 import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 import { Tables } from '@package/types';
+import { shuffle } from 'es-toolkit';
 import { SupabaseService } from 'src/supabase/supabase.service';
 import { v4 as uuidv4 } from 'uuid';
 
+import { ADJECTIVE_LIST, FOOD_NAME_LIST } from './consts/nickname';
 import { DeleteAuthDto } from './dto/delete-auth.dto';
 
 @Injectable()
@@ -176,8 +178,12 @@ export class AuthService {
     return userInfo;
   }
 
+  makeNickname() {
+    return [shuffle(ADJECTIVE_LIST)[0], shuffle(FOOD_NAME_LIST)[0]].join('');
+  }
+
   /** NOTE: CREATE user with providerId */
-  async addUserWithProviderId(
+  async registUserWithProviderId(
     providerId: string,
     newUserInfo: Partial<Tables<'users'>>,
   ) {
@@ -189,7 +195,10 @@ export class AuthService {
 
     const { data: addedUserInfo } = await this.supabaseService.client
       .from('users')
-      .insert(newUserInfo)
+      .insert({
+        ...newUserInfo,
+        nickname: this.makeNickname(),
+      })
       .select('*')
       .single();
 

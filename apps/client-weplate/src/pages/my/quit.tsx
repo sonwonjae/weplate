@@ -50,6 +50,7 @@ function MyQuit() {
     "success";
 
   useEffect(() => {
+    window.Cookies = Cookies;
     if (!isSuccessVerification) {
       return;
     }
@@ -107,7 +108,7 @@ function MyQuit() {
         )}
         {!isVerified && (
           <Link
-            href={`${process.env.HOST}/api/user/kakao/check?redirectUrl=${process.env.HOST}/my/quit`}
+            href={`${process.env.NEXT_PUBLIC_HOST}/api/user/kakao/check?redirectUrl=${process.env.NEXT_PUBLIC_HOST}/my/quit`}
             className={cn(
               buttonVariants({
                 outline: true,
@@ -160,8 +161,8 @@ function MyQuit() {
                     <SelectItem value="서비스 이용 빈도가 낮아서">
                       서비스 이용 빈도가 낮아서
                     </SelectItem>
-                    <SelectItem value="개인정보 보호 우려가 있어서">
-                      개인정보 보호 우려가 있어서
+                    <SelectItem value="기타 (직접 입력)">
+                      기타 (직접 입력)
                     </SelectItem>
                   </SelectContent>
                 </Select>
@@ -210,7 +211,7 @@ function MyQuit() {
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel className={cn("text-xs")}>
+                <FormLabel className={cn("text-sm")}>
                   모든 데이터가 삭제되며, 탈퇴에 동의합니다.
                 </FormLabel>
               </FormItem>

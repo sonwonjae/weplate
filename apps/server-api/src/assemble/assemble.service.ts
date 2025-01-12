@@ -230,7 +230,7 @@ export class AssembleService {
           return {
             id,
             permission,
-            name: users?.name,
+            nickname: users?.nickname,
             isRegisted: !!user__assemble__foods.length,
           };
         },

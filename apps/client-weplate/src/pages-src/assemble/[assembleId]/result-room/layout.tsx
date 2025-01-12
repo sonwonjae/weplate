@@ -37,13 +37,13 @@ function Layout({ children }: PropsWithChildren) {
 
   const shareAssembleLink = async () => {
     await shareLink({
-      url: `${process.env.HOST}/assemble/${router.query.assembleId}`,
+      url: `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}`,
     });
   };
 
   const shareRecommendedFoodResult = async () => {
     await shareLink({
-      url: `${process.env.HOST}/assemble/${router.query.assembleId}/result-room`,
+      url: `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/result-room`,
       position: "top-left",
     });
   };

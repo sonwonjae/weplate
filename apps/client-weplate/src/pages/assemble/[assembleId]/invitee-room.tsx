@@ -70,7 +70,7 @@ function AssembleInviteeRoomPage() {
       >
         <h4 className={cn("font-bold")}>
           <span className={cn("text-primary")}>
-            {assemble?.ownerInfo?.name}
+            {assemble?.ownerInfo?.nickname}
           </span>
           님이 초대합니다.
         </h4>

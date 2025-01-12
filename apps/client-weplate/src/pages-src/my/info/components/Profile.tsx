@@ -34,7 +34,7 @@ function Profile() {
       </div>
       <div className={cn("flex", "flex-col", "items-center", "justify-center")}>
         <div className={cn("font-bold", "text-lg")}>
-          <span className={cn("text-primary")}>{userInfo?.name}</span>
+          <span className={cn("text-primary")}>{userInfo?.nickname}</span>
           <span>님</span>
         </div>
         {userInfo?.provider === "kakao" && (

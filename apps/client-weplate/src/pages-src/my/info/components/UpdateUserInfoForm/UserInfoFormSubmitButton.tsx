@@ -18,7 +18,7 @@ const formButtonVariants = cva(
 function UserInfoFormSubmitButton() {
   const queryClient = useQueryClient();
   const authQuery = new RQClient({ url: "/api/user/auth/check" });
-  const { data: { name: originNickname = "" } = {} } = useQuery(
+  const { data: { nickname: originNickname = "" } = {} } = useQuery(
     authQuery.queryOptions,
   );
 
@@ -38,7 +38,7 @@ function UserInfoFormSubmitButton() {
       const nickname = form.getValues("nickname");
 
       await authAxios.patch("/api/user/auth", {
-        name: nickname,
+        nickname,
       });
 
       await queryClient.refetchQueries({

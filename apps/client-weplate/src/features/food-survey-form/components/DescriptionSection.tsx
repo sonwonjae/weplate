@@ -47,7 +47,7 @@ function DescriptionSection() {
               "animate-[fade-in-right_0.4s_ease-in-out_forwards_0.3s]",
           )}
         >
-          {userInfo?.name}님,
+          {userInfo?.nickname}님,
         </span>
         <br />
         <span

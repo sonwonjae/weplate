@@ -25,7 +25,7 @@ export type CustomIncomingMessage<
   userInfo?: {
     id: string;
     avatarUrl: string;
-    name: string;
+    nickname: string;
     email: string;
     providerId: string;
     provider: string;
@@ -34,7 +34,7 @@ export type CustomIncomingMessage<
   userInfo: {
     id: string;
     avatarUrl: string;
-    name: string;
+    nickname: string;
     email: string;
     providerId: string;
     provider: string;

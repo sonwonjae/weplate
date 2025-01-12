@@ -351,7 +351,7 @@ export type Database = {
           createdAt: string;
           email: string;
           id: string;
-          name: string;
+          nickname: string;
           provider: Database['public']['Enums']['provider'] | null;
           providerId: string;
           updatedAt: string;
@@ -361,7 +361,7 @@ export type Database = {
           createdAt?: string;
           email?: string;
           id?: string;
-          name?: string;
+          nickname?: string;
           provider?: Database['public']['Enums']['provider'] | null;
           providerId?: string;
           updatedAt?: string;
@@ -371,7 +371,7 @@ export type Database = {
           createdAt?: string;
           email?: string;
           id?: string;
-          name?: string;
+          nickname?: string;
           provider?: Database['public']['Enums']['provider'] | null;
           providerId?: string;
           updatedAt?: string;

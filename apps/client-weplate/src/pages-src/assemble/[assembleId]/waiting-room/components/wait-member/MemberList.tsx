@@ -28,7 +28,7 @@ function MemberList() {
         </span>
       </h2>
       <ul className={cn("pt-4", "px-5", "flex", "gap-5", "overflow-x-auto")}>
-        {assembleUserList.map(({ id, permission, name, isRegisted }) => {
+        {assembleUserList.map(({ id, permission, nickname, isRegisted }) => {
           return (
             <li
               key={id}
@@ -65,7 +65,7 @@ function MemberList() {
                   className={cn("w-10", "h-10", "rounded-full", "bg-slate-200")}
                 />
               </div>
-              <div className={cn("flex-1", "text-xs")}>{name}</div>
+              <div className={cn("flex-1", "text-xs")}>{nickname}</div>
               <CheckCircle2Icon
                 size={24}
                 className={cn(

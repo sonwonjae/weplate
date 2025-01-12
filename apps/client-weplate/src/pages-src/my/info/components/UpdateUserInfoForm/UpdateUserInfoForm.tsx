@@ -36,7 +36,7 @@ function UpdateUserInfoForm() {
   const form = useForm<z.infer<typeof userInfoForm>>({
     resolver: zodResolver(userInfoForm),
     defaultValues: {
-      nickname: userInfo?.name ?? "",
+      nickname: userInfo?.nickname ?? "",
     },
   });
 

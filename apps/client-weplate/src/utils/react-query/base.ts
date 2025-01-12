@@ -46,7 +46,7 @@ export type ResponseMap = {
   [key in `/api/assemble/${string}/user/list`]: Array<{
     id: string;
     permission: "owner" | "member";
-    name: string | undefined;
+    nickname: string | undefined;
     isRegisted: boolean;
   }>;
 } & {
@@ -60,7 +60,7 @@ export type ResponseMap = {
       createdAt: string;
       email: string;
       id: string;
-      name: string;
+      nickname: string;
       provider: "kakao";
       providerId: string;
       updatedAt: string;
@@ -70,7 +70,7 @@ export type ResponseMap = {
       createdAt: string;
       email: string;
       id: string;
-      name: string;
+      nickname: string;
       provider: "kakao";
       providerId: string;
       updatedAt: string;
@@ -84,7 +84,7 @@ export type ResponseMap = {
   "/api/user/auth/check": {
     id: string;
     avatarUrl: string;
-    name: string;
+    nickname: string;
     email: string;
     providerId: string;
     provider: string;
@@ -107,7 +107,7 @@ export interface RQDefaultParams<
 }
 
 export const apiAxios = axios.create({
-  baseURL: process.env.HOST,
+  baseURL: process.env.NEXT_PUBLIC_HOST,
   timeout: 1000 * 60,
   withCredentials: true,
   httpsAgent: new https.Agent({
@@ -116,7 +116,7 @@ export const apiAxios = axios.create({
 });
 
 export const authAxios = axios.create({
-  baseURL: process.env.HOST,
+  baseURL: process.env.NEXT_PUBLIC_HOST,
   timeout: 1000 * 60,
   withCredentials: true,
   httpsAgent: new https.Agent({
