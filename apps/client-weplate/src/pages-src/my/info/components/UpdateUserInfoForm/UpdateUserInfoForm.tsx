@@ -19,13 +19,19 @@ import { cn } from "@/utils/tailwind";
 
 import { useUpdatableUserInfoStore } from "../../stores/updatable-user-info";
 
+import { BAD_WORD_LIST } from "./UpdateUserInfoForm.constants";
 import UserInfoFormSubmitButton from "./UserInfoFormSubmitButton";
 
 export const userInfoForm = z.object({
   nickname: z
     .string()
     .min(2, "닉네임은 최소 2글자 이상 입력해주세요.")
-    .max(8, "닉네임은 최대 8글자 이하 입력해주세요."),
+    .max(8, "닉네임은 최대 8글자 이하 입력해주세요.")
+    .refine((value) => {
+      return !BAD_WORD_LIST.some((badWord) => {
+        return value.includes(badWord);
+      });
+    }, "부적절한 어휘가 포함되어 있습니다."),
 });
 
 function UpdateUserInfoForm() {
@@ -65,7 +71,7 @@ function UpdateUserInfoForm() {
                       disabled={!isUpdatable}
                       type="text"
                       placeholder="닉네임은여덟글자"
-                      counter
+                      counter={!!isUpdatable}
                       maxLength={8}
                       className={cn(
                         isUpdatable && "border-primary",

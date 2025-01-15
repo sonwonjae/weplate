@@ -19,6 +19,8 @@ import { apiAxios, RQInfinityClient } from "@/utils/react-query";
 import { InfinityResponseMap } from "@/utils/react-query/infinity";
 import { cn } from "@/utils/tailwind";
 
+import MemberList from "./MemberList";
+
 interface AssembleItemPureProps {
   isActiveToolsAssembleId: string | null;
   activeTools: boolean;
@@ -35,6 +37,7 @@ function AssembleItem({
 
   id: assembleId,
   title,
+  userAssembleList,
 }: AssembleItemProps) {
   const toolsContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -102,7 +105,7 @@ function AssembleItem({
         )}
       >
         <div className={cn("flex", "gap-3", "w-full", "items-center")}>
-          <div className={cn("w-12", "h-12", "rounded-full", "bg-slate-100")} />
+          <MemberList memberList={userAssembleList} />
           <div
             className={cn("flex-1", "flex", "flex-col", "gap-1", "truncate")}
           >
@@ -130,7 +133,9 @@ function AssembleItem({
                 "select-none",
               )}
             >
-              N명과 함께
+              {userAssembleList.length <= 1 && "혼자 참여 중"}
+              {userAssembleList.length > 1 &&
+                `${userAssembleList.length}명 참여 중`}
             </span>
           </div>
           <div ref={toolsContainerRef} className={cn("relative", "h-12")}>

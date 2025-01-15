@@ -23,8 +23,14 @@ export type InfinityResponseMap = {
       id: string;
       title: string;
       createdAt: string;
-      udpated: string;
-      provider: string;
+      udpatedAt: string;
+      userAssembleList: Array<{
+        id: string;
+        permission: "owner" | "member";
+        userId: string | undefined;
+        nickname: string | undefined;
+        isRegisted: boolean;
+      }>;
     }>;
     cursor: string | null;
   };

@@ -4,6 +4,7 @@ import {
   ChevronLeftIcon,
   ShareIcon,
   UserRoundPlusIcon,
+  UsersRoundIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,6 +12,12 @@ import { useEffect, type PropsWithChildren } from "react";
 
 import { Header, Footer, Main } from "@/layouts";
 import { Button } from "@/shad-cn/components/ui/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTrigger,
+} from "@/shad-cn/components/ui/drawer";
+import Members from "@/ui/member/Members";
 import { RQClient } from "@/utils/react-query";
 import { shareLink } from "@/utils/share";
 import { cn } from "@/utils/tailwind";
@@ -97,6 +104,23 @@ function Layout({ children }: PropsWithChildren) {
               <Link href={`/assemble/${router.query.assembleId}/invite-member`}>
                 <UserRoundPlusIcon />
               </Link>
+            )}
+            {!isOwner && (
+              <Drawer>
+                <DrawerTrigger asChild>
+                  <button type="button">
+                    <UsersRoundIcon />
+                  </button>
+                </DrawerTrigger>
+                <DrawerContent>
+                  <div className={cn("relative", "pb-8")}>
+                    <Members>
+                      <Members.Title />
+                      <Members.List />
+                    </Members>
+                  </div>
+                </DrawerContent>
+              </Drawer>
             )}
             <button type="button" onClick={shareAssembleLink}>
               <ShareIcon />

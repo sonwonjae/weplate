@@ -3,6 +3,7 @@ import type { ServerResponse } from "http";
 
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, CrownIcon, Share2Icon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
 import { toast } from "sonner";
@@ -21,6 +22,8 @@ export const getServerSideProps = makeGetServerSideProps(router);
 
 function AssembleInviteUserPage() {
   const router = useRouter();
+  const authQuery = new RQClient({ url: "/api/user/auth/check" });
+  const { data: userInfo } = useQuery(authQuery.queryOptions);
   const assembleUserListQuery = new RQClient({
     url: `/api/assemble/${router.query.assembleId}/user/list`,
   });
@@ -105,46 +108,73 @@ function AssembleInviteUserPage() {
           </span>
         </h4>
         <ul className={cn("flex", "flex-col", "gap-5", "py-5")}>
-          {assembleUserList.map(({ id, permission, nickname, isRegisted }) => {
-            return (
-              <li key={id} className={cn("flex", "items-center", "gap-2")}>
-                <div
-                  className={cn(
-                    "flex",
-                    "justify-center",
-                    "items-center",
-                    "w-10",
-                    "h-10",
-                    "rounded-full",
-                    permission === "owner" && "border",
-                    permission === "owner" && "border-primary",
-                    "bg-white",
-                  )}
-                >
+          {assembleUserList.map(
+            ({ id, permission, userId, nickname, isRegisted }, index) => {
+              return (
+                <li key={id} className={cn("flex", "items-center", "gap-2")}>
                   <div
-                    className={cn("w-9", "h-9", "rounded-full", "bg-slate-200")}
+                    className={cn(
+                      "flex",
+                      "justify-center",
+                      "items-center",
+                      "w-14",
+                      "h-14",
+                      "rounded-full",
+                      userInfo?.id === userId && "border-2",
+                      userInfo?.id === userId && "border-primary",
+                      "bg-white",
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "w-12",
+                        "h-12",
+                        "rounded-full",
+                        "flex",
+                        "items-center",
+                        "justify-center",
+                        "bg-sky-100",
+                      )}
+                    >
+                      {permission === "owner" && (
+                        <Image
+                          width={36}
+                          height={36}
+                          src="/chief.svg"
+                          alt="chief"
+                        />
+                      )}
+                      {permission === "member" && (
+                        <Image
+                          width={32}
+                          height={32}
+                          src="/member.svg"
+                          alt={`member_${index}`}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div className={cn("w-5", "h-5")}>
+                    {permission === "owner" && (
+                      <CrownIcon
+                        size={16}
+                        className={cn("text-yellow-400", "fill-yellow-400")}
+                      />
+                    )}
+                  </div>
+                  <div className={cn("flex-1", "font-bold")}>{nickname}</div>
+                  <CheckCircle2Icon
+                    size={28}
+                    className={cn(
+                      "stroke-white",
+                      isRegisted && "fill-primary",
+                      !isRegisted && "fill-secondary",
+                    )}
                   />
-                </div>
-                <div className={cn("w-5", "h-5")}>
-                  {permission === "owner" && (
-                    <CrownIcon
-                      size={16}
-                      className={cn("text-yellow-400", "fill-yellow-400")}
-                    />
-                  )}
-                </div>
-                <div className={cn("flex-1", "font-bold")}>{nickname}</div>
-                <CheckCircle2Icon
-                  size={28}
-                  className={cn(
-                    "stroke-white",
-                    isRegisted && "fill-primary",
-                    !isRegisted && "fill-secondary",
-                  )}
-                />
-              </li>
-            );
-          })}
+                </li>
+              );
+            },
+          )}
         </ul>
       </section>
     </section>

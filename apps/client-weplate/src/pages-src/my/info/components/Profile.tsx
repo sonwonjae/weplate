@@ -21,13 +21,13 @@ function Profile() {
     >
       <div
         className={cn(
-          "rounded-full",
-          "bg-sky-100",
           "w-20",
           "h-20",
+          "rounded-full",
           "flex",
           "items-center",
           "justify-center",
+          "bg-sky-100",
         )}
       >
         <Image width={64} height={64} src="/chief.svg" alt="chief" />

@@ -1,4 +1,4 @@
-import { FoodWritingListLoading } from "@/ui/loader";
+import { FoodWritingListLoading } from "@/ui/loading/components";
 import { cn } from "@/utils/tailwind";
 
 import { useReRecommendFoodStore } from "../../stores/re-recommend-food";

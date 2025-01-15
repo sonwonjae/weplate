@@ -44,6 +44,7 @@ function FoodWritingListLoading({
               "overflow-hidden",
               "rounded-2xl",
               "p-4",
+              "text-sm",
               // animation styles
               "transition-all",
               "duration-200",

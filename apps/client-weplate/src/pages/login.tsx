@@ -6,6 +6,7 @@ import { createRouter } from "next-connect";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
 import { KakaoLogin } from "@/pages-src/login/components";
+import Head from "@/pages-src/login/head";
 import Layout from "@/pages-src/login/layout";
 import middleware from "@/pages-src/login/middleware";
 import { cn } from "@/utils/tailwind";
@@ -43,6 +44,7 @@ function LoginPage() {
   );
 }
 
+LoginPage.Head = Head;
 LoginPage.Layout = Layout;
 
 export default LoginPage;

@@ -12,6 +12,12 @@ type Req = CustomIncomingMessage;
 const prefetch: Middleware<Req> = async (req, res) => {
   const assembleId = req.params?.assembleId as string;
 
+  const assembleUserListQuery = new RQServer({
+    url: `/api/assemble/${assembleId}/user/list`,
+    res,
+  });
+  await req.queryClient.fetchQuery(assembleUserListQuery.queryOptions);
+
   try {
     const checkJoinableQuery = new RQServer({
       url: `/api/assemble/${assembleId}/check/full`,

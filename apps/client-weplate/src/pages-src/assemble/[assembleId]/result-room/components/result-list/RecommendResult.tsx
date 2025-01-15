@@ -62,6 +62,7 @@ function RecommendResult() {
                 "overflow-hidden",
                 "rounded-2xl",
                 "p-4",
+                "text-sm",
                 // animation styles
                 "transition-all",
                 "duration-200",
@@ -78,20 +79,6 @@ function RecommendResult() {
           );
         })}
       </ul>
-      <p
-        className={cn(
-          "text-slate-600",
-          "text-sm",
-          "text-center",
-          "w-full",
-          reRecommendStatus === "end" &&
-            "animate-[fade-in-up_0.4s_ease-in-out_forwards]",
-        )}
-      >
-        모임원 취향을 반영한 메뉴 3가지를 추천드렸습니다.
-        <br />새 메뉴를 원하시면 &lsquo;다른 메뉴 추천 받기&lsquo; 버튼을
-        눌러주세요.
-      </p>
     </div>
   );
 }

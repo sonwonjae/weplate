@@ -64,7 +64,7 @@ export class AssembleController {
     @UserInfo() userInfo: Tables<'users'>,
     @Param('assembleId') assembleId: string,
   ) {
-    return this.assembleService.getAssembleUserList(userInfo, assembleId);
+    return this.assembleService.getAssembleUserList(assembleId, userInfo);
   }
 
   @Get(':assembleId/check/full')

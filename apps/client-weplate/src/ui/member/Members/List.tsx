@@ -1,13 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, CrownIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
-function MemberList() {
+function List() {
   const router = useRouter();
 
+  const authQuery = new RQClient({ url: "/api/user/auth/check" });
+  const { data: userInfo } = useQuery(authQuery.queryOptions);
   const assembleUserListQuery = new RQClient({
     url: `/api/assemble/${router.query.assembleId}/user/list`,
   });
@@ -15,21 +18,10 @@ function MemberList() {
     assembleUserListQuery.queryOptions,
   );
 
-  const registedMemberCount = assembleUserList.filter(({ isRegisted }) => {
-    return isRegisted;
-  }).length;
-
   return (
-    <div className={cn("flex", "flex-col", "gap-4")}>
-      <h2 className={cn("pt-8", "px-5", "font-bold", "text-lg")}>
-        음식 정보 등록 현황{" "}
-        <span>
-          <span className={cn("text-primary")}>{registedMemberCount}</span>/
-          <span>{assembleUserList.length}</span>
-        </span>
-      </h2>
-      <ul className={cn("pt-4", "px-5", "flex", "gap-5", "overflow-x-auto")}>
-        {assembleUserList.map(({ id, permission, nickname, isRegisted }) => {
+    <ul className={cn("pt-4", "px-5", "flex", "gap-5", "overflow-x-auto")}>
+      {assembleUserList.map(
+        ({ id, permission, userId, nickname, isRegisted }, index) => {
           return (
             <li
               key={id}
@@ -41,11 +33,11 @@ function MemberList() {
                   "flex",
                   "justify-center",
                   "items-center",
-                  "w-11",
-                  "h-11",
+                  "w-14",
+                  "h-14",
                   "rounded-full",
-                  permission === "owner" && "border",
-                  permission === "owner" && "border-primary",
+                  userInfo?.id === userId && "border-2",
+                  userInfo?.id === userId && "border-primary",
                   "bg-white",
                 )}
               >
@@ -58,13 +50,37 @@ function MemberList() {
                       "absolute",
                       "top-0",
                       "-translate-y-full",
-                      "pb-0.5",
                     )}
                   />
                 )}
                 <div
-                  className={cn("w-10", "h-10", "rounded-full", "bg-slate-200")}
-                />
+                  className={cn(
+                    "w-12",
+                    "h-12",
+                    "rounded-full",
+                    "flex",
+                    "items-center",
+                    "justify-center",
+                    "bg-sky-100",
+                  )}
+                >
+                  {permission === "owner" && (
+                    <Image
+                      width={36}
+                      height={36}
+                      src="/chief.svg"
+                      alt="chief"
+                    />
+                  )}
+                  {permission === "member" && (
+                    <Image
+                      width={32}
+                      height={32}
+                      src="/member.svg"
+                      alt={`member_${index}`}
+                    />
+                  )}
+                </div>
               </div>
               <div className={cn("flex-1", "text-xs")}>{nickname}</div>
               <CheckCircle2Icon
@@ -77,10 +93,10 @@ function MemberList() {
               />
             </li>
           );
-        })}
-      </ul>
-    </div>
+        },
+      )}
+    </ul>
   );
 }
 
-export default MemberList;
+export default List;

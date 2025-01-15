@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
+import Head from "@/pages-src/assemble/[assembleId]/invitee-room/head";
 import Layout from "@/pages-src/assemble/[assembleId]/invitee-room/layout";
 import middleware from "@/pages-src/assemble/[assembleId]/invitee-room/middleware";
 import { Button } from "@/shad-cn/components/ui/button";
@@ -103,6 +104,7 @@ function AssembleInviteeRoomPage() {
   );
 }
 
+AssembleInviteeRoomPage.Head = Head;
 AssembleInviteeRoomPage.Layout = Layout;
 
 export default AssembleInviteeRoomPage;

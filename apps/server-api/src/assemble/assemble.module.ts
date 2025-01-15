@@ -59,7 +59,7 @@ export class AssembleModule {
           method: RequestMethod.DELETE,
         },
       )
-      .apply(RequiredAuthMiddleware)
+      .apply(OptionalAuthMiddleware)
       .forRoutes({
         path: 'assemble/:assembleId/user/list',
         method: RequestMethod.GET,

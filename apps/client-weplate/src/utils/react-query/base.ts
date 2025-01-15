@@ -46,6 +46,7 @@ export type ResponseMap = {
   [key in `/api/assemble/${string}/user/list`]: Array<{
     id: string;
     permission: "owner" | "member";
+    userId: string;
     nickname: string | undefined;
     isRegisted: boolean;
   }>;

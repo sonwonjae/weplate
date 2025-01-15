@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shad-cn/components/ui/select";
-import { MoveRequestNewFoodForm } from "@/ui/move-form";
+import { ConnectRequestNewFoodGoogleForm } from "@/ui/connect-external-link/google-form";
 import { cn } from "@/utils/tailwind";
 
 const router = createRouter<CustomIncomingMessage, ServerResponse>();
@@ -67,10 +67,10 @@ function MyQuit() {
 
   return (
     <>
-      <MoveRequestNewFoodForm />
+      <ConnectRequestNewFoodGoogleForm />
       {/* <Test /> */}
       <section className={cn("w-full", "bg-background", "py-2", "px-5")}>
-        <h2 className={cn("font-bold", "text-xl")}>회원 탈퇴 안내</h2>
+        <h2 className={cn("font-bold", "text-lg")}>회원 탈퇴 안내</h2>
         <p className={cn("text-sm", "text-slate-600", "mt-1")}>
           회원 탈퇴 시{" "}
           <span className={cn("text-primary", "font-bold")}>
@@ -80,11 +80,14 @@ function MyQuit() {
           <br />
           한번 삭제된 정보는 복구가 불가능합니다.
         </p>
-        <h3 className={cn("font-bold", "text-lg", "mt-5")}>삭제되는정보</h3>
-        <ul className={cn("text-sm", "text-slate-600", "mt-1")}>
-          <li>• 계정 정보 및 프로필 정보</li>
-          <li>• 생성/참여 중인 모임, 초대한 모임원 정보</li>
-          <li>• 등록한 선호/비선호 음식 정보</li>
+        <ul className={cn("text-sm", "text-slate-600", "mt-4")}>
+          <li>계정 정보 및 프로필 정보 삭제</li>
+          <li>혼자 추천받기로 생성/참여한 모임 삭제</li>
+          <li>혼자 추천받은 음식 추천 기록 삭제</li>
+          <li>모든 모임에서 본인 정보 삭제</li>
+          <li>등록한 선호/비선호 음식 정보 삭제</li>
+          <li>참여 중인 모임 (본인 제외) 유지</li>
+          <li>모임원과 추천받은 음식 추천 기록 유지</li>
         </ul>
       </section>
       <section className={cn("w-full", "bg-background", "py-2", "px-5")}>

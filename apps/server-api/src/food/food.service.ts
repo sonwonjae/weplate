@@ -576,6 +576,11 @@ export class FoodService {
       ].filter(Boolean),
     );
 
+    await this.supabaseService.client
+      .from('assembles')
+      .update({ updatedAt: new Date().toISOString() })
+      .eq('id', assembleId);
+
     return [mostFavoriteFood, fusionCuisineFood, singleCuisineFood];
   }
 

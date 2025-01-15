@@ -2,7 +2,7 @@ import { ChevronRightIcon } from "lucide-react";
 
 import { cn } from "@/utils/tailwind";
 
-function MoveRequestNewFoodForm() {
+function ConnectRequestNewFoodGoogleForm() {
   return (
     <section className={cn("w-full", "py-4", "px-5", "bg-background")}>
       <div
@@ -27,4 +27,4 @@ function MoveRequestNewFoodForm() {
   );
 }
 
-export default MoveRequestNewFoodForm;
+export default ConnectRequestNewFoodGoogleForm;

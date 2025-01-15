@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
+import Members from "@/ui/member/Members";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
@@ -8,7 +9,6 @@ import { useRecommendFoodStore } from "../../stores/recommend-food";
 import { useSkipInviteMemberStore } from "../../stores/skip-invite-member";
 
 import FoodMarquee from "./FoodMarquee";
-import MemberList from "./MemberList";
 import RecommendLoading from "./RecommendLoading";
 
 function WaitMember() {
@@ -45,7 +45,9 @@ function WaitMember() {
 
   return (
     <section className={cn("h-full", "flex", "flex-col", "gap-8")}>
-      <MemberList />
+      <Members>
+        <Members.Title />
+      </Members>
       {(recommendStatus === "wait" ||
         recommendStatus === "marquee-loading") && <FoodMarquee />}
       {(recommendStatus === "recommend-loading" ||

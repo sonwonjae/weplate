@@ -108,6 +108,7 @@ export class AssembleService {
     }
 
     if (sort === 'latest') {
+      console.log('latest');
       query = query.order('updatedAt', { ascending: false });
     }
     if (sort === 'oldest') {
@@ -124,9 +125,23 @@ export class AssembleService {
 
     const { data: myAssembleList } = await query;
 
+    const mappedMyAssembleList = await Promise.all(
+      (myAssembleList ?? []).map(
+        async ({ id, title, createdAt, updatedAt }) => {
+          return {
+            id,
+            title,
+            createdAt,
+            updatedAt,
+            userAssembleList: await this.getAssembleUserList(id, userInfo),
+          };
+        },
+      ),
+    );
+
     return {
-      list: myAssembleList ?? [],
-      cursor: myAssembleList?.[myAssembleList.length - 1]?.id ?? null,
+      list: mappedMyAssembleList,
+      cursor: mappedMyAssembleList[mappedMyAssembleList.length - 1]?.id ?? null,
     };
   }
 
@@ -211,7 +226,7 @@ export class AssembleService {
     return true;
   }
 
-  async getAssembleUserList(userInfo: Tables<'users'>, assembleId: string) {
+  async getAssembleUserList(assembleId: string, userInfo?: Tables<'users'>) {
     const { data: userAssemblesWithFoodsSurvey = [] } =
       await this.supabaseService.client
         .from('user__assembles')
@@ -222,14 +237,33 @@ export class AssembleService {
             users(*)
           `,
         )
-        .eq('assembleId', assembleId);
+        .eq('assembleId', assembleId)
+        .order('createdAt', { ascending: true });
+
+    const sortedUserAssemblesWithFoodsSurvey =
+      userAssemblesWithFoodsSurvey
+        /** NOTE: 본인인 경우 방장 다음으로 위치 */
+        ?.sort((a, b) => {
+          if (a.id === userInfo?.id && b.id !== userInfo?.id) {
+            return -1;
+          }
+          return 0;
+        })
+        /** NOTE: 방장인 경우 무조건 1번째 위치 */
+        .sort((a, b) => {
+          if (a.permission === 'owner' && b.permission !== 'owner') {
+            return -1;
+          }
+          return 0;
+        }) ?? [];
 
     return (
-      userAssemblesWithFoodsSurvey?.map(
+      sortedUserAssemblesWithFoodsSurvey.map(
         ({ id, permission, user__assemble__foods, users }) => {
           return {
             id,
             permission,
+            userId: users?.id,
             nickname: users?.nickname,
             isRegisted: !!user__assemble__foods.length,
           };

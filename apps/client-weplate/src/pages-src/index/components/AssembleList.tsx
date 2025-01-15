@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
 import { Skeleton } from "@/shad-cn/components/ui/skeleton";
-import { ThreeDots } from "@/ui/loading-icons";
+import { ThreeDots } from "@/ui/loading/icons";
 import { RQInfinityClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
@@ -123,14 +123,13 @@ function AssembleList() {
         "px-5",
       )}
     >
-      {myAssembleList.map(({ id: assembleId, ...assembleItem }) => {
+      {myAssembleList.map((assembleItem) => {
         return (
           <AssembleItem
-            key={assembleId}
+            key={assembleItem.id}
             isActiveToolsAssembleId={isActiveToolsAssembleId}
-            activeTools={isActiveToolsAssembleId === assembleId}
+            activeTools={isActiveToolsAssembleId === assembleItem.id}
             changeActiveTools={changeActiveTools}
-            id={assembleId}
             {...assembleItem}
           />
         );

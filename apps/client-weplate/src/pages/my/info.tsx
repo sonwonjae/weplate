@@ -22,7 +22,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/shad-cn/components/ui/dialog";
-import { MoveRequestNewFoodForm } from "@/ui/move-form";
+import { ConnectRequestNewFoodGoogleForm } from "@/ui/connect-external-link/google-form";
 import { authAxios } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
@@ -63,24 +63,40 @@ function MyInfo() {
 
   return (
     <>
-      <MoveRequestNewFoodForm />
+      <ConnectRequestNewFoodGoogleForm />
       <Profile />
       <UpdateUserInfoForm />
       <section className={cn("w-full", "bg-background")}>
-        <ul className={cn("pb-20")}>
+        <ul className={cn("pt-10", "pb-32")}>
           <li className={cn(titleVariants())}>음식 추가</li>
-          <li
+          <a
+            href="http://bit.ly/3VQOABC"
+            target="_blank"
             className={cn(itemVariants())}
-            onClick={() => {
-              window.open("http://bit.ly/3VQOABC", "_blank");
-            }}
           >
             새로운 음식 제안
-          </li>
+          </a>
 
           <li className={cn(titleVariants())}>고객 지원</li>
+          <a
+            href="https://bit.ly/4hbv8HX"
+            target="_blank"
+            className={cn(itemVariants())}
+          >
+            버그 및 오류 신고
+          </a>
+          <a
+            href="https://bit.ly/4jafrm8"
+            target="_blank"
+            className={cn(itemVariants())}
+          >
+            문의하기
+          </a>
+
+          <li className={cn(titleVariants())}>서비스 약관</li>
           <li className={cn(itemVariants())}>개인정보처리방침</li>
           <li className={cn(itemVariants())}>이용약관</li>
+          <li className={cn(itemVariants())}>오픈소스 라이선스</li>
 
           <li className={cn(titleVariants())}>계정 설정</li>
           <li>
@@ -116,10 +132,7 @@ function MyInfo() {
             </Dialog>
           </li>
           <li>
-            <Link
-              href="/my/quit"
-              className={cn(itemVariants(), "text-slate-400")}
-            >
+            <Link href="/my/quit" className={cn(itemVariants())}>
               회원탈퇴
             </Link>
           </li>
