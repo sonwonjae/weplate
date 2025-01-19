@@ -12,6 +12,7 @@ import { Tables } from '@package/types';
 import { UserInfo } from 'src/auth/auth.decorator';
 
 import { CreateFoodSurveyDto } from './dto/create-food-survey.dto';
+import { ManageFoodListDto } from './dto/manage-food-list.dto';
 import { SearchFoodListDto } from './dto/search-food-list.dto';
 import { FoodService } from './food.service';
 
@@ -22,6 +23,11 @@ export class FoodController {
   @Get('search/list')
   searchFoodList(@Query() query: SearchFoodListDto) {
     return this.foodService.searchFoodList(query);
+  }
+
+  @Get('detail/list')
+  getFoodListWithCuisine(@Query() query: ManageFoodListDto) {
+    return this.foodService.getFoodListWithCuisine(query);
   }
 
   @Get(':assembleId/survey')

@@ -347,6 +347,7 @@ export type Database = {
       };
       users: {
         Row: {
+          authority: Database['public']['Enums']['authority'];
           avatarUrl: string;
           createdAt: string;
           email: string;
@@ -357,6 +358,7 @@ export type Database = {
           updatedAt: string;
         };
         Insert: {
+          authority?: Database['public']['Enums']['authority'];
           avatarUrl?: string;
           createdAt?: string;
           email?: string;
@@ -367,6 +369,7 @@ export type Database = {
           updatedAt?: string;
         };
         Update: {
+          authority?: Database['public']['Enums']['authority'];
           avatarUrl?: string;
           createdAt?: string;
           email?: string;
@@ -386,6 +389,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
+      authority: 'manager' | 'member';
       food_survey_type: 'favorite' | 'hate';
       permission: 'owner' | 'member';
       provider: 'kakao';

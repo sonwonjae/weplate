@@ -1,0 +1,1 @@
+export { FoodTable } from "./FoodTable";

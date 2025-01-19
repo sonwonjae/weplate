@@ -69,34 +69,48 @@ function MyInfo() {
       <section className={cn("w-full", "bg-background")}>
         <ul className={cn("pt-10", "pb-32")}>
           <li className={cn(titleVariants())}>음식 추가</li>
-          <a
-            href="http://bit.ly/3VQOABC"
-            target="_blank"
-            className={cn(itemVariants())}
-          >
-            새로운 음식 제안
-          </a>
+          <li>
+            <Link
+              href="http://bit.ly/3VQOABC"
+              target="_blank"
+              className={cn(itemVariants())}
+            >
+              새로운 음식 제안
+            </Link>
+          </li>
 
           <li className={cn(titleVariants())}>고객 지원</li>
-          <a
-            href="https://bit.ly/4hbv8HX"
-            target="_blank"
-            className={cn(itemVariants())}
-          >
-            버그 및 오류 신고
-          </a>
-          <a
-            href="https://bit.ly/4jafrm8"
-            target="_blank"
-            className={cn(itemVariants())}
-          >
-            문의하기
-          </a>
+          <li>
+            <Link
+              href="https://bit.ly/4hbv8HX"
+              target="_blank"
+              className={cn(itemVariants())}
+            >
+              버그 및 오류 신고
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="https://bit.ly/4jafrm8"
+              target="_blank"
+              className={cn(itemVariants())}
+            >
+              문의하기
+            </Link>
+          </li>
 
           <li className={cn(titleVariants())}>서비스 약관</li>
           <li className={cn(itemVariants())}>개인정보처리방침</li>
           <li className={cn(itemVariants())}>이용약관</li>
-          <li className={cn(itemVariants())}>오픈소스 라이선스</li>
+          <li>
+            <Link
+              href="/opensource-lincense"
+              target="_blank"
+              className={cn(itemVariants())}
+            >
+              오픈소스 라이선스
+            </Link>
+          </li>
 
           <li className={cn(titleVariants())}>계정 설정</li>
           <li>

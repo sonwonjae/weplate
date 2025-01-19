@@ -6,6 +6,7 @@ import { CheckFoodSurveyDto } from './dto/check-food-survey.dto';
 import { CreateFoodSurveyDto } from './dto/create-food-survey.dto';
 import { DeleteFoodSurveyDto } from './dto/delete-food-survey.dto';
 import { GetFoodSurveyDto } from './dto/get-food-survey.dto';
+import { ManageFoodListDto } from './dto/manage-food-list.dto';
 import { RecommendFoodListDto } from './dto/recommend-food-list.dto';
 import { SearchFoodListDto } from './dto/search-food-list.dto';
 import { UpdateFoodSurveyDto } from './dto/update-food-survey.dto';
@@ -16,7 +17,6 @@ export class FoodService {
 
   async searchFoodList({ search }: SearchFoodListDto) {
     let query = this.supabaseService.client.from('foods').select('*');
-
     if (search) {
       query = query.ilike('name', `%${search}%`);
     }
@@ -24,6 +24,41 @@ export class FoodService {
     const { data: foodList } = await query;
 
     return foodList ?? [];
+  }
+
+  async getFoodListWithCuisine({ search }: ManageFoodListDto) {
+    let query = this.supabaseService.client.from('foods').select(`
+        *,
+        food__cuisine!inner(
+          *,
+          cuisine!inner(*)
+        )
+      `);
+
+    if (search) {
+      query = query.ilike('name', `%${search}%`);
+    }
+
+    const { data: foodListWithCuisine } = await query;
+
+    return (
+      foodListWithCuisine?.map(({ food__cuisine, ...food }) => {
+        return {
+          ...food,
+          cuisine: food__cuisine.reduce((acc, { cuisine }) => {
+            if (
+              acc.find(({ id }) => {
+                return id === cuisine?.id;
+              })
+            ) {
+              return acc;
+            }
+
+            return [...acc, cuisine];
+          }, []),
+        };
+      }) ?? []
+    );
   }
 
   async getFoodListSurvey(

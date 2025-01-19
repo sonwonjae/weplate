@@ -2,6 +2,7 @@ import type { AxiosError } from "axios";
 
 import https from "https";
 
+import { Tables } from "@package/types";
 import { UseQueryOptions } from "@tanstack/react-query";
 import axios, { AxiosInstance } from "axios";
 
@@ -30,6 +31,15 @@ export type ResponseMap = {
     foodName: string;
   }>;
 } & {
+  [key in `/api/food/detail/list?${string}`]: Array<
+    {
+      cuisine: {
+        id: string;
+        name: string;
+      }[];
+    } & Tables<"foods">
+  >;
+} & {
   [key in `/api/food/${string}/survey`]: {
     favorite: Array<{
       id: string;
@@ -56,46 +66,16 @@ export type ResponseMap = {
     id: string;
     title: string;
     updatedAt: string;
-    ownerInfo: {
-      avatarUrl: string;
-      createdAt: string;
-      email: string;
-      id: string;
-      nickname: string;
-      provider: "kakao";
-      providerId: string;
-      updatedAt: string;
-    };
-    memberList: {
-      avatarUrl: string;
-      createdAt: string;
-      email: string;
-      id: string;
-      nickname: string;
-      provider: "kakao";
-      providerId: string;
-      updatedAt: string;
-    }[];
+    ownerInfo: Tables<"users">;
+    memberList: Tables<"users">[];
   };
 } & {
   "/api/assemble/check/within-creation-limit": {
     isWithinCreationLimit: boolean;
     limit: number;
   };
-  "/api/user/auth/check": {
-    id: string;
-    avatarUrl: string;
-    nickname: string;
-    email: string;
-    providerId: string;
-    provider: string;
-  };
-  "/api/food/search/list": Array<{
-    id: string;
-    name: string;
-    createdAt: string;
-    updatedAt: string;
-  }>;
+  "/api/user/auth/check": Tables<"users">;
+  "/api/food/search/list": Array<Tables<"foods">>;
 };
 
 export interface RQDefaultParams<

@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 
+import { Tables } from "@package/types";
 import { QueryClient } from "@tanstack/react-query";
 import { GetServerSidePropsResult } from "next";
 import { createRouter } from "next-connect";
@@ -22,23 +23,9 @@ export type CustomIncomingMessage<
   cookies: Record<string, string | undefined>;
   queryClient: QueryClient;
 } & {
-  userInfo?: {
-    id: string;
-    avatarUrl: string;
-    nickname: string;
-    email: string;
-    providerId: string;
-    provider: string;
-  };
+  userInfo?: Tables<"users">;
 } & {
-  userInfo: {
-    id: string;
-    avatarUrl: string;
-    nickname: string;
-    email: string;
-    providerId: string;
-    provider: string;
-  };
+  userInfo: Tables<"users">;
 };
 
 export type Middleware<
