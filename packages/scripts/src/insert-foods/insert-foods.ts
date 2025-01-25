@@ -26,6 +26,9 @@ const main = async () => {
       cuisineList: cuisineList.split(', '),
     };
   });
+  if (foodListInScript[0].foodName === 'food_name') {
+    foodListInScript.shift();
+  }
   const cuisineListInScript = [
     ...new Set(
       foodListInScript.flatMap(({ cuisineList }) => {
