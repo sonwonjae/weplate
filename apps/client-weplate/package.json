@@ -5,7 +5,7 @@
   "scripts": {
     "set:env": "dotenv -e .env",
     "dev": "pnpm set:env -- next dev",
-    "build": "next build",
+    "build": "pnpm set:env -- next build",
     "start": "pnpm set:env -- next start",
     "lint": "next lint"
   },
