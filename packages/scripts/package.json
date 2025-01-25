@@ -1,0 +1,27 @@
+{
+  "name": "@package/scripts",
+  "version": "0.0.1",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "set:env": "dotenv -e .env",
+    "insert-foods": "pnpm set:env -- ts-node ./src/insert-foods/insert-foods.ts"
+  },
+  "devDependencies": {
+    "@sonwonjae/eslint-config": "^1.0.2",
+    "@supabase/supabase-js": "^2.46.2",
+    "@types/node": "^22.10.9",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@package/types": "workspace:*",
+    "dotenv": "^16.4.5",
+    "dotenv-cli": "^7.4.4",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.0",
+    "ts-loader": "^9.4.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.7.3"
+  }
+}
