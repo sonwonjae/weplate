@@ -185,7 +185,14 @@ export class AuthService {
   /** NOTE: CREATE user with providerId */
   async registUserWithProviderId(
     providerId: string,
-    newUserInfo: Partial<Tables<'users'>>,
+    newUserInfo: {
+      readonly avatarUrl: Tables<'users'>['avatarUrl'];
+      readonly email: Tables<'users'>['email'];
+      readonly providerId: Tables<'users'>['providerId'];
+      readonly gender: Tables<'users'>['gender'];
+      readonly birthyear: Tables<'users'>['birthyear'];
+      readonly provider: Tables<'users'>['provider'];
+    },
   ) {
     const userInfo = await this.getUserWithProviderId(providerId);
 

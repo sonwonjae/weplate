@@ -82,9 +82,11 @@ export class KakaoService {
       );
 
       return {
-        avatarUrl: userInfo?.kakao_account?.profile?.profile_image_url ?? '',
-        email: userInfo?.kakao_account?.email,
+        avatarUrl: '',
+        email: userInfo?.kakao_account?.email ?? '',
         providerId: String(userInfo.id),
+        gender: userInfo?.kakao_account?.gender ?? null,
+        birthyear: Number(userInfo?.kakao_account?.birthyear ?? 0),
         provider: 'kakao',
       } as const;
     } catch (err) {

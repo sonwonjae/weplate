@@ -349,8 +349,10 @@ export type Database = {
         Row: {
           authority: Database['public']['Enums']['authority'];
           avatarUrl: string;
+          birthyear: number;
           createdAt: string;
           email: string;
+          gender: Database['public']['Enums']['gender'] | null;
           id: string;
           nickname: string;
           provider: Database['public']['Enums']['provider'] | null;
@@ -360,8 +362,10 @@ export type Database = {
         Insert: {
           authority?: Database['public']['Enums']['authority'];
           avatarUrl?: string;
+          birthyear: number;
           createdAt?: string;
           email?: string;
+          gender?: Database['public']['Enums']['gender'] | null;
           id?: string;
           nickname?: string;
           provider?: Database['public']['Enums']['provider'] | null;
@@ -371,8 +375,10 @@ export type Database = {
         Update: {
           authority?: Database['public']['Enums']['authority'];
           avatarUrl?: string;
+          birthyear?: number;
           createdAt?: string;
           email?: string;
+          gender?: Database['public']['Enums']['gender'] | null;
           id?: string;
           nickname?: string;
           provider?: Database['public']['Enums']['provider'] | null;
@@ -391,6 +397,7 @@ export type Database = {
     Enums: {
       authority: 'manager' | 'member';
       food_survey_type: 'favorite' | 'hate';
+      gender: 'male' | 'female';
       permission: 'owner' | 'member';
       provider: 'kakao';
       recommend_type: 'single-cuisine' | 'multi-cuisine' | 'most-favorite';

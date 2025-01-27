@@ -23,7 +23,6 @@ export class AuthController {
     @Body() body: DeleteAuthDto,
     @UserInfo() userInfo: Tables<'users'>,
   ) {
-    console.log('come in');
     await this.assembleService.exitAllAssemble(userInfo.id);
     await firstValueFrom(
       this.httpService

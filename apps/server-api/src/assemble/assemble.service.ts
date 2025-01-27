@@ -108,7 +108,6 @@ export class AssembleService {
     }
 
     if (sort === 'latest') {
-      console.log('latest');
       query = query.order('updatedAt', { ascending: false });
     }
     if (sort === 'oldest') {
