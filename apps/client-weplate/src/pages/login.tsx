@@ -24,19 +24,37 @@ function LoginPage() {
         "flex",
         "flex-col",
         "items-center",
-        "gap-4",
-        "h-full",
         "justify-center",
+        "gap-32",
+        "h-full",
         "py-4",
         "px-5",
         "bg-background",
       )}
     >
-      <Image src="/smile.png" alt="smile" width={214} height={210} />
-      <h2 className={cn("text-xl", "font-bold")}>
-        지금 최적의 음식을 정해보세요!
-      </h2>
-      <p className={cn("text-slate-600")}>최적의 모임음식 선택</p>
+      <div
+        className={cn(
+          "w-full",
+          "flex",
+          "flex-col",
+          "items-center",
+          "justify-center",
+          "gap-4",
+        )}
+      >
+        <Image src="/weplate_login.png" alt="smile" width={320} height={206} />
+        <div>
+          <h2 className={cn("text-xl", "font-bold", "text-center")}>
+            모임의 즐거움을 더하는
+            <br />
+            취향 존중 메뉴 추천
+          </h2>
+          <p className={cn("text-slate-600")}>
+            <span className={cn("text-primary")}>위플레이트</span>에서
+            경험하세요!
+          </p>
+        </div>
+      </div>
       <div className={cn("w-full", "px-4")}>
         <KakaoLogin />
       </div>
