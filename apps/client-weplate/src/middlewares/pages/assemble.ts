@@ -77,7 +77,7 @@ export const checkAssembleMember = (
 
     return {
       redirect: {
-        destination: `/assemble/${assembleId}/invitee-room`,
+        destination: `/`,
         permanent: true,
       },
     };
