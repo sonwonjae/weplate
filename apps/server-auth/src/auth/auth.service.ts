@@ -43,9 +43,23 @@ export class AuthService {
         return this.checkRefreshToken(req, res);
       }
 
-      const userId = await this.cacheManager.get<string>(
-        `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
-      );
+      const userId = await (async () => {
+        const cachedUserId = await this.cacheManager.get<string>(
+          `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
+        );
+
+        if (cachedUserId) {
+          return cachedUserId;
+        }
+
+        const { data: authToken } = await this.supabaseService.client
+          .from('auth_tokens')
+          .select('*')
+          .eq('accessToken', accessToken)
+          .single();
+
+        return authToken?.userId;
+      })();
 
       if (!userId) {
         return this.checkRefreshToken(req, res);
@@ -64,7 +78,6 @@ export class AuthService {
     if (!refreshToken) {
       throw new ForbiddenException();
     }
-
     const { data: authToken } = await this.supabaseService.client
       .from('auth_tokens')
       .select('*')
