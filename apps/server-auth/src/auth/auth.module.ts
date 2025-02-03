@@ -1,6 +1,7 @@
 import { Agent } from 'node:https';
 
 import { HttpModule } from '@nestjs/axios';
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { KakaoService } from 'src/kakao/kakao.service';
 import { SupabaseService } from 'src/supabase/supabase.service';
@@ -15,6 +16,7 @@ import { AuthService } from './auth.service';
         rejectUnauthorized: process.env.MODE !== 'dev',
       }),
     }),
+    CacheModule.register(),
   ],
   controllers: [AuthController],
   providers: [AuthService, SupabaseService, KakaoService],

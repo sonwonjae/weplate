@@ -58,8 +58,8 @@ export class RQInfinity<
     this._params = params;
 
     this.axiosInstance = (() => {
-      switch (url) {
-        case "/api/assemble/list/my":
+      switch (true) {
+        case /^\/api/.test(this.url):
         default:
           return apiAxios;
       }

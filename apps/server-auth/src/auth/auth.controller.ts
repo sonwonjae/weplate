@@ -61,6 +61,7 @@ export class AuthController {
 
   @Get('callback/login/:provider')
   async loginCallback(
+    @Req() req: ExpressRequest,
     @Res({ passthrough: true }) res: ExpressResponse,
     @Param('provider') provider: 'kakao',
     @Query('code') code: string,
@@ -79,7 +80,7 @@ export class AuthController {
       oauthUserInfo.providerId,
       oauthUserInfo,
     );
-    await this.authService.reissueToken(res, userInfo.id);
+    await this.authService.reissueToken(req, res, userInfo.id);
 
     const redirectUrl = state;
     return res.status(302).redirect(redirectUrl);
@@ -93,7 +94,6 @@ export class AuthController {
   ) {
     const userInfo = await this.authService.checkToken(req, res);
     const { provider, providerId } = userInfo;
-
     try {
       switch (provider) {
         case 'kakao':
@@ -108,7 +108,7 @@ export class AuthController {
 
       /** NOTE: 회원 탈퇴했거나 앱 연결을 끊은 경우 */
       if (errorData.code === -101) {
-        await this.authService.deleteUser(res, userInfo.id);
+        await this.authService.deleteUser(req, res, userInfo.id);
       }
 
       throw error;
@@ -125,7 +125,7 @@ export class AuthController {
       req,
       res,
     );
-    await this.authService.expireToken(res);
+    await this.authService.expireToken(req, res);
 
     switch (provider) {
       case 'kakao':
@@ -146,8 +146,8 @@ export class AuthController {
       providerId,
       id: userId,
     } = await this.authService.checkToken(req, res);
-    await this.authService.expireToken(res);
-    await this.authService.deleteUser(res, userId);
+    await this.authService.expireToken(req, res);
+    await this.authService.deleteUser(req, res, userId);
     await this.authService.registQuitUserSurveyForm(providerId, body);
 
     switch (provider) {

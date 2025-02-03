@@ -33,8 +33,6 @@ const prefetch: Middleware<HomePageReq> = async (req, res) => {
 };
 
 const middleware = pipe<HomePageReq>(
-  checkAuth(),
-  checkWithInCreationLimit(),
   checkSingleQuery({
     queryName: "search",
   }),
@@ -46,6 +44,17 @@ const middleware = pipe<HomePageReq>(
     queryName: "limit",
     defaultSingleQuery: Number(process.env.NEXT_PUBLIC_ASSEMBLE_PAGE_LIMIT),
   }),
+  () => {
+    return { props: {} };
+  },
+  checkAuth(),
+  () => {
+    return { props: {} };
+  },
+  checkWithInCreationLimit(),
+  () => {
+    return { props: {} };
+  },
   prefetch,
 );
 

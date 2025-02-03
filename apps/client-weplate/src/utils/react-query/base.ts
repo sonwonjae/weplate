@@ -131,7 +131,7 @@ export class RQ<
       switch (true) {
         case /^\/api\/user/.test(this.url):
           return authAxios;
-        case /^^\/api/.test(this.url):
+        case /^\/api/.test(this.url):
         default:
           return apiAxios;
       }

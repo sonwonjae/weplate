@@ -4,6 +4,7 @@ import type {
   Response as ExpressResponse,
 } from 'express';
 
+import { Cache } from '@nestjs/cache-manager';
 import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 import { Tables } from '@package/types';
 import { shuffle } from 'es-toolkit';
@@ -15,7 +16,10 @@ import { DeleteAuthDto } from './dto/delete-auth.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private readonly supabaseService: SupabaseService,
+    private readonly cacheManager: Cache,
+  ) {}
 
   /** NOTE: READ token */
   getToken(req: ExpressRequest) {
@@ -39,17 +43,15 @@ export class AuthService {
         return this.checkRefreshToken(req, res);
       }
 
-      const { data: authToken } = await this.supabaseService.client
-        .from('auth_tokens')
-        .select('*')
-        .eq('accessToken', accessToken)
-        .single();
+      const userId = await this.cacheManager.get<string>(
+        `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
+      );
 
-      if (!authToken) {
+      if (!userId) {
         return this.checkRefreshToken(req, res);
       }
 
-      return this.getUserWithUserId(authToken.userId);
+      return this.getUserWithUserId(userId);
     } catch (error) {
       throw error as HttpException;
     }
@@ -73,7 +75,7 @@ export class AuthService {
       throw new ForbiddenException();
     }
 
-    await this.reissueToken(res, authToken.userId);
+    await this.reissueToken(req, res, authToken.userId);
     return this.getUserWithUserId(authToken.userId);
   }
 
@@ -112,6 +114,12 @@ export class AuthService {
       REFRESH_TOKEN_COOKIE_OPTION,
     );
 
+    await this.cacheManager.set(
+      `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
+      userId,
+      Number(accessTokenExpires) - Date.now(),
+    );
+
     await this.supabaseService.client.from('auth_tokens').upsert(
       {
         userId,
@@ -125,7 +133,14 @@ export class AuthService {
   }
 
   /** NOTE: DELETE token */
-  async expireToken(res: ExpressResponse) {
+  async expireToken(req: ExpressRequest, res: ExpressResponse) {
+    const { accessToken } = this.getToken(req);
+    if (accessToken) {
+      this.cacheManager.del(
+        `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
+      );
+    }
+
     const EXPIRED_COOKIE_OPTION: CookieOptions = {
       domain: process.env.DOMAIN as string,
       httpOnly: true,
@@ -147,13 +162,24 @@ export class AuthService {
   }
 
   /** NOTE: UPDATE token */
-  async reissueToken(res: ExpressResponse, userId: string) {
-    await this.expireToken(res);
+  async reissueToken(
+    req: ExpressRequest,
+    res: ExpressResponse,
+    userId: string,
+  ) {
+    await this.expireToken(req, res);
     await this.issueToken(res, userId);
   }
 
   /** NOTE: READ user with userId */
   async getUserWithUserId(userId: string) {
+    const cachedUserInfo = await this.cacheManager.get<Tables<'users'>>(
+      `auth:userId:${userId}`,
+    );
+    if (cachedUserInfo) {
+      return cachedUserInfo;
+    }
+
     const { data: userInfo } = await this.supabaseService.client
       .from('users')
       .select('*')
@@ -164,17 +190,30 @@ export class AuthService {
       throw new ForbiddenException();
     }
 
+    await this.cacheManager.set(`auth:userId:${userId}`, userInfo, 1000 * 60);
     return userInfo;
   }
 
   /** NOTE: READ user with providerId */
   async getUserWithProviderId(providerId: string) {
+    const cachedUserInfo = await this.cacheManager.get<Tables<'users'>>(
+      `auth:providerId:${providerId}`,
+    );
+    if (cachedUserInfo) {
+      return cachedUserInfo;
+    }
+
     const { data: userInfo } = await this.supabaseService.client
       .from('users')
       .select('*')
       .eq('providerId', providerId)
       .single();
 
+    await this.cacheManager.set(
+      `auth:providerId:${providerId}`,
+      userInfo,
+      1000 * 60,
+    );
     return userInfo;
   }
 
@@ -237,8 +276,8 @@ export class AuthService {
   }
 
   /** NOTE: DELETE user */
-  async deleteUser(res: ExpressResponse, userId: string) {
-    await this.expireToken(res);
+  async deleteUser(req: ExpressRequest, res: ExpressResponse, userId: string) {
+    await this.expireToken(req, res);
     await this.supabaseService.client.from('users').delete().eq('id', userId);
   }
 
