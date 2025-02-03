@@ -5,10 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { AxiosError, AxiosInstance } from "axios";
 
-import {
-  apiAxios,
-  // authAxios,
-} from "./base";
+import apiAxios from "./apiAxios";
 
 export interface RQInfinityRequestParams {
   search?: string;

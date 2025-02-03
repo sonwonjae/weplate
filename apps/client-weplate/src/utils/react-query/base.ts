@@ -1,10 +1,11 @@
 import type { AxiosError } from "axios";
 
-import https from "https";
-
 import { Tables } from "@package/types";
 import { UseQueryOptions } from "@tanstack/react-query";
-import axios, { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
+
+import apiAxios from "./apiAxios";
+import authAxios from "./authAxios";
 
 /** FIXME: back 로직이랑 타입 싱크 맞추기 */
 export type ResponseMap = {
@@ -87,24 +88,6 @@ export interface RQDefaultParams<
   customQueryOptions?: Partial<UseQueryOptions<TQueryFnData, AxiosError>>;
 }
 
-export const apiAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_HOST,
-  timeout: 1000 * 60,
-  withCredentials: true,
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: process.env.NEXT_PUBLIC_MODE !== "dev",
-  }),
-});
-
-export const authAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_HOST,
-  timeout: 1000 * 60,
-  withCredentials: true,
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: process.env.NEXT_PUBLIC_MODE !== "dev",
-  }),
-});
-
 export class RQ<
   ReqURL extends keyof ResponseMap,
   TQueryFnData extends ResponseMap[ReqURL],
@@ -157,6 +140,7 @@ export class RQ<
 
         return data as TQueryFnData;
       } catch (error) {
+        console.log("luke: ", (error as AxiosError)?.response?.status);
         throw error as AxiosError;
       }
     };
