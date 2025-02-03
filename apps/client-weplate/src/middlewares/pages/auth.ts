@@ -58,7 +58,7 @@ export const checkAuth = (
       if (required) {
         return {
           redirect: {
-            destination: "/login",
+            destination: `/login?redirectUrl=${req.pathname}`,
             permanent: true,
           },
         };
