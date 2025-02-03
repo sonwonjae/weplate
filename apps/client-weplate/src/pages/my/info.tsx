@@ -136,7 +136,9 @@ function MyInfo() {
                     onClick={async () => {
                       await authAxios.get("/api/user/auth/logout");
                       queryClient.removeQueries();
-                      router.replace("/login");
+                      router.replace(
+                        `/login?redirectUrl=${window.location.pathname}`,
+                      );
                     }}
                   >
                     로그아웃
