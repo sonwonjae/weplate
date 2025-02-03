@@ -5,7 +5,7 @@ import type {
 } from 'express';
 
 import { Cache } from '@nestjs/cache-manager';
-import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Tables } from '@package/types';
 import { shuffle } from 'es-toolkit';
 import { SupabaseService } from 'src/supabase/supabase.service';
@@ -66,8 +66,8 @@ export class AuthService {
       }
 
       return this.getUserWithUserId(userId);
-    } catch (error) {
-      throw error as HttpException;
+    } catch {
+      throw new ForbiddenException();
     }
   }
 
@@ -284,6 +284,8 @@ export class AuthService {
     if (!userInfo) {
       throw new ForbiddenException();
     }
+    await this.cacheManager.del(`auth:userId:${userInfo.id}`);
+    await this.cacheManager.del(`auth:providerId:${userInfo.providerId}`);
 
     return userInfo;
   }
@@ -291,6 +293,7 @@ export class AuthService {
   /** NOTE: DELETE user */
   async deleteUser(req: ExpressRequest, res: ExpressResponse, userId: string) {
     await this.expireToken(req, res);
+    await this.cacheManager.del(`auth:userId:${userId}`);
     await this.supabaseService.client.from('users').delete().eq('id', userId);
   }
 
