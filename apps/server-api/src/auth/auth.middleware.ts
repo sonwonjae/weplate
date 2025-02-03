@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, Injectable, NestMiddleware } from '@nestjs/common';
+import { ForbiddenException, Injectable, NestMiddleware } from '@nestjs/common';
 import { Tables } from '@package/types';
 import { Request, Response, NextFunction } from 'express';
 import { catchError, firstValueFrom } from 'rxjs';
@@ -35,8 +35,8 @@ export class RequiredAuthMiddleware implements NestMiddleware {
 
       req.userInfo = userInfo;
       return next();
-    } catch (error) {
-      throw error as HttpException;
+    } catch {
+      throw new ForbiddenException();
     }
   }
 }
