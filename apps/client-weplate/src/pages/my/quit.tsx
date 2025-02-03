@@ -68,8 +68,9 @@ function MyQuit() {
   return (
     <>
       <ConnectRequestNewFoodGoogleForm />
-      {/* <Test /> */}
-      <section className={cn("w-full", "bg-background", "py-2", "px-5")}>
+      <section
+        className={cn("w-full", "bg-background", "py-2", "px-5", "space-y-4")}
+      >
         <h2 className={cn("font-bold", "text-lg")}>회원 탈퇴 안내</h2>
         <p className={cn("text-sm", "text-slate-600", "mt-1")}>
           회원 탈퇴 시{" "}
@@ -80,15 +81,25 @@ function MyQuit() {
           <br />
           한번 삭제된 정보는 복구가 불가능합니다.
         </p>
-        <ul className={cn("text-sm", "text-slate-600", "mt-4")}>
-          <li>계정 정보 및 프로필 정보 삭제</li>
-          <li>혼자 추천받기로 생성/참여한 모임 삭제</li>
-          <li>혼자 추천받은 음식 추천 기록 삭제</li>
-          <li>모든 모임에서 본인 정보 삭제</li>
-          <li>등록한 선호/비선호 음식 정보 삭제</li>
-          <li>참여 중인 모임 (본인 제외) 유지</li>
-          <li>모임원과 추천받은 음식 추천 기록 유지</li>
-        </ul>
+
+        <div>
+          <h3 className={cn("text-sm", "text-slate-600")}>삭제되는 정보</h3>
+          <ul className={cn("text-sm", "text-slate-600", "list-disc", "pl-5")}>
+            <li>계정 및 프로필 정보</li>
+            <li>혼자 생성/참여한 모임 및 추천받은 음식 기록</li>
+            <li>모든 모임에서 본인 정보</li>
+            <li>등록한 선호/비선호 음식 정보</li>
+          </ul>
+        </div>
+        <div>
+          <h3 className={cn("text-sm", "text-slate-600")}>
+            모임원에게 유지되는 정보
+          </h3>
+          <ul className={cn("text-sm", "text-slate-600", "list-disc", "pl-5")}>
+            <li>모임원과 참여 중인 모임</li>
+            <li>모임원과 추천받은 음식 기록</li>
+          </ul>
+        </div>
       </section>
       <section className={cn("w-full", "bg-background", "py-2", "px-5")}>
         {isVerified && (
