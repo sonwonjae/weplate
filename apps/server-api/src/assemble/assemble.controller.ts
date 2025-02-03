@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  Redirect,
 } from '@nestjs/common';
 import { Tables } from '@package/types';
 import { UserInfo } from 'src/auth/auth.decorator';
@@ -75,12 +76,17 @@ export class AssembleController {
     return this.assembleService.checkJoinable(assembleId, userInfo);
   }
 
-  @Post(':assembleId/request/join')
-  requestJoinFromInvitee(
+  @Get(':assembleId/request/join')
+  @Redirect('/assemble/:assembleId')
+  async requestJoinFromInvitee(
     @UserInfo() userInfo: Tables<'users'>,
     @Param('assembleId') assembleId: string,
   ) {
-    return this.assembleService.requestJoinFromInvitee(userInfo, assembleId);
+    await this.assembleService.requestJoinFromInvitee(userInfo, assembleId);
+
+    return {
+      url: `/assemble/${assembleId}`,
+    };
   }
 
   @Get(':assembleId/check/new-registed-food-member')

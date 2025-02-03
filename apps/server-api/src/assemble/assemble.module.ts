@@ -82,7 +82,7 @@ export class AssembleModule {
       .apply(RequiredAuthMiddleware, CheckFullAssembleMiddleware)
       .forRoutes({
         path: 'assemble/:assembleId/request/join',
-        method: RequestMethod.POST,
+        method: RequestMethod.GET,
       })
       .apply(RequiredAuthMiddleware)
       .forRoutes({

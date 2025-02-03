@@ -35,13 +35,13 @@ function AssembleInviteeRoomPage() {
   const { mutateAsync: requestJoin } = useMutation({
     mutationFn: async () => {
       try {
-        await apiAxios.post(
+        await apiAxios.get(
           `/api/assemble/${router.query.assembleId}/request/join`,
         );
         router.replace(`/assemble/${router.query.assembleId}`);
       } catch {
         router.replace(
-          `/login?redirectUrl=/assemble/${router.query.assembleId}/invitee-room`,
+          `/login?redirectUrl=/api/assemble/${router.query.assembleId}/request/join`,
         );
       }
     },
