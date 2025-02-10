@@ -38,10 +38,10 @@ function AssembleList() {
   }
 
   const myAssembleList = data.pages
-    .map(({ list }) => {
+    .flatMap(({ list }) => {
       return list;
     })
-    .flat(1);
+    .filter(Boolean);
 
   if (!myAssembleList || !myAssembleList.length) {
     return (
