@@ -48,6 +48,9 @@ input[type="search"]::-webkit-search-results-decoration {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+  .negative {
+    --primary: 237 68% 59%;
+  }
   .dark {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;

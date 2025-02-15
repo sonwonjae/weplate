@@ -33,6 +33,10 @@ export const useFoodSurveyStepsStore = create<FoodSurveyStepsState>()(
       movePrevStep: () => {
         return set(() => {
           const prevStepIndex = get().currentStepIndex - 1;
+
+          if (get().allSteps[prevStepIndex] !== "hate") {
+            document.documentElement.style.setProperty("--primary", "");
+          }
           if (prevStepIndex < 0) {
             return {};
           }
@@ -45,6 +49,12 @@ export const useFoodSurveyStepsStore = create<FoodSurveyStepsState>()(
       moveNextStep: () => {
         return set(() => {
           const nextStepIndex = get().currentStepIndex + 1;
+          if (get().allSteps[nextStepIndex] === "hate") {
+            document.documentElement.style.setProperty(
+              "--primary",
+              "237 68% 59%",
+            );
+          }
           if (get().allSteps.length - 1 < nextStepIndex) {
             return {};
           }
@@ -55,6 +65,8 @@ export const useFoodSurveyStepsStore = create<FoodSurveyStepsState>()(
         });
       },
       resetStep: () => {
+        document.documentElement.style.setProperty("--primary", "");
+
         return set(FOOD_SURVEY_STEPS_INITIAL_STATE);
       },
     };

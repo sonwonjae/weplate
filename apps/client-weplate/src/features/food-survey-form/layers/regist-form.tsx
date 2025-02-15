@@ -1,5 +1,4 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/router";
 import { useEffect, type PropsWithChildren } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,7 +25,6 @@ function RegistFoodSurveyFormLayer({ children }: PropsWithChildren) {
     },
   });
 
-  const router = useRouter();
   const resetSearchFoods = useSearchFoodStore((state) => {
     return state.resetSearchFoods;
   });
@@ -35,10 +33,12 @@ function RegistFoodSurveyFormLayer({ children }: PropsWithChildren) {
   });
 
   useEffect(() => {
-    form.reset();
-    resetSearchFoods();
-    resetStep();
-  }, [router.pathname]);
+    return () => {
+      form.reset();
+      resetSearchFoods();
+      resetStep();
+    };
+  }, []);
 
   return <Form {...form}>{children}</Form>;
 }

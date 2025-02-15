@@ -45,10 +45,12 @@ function EditFoodSurveyFormLayer({ children }: PropsWithChildren) {
   });
 
   useEffect(() => {
-    form.reset();
-    resetSearchFoods();
-    resetStep();
-  }, [router.pathname]);
+    return () => {
+      form.reset();
+      resetSearchFoods();
+      resetStep();
+    };
+  }, []);
 
   return <Form {...form}>{children}</Form>;
 }
