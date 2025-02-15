@@ -10,7 +10,9 @@ function Header({
   children,
 }: PropsWithChildren<{ className?: string }>) {
   return (
-    <header className={cn("w-full", "border-b", "border-b-slate-200")}>
+    <header
+      className={cn("w-full", "border-b", "border-b-slate-200", "bg-white")}
+    >
       <section
         className={cn(
           "relative",

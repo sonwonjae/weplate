@@ -17,6 +17,7 @@ function Footer({
         "border-t",
         "border-t-slate-200",
         "z-50",
+        "bg-white",
         className,
       )}
     >
