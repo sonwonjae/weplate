@@ -7,7 +7,14 @@ import { useId, type PropsWithChildren } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { BAD_WORD_LIST } from "@/constants/validation";
+import {
+  checkBadWord,
+  createCheckBadWordErrorMessage,
+} from "@/form-validations/bad-word-list";
+import {
+  checkOnlySpace,
+  checkOnlySpaceErrorMessage,
+} from "@/form-validations/only-space";
 import { Header, Main, Footer } from "@/layouts";
 import { Button } from "@/shad-cn/components/ui/button";
 import { Form } from "@/shad-cn/components/ui/form";
@@ -19,11 +26,8 @@ export const assembleFormSchema = z.object({
     .string()
     .nonempty({ message: "모임명을 입력해주세요." })
     .max(20, "모임 이름은 20자 이내로 입력해주세요.")
-    .refine((value) => {
-      return !BAD_WORD_LIST.some((badWord) => {
-        return value.includes(badWord);
-      });
-    }, "부적절한 어휘가 포함되어 있습니다."),
+    .refine(checkOnlySpace, checkOnlySpaceErrorMessage)
+    .refine(checkBadWord, createCheckBadWordErrorMessage),
 });
 
 function Layout({ children }: PropsWithChildren) {
@@ -56,7 +60,7 @@ function Layout({ children }: PropsWithChildren) {
         id: string;
         title: string;
       }>("/api/assemble/item", {
-        title,
+        title: title.trim(),
       });
 
       const isWithinCreationLimitQuery = new RQClient({

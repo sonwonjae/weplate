@@ -5,7 +5,14 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { BAD_WORD_LIST } from "@/constants/validation";
+import {
+  checkBadWord,
+  createCheckBadWordErrorMessage,
+} from "@/form-validations/bad-word-list";
+import {
+  checkOnlySpace,
+  checkOnlySpaceErrorMessage,
+} from "@/form-validations/only-space";
 import {
   Form,
   FormControl,
@@ -27,11 +34,8 @@ export const userInfoForm = z.object({
     .string()
     .min(2, "닉네임은 최소 2글자 이상 입력해주세요.")
     .max(8, "닉네임은 최대 8글자 이하 입력해주세요.")
-    .refine((value) => {
-      return !BAD_WORD_LIST.some((badWord) => {
-        return value.includes(badWord);
-      });
-    }, "부적절한 어휘가 포함되어 있습니다."),
+    .refine(checkOnlySpace, checkOnlySpaceErrorMessage)
+    .refine(checkBadWord, createCheckBadWordErrorMessage),
 });
 
 function UpdateUserInfoForm() {

@@ -38,7 +38,7 @@ function UserInfoFormSubmitButton() {
       const nickname = form.getValues("nickname");
 
       await authAxios.patch("/api/user/auth", {
-        nickname,
+        nickname: nickname.trim(),
       });
 
       await queryClient.refetchQueries({
