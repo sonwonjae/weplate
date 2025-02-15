@@ -107,9 +107,6 @@ export class RQInfinity<
   >["queryFn"] {
     return async ({ pageParam: cursor }) => {
       try {
-        if (globalThis.window) {
-          throw new Error("he");
-        }
         const { data: { list, cursor: nextCursor } = {} } =
           await this.axiosInstance(this.url, {
             method: this.#method,

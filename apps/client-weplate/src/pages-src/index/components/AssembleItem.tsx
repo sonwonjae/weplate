@@ -236,7 +236,7 @@ function AssembleItem({
                       disabled={isPending}
                       className={cn("w-full")}
                       onClick={() => {
-                        return deleteAssemble();
+                        deleteAssemble();
                       }}
                     >
                       확인

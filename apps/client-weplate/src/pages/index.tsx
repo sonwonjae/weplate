@@ -2,6 +2,7 @@ import type { ServerResponse } from "http";
 
 import { useQuery } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
 import { toast } from "sonner";
@@ -90,7 +91,7 @@ function HomePage() {
       </h2>
       <div
         className={cn(
-          "overflow-hidden",
+          "overflow-auto",
           "relative",
           "flex-1",
           "space-y-3",
@@ -100,6 +101,32 @@ function HomePage() {
         )}
       >
         <AssembleList />
+        <div
+          className={cn(
+            "pt-4",
+            "pb-10",
+            "px-5",
+            "w-full",
+            "text-xs",
+            "self-end",
+            "text-center",
+            "text-gray-500",
+          )}
+        >
+          <Link
+            href="https://achieved-arthropod-648.notion.site/17939793c46d80ae9015e981635f9b8d?pvs=4"
+            target="_blank"
+          >
+            개인정보처리방침
+          </Link>
+          <span className={cn("px-2")}>|</span>
+          <Link
+            href="https://achieved-arthropod-648.notion.site/17939793c46d80ae9015e981635f9b8d?pvs=4"
+            target="_blank"
+          >
+            서비스 이용약관
+          </Link>
+        </div>
       </div>
     </>
   );
