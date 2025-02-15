@@ -41,7 +41,7 @@ function Layout({ children }: PropsWithChildren) {
       });
 
       queryClient.removeQueries();
-      router.replace(`/login?redirectUrl=${window.location.pathname}`);
+      router.replace("/my/quit/complete");
     },
   });
 

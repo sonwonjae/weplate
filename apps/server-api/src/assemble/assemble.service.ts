@@ -1,7 +1,7 @@
 import type { Response as ExpressResponse } from 'express';
 
 import { ConflictException, HttpException, Injectable } from '@nestjs/common';
-import { Tables } from '@package/types';
+import { Enums, Tables } from '@package/types';
 import { SupabaseService } from 'src/supabase/supabase.service';
 
 import { CreateAssembleDto } from './dto/create-assemble.dto';
@@ -399,24 +399,11 @@ export class AssembleService {
     return remainCount >= 0 ? remainCount : 0;
   }
 
-  async checkAssemblePermission(assembleId: string, userId: string) {
-    const { data: userAssemble } = await this.supabaseService.client
-      .from('user__assembles')
-      .select('*')
-      .eq('userId', userId)
-      .eq('assembleId', assembleId)
-      .single();
-
-    if (!userAssemble) {
-      throw new HttpException('is not assemble user', 400);
-    }
-
-    return userAssemble.permission;
-  }
-
-  async delegateOwnerToOldestMember(assembleId: string, userId: string) {
-    const permission = await this.checkAssemblePermission(assembleId, userId);
-
+  async delegateOwnerToOldestMember(
+    assembleId: string,
+    userId: string,
+    permission: Enums<'permission'>,
+  ) {
     if (permission !== 'owner') {
       return {
         delegatable: false,
@@ -466,14 +453,15 @@ export class AssembleService {
       .eq('userId', userId);
 
     const assembleIdList =
-      userAssembleList?.map(({ assembleId }) => {
-        return assembleId;
+      userAssembleList?.map(({ assembleId, permission }) => {
+        return { assembleId, permission };
       }) ?? [];
 
-    for await (const assembleId of assembleIdList) {
+    for await (const { assembleId, permission } of assembleIdList) {
       const { code, delegatable } = await this.delegateOwnerToOldestMember(
         assembleId,
         userId,
+        permission,
       );
       if (!delegatable && code === -1) {
         await this.removeAssemble(assembleId);
