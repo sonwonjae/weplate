@@ -250,6 +250,44 @@ export type Database = {
           },
         ];
       };
+      user__agreement_service: {
+        Row: {
+          createdAt: string;
+          id: string;
+          isAdultAgreed: boolean;
+          isPrivacyPolicyAgreed: boolean;
+          isTermsOfUseAgreed: boolean;
+          isThirdPartyDataSharingAgreed: boolean;
+          userId: string;
+        };
+        Insert: {
+          createdAt?: string;
+          id?: string;
+          isAdultAgreed?: boolean;
+          isPrivacyPolicyAgreed?: boolean;
+          isTermsOfUseAgreed?: boolean;
+          isThirdPartyDataSharingAgreed?: boolean;
+          userId?: string;
+        };
+        Update: {
+          createdAt?: string;
+          id?: string;
+          isAdultAgreed?: boolean;
+          isPrivacyPolicyAgreed?: boolean;
+          isTermsOfUseAgreed?: boolean;
+          isThirdPartyDataSharingAgreed?: boolean;
+          userId?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user__agreement_service_userId_fkey';
+            columns: ['userId'];
+            isOneToOne: false;
+            referencedRelation: 'users';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       user__assemble__foods: {
         Row: {
           assembleId: string;

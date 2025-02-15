@@ -22,6 +22,8 @@ function Header({
           "justify-between",
           "py-3",
           "px-5",
+          "min-h-[3.25rem]",
+          "bg-white",
           className,
         )}
       >

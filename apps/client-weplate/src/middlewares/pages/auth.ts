@@ -38,6 +38,22 @@ export const checkAuth = (
     try {
       const authQuery = new RQServer({ url: "/api/user/auth/check", res });
       const userInfo = await req.queryClient.fetchQuery(authQuery.queryOptions);
+      const agreeServicePolicyQuery = new RQServer({
+        url: "/api/agree/check/service/policy",
+        res,
+      });
+      const agreeServicePolicy = await req.queryClient.fetchQuery(
+        agreeServicePolicyQuery.queryOptions,
+      );
+
+      if (required && !agreeServicePolicy.isValid) {
+        return {
+          redirect: {
+            destination: `/agree/service?redirectUrl=${req.pathname}`,
+            permanent: true,
+          },
+        };
+      }
 
       if (authority === "manager" && userInfo.authority !== "manager") {
         /** FIXME: 403 페이지 만들어서 그리로 redirect로 수정 필요 */

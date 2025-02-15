@@ -77,6 +77,7 @@ export type ResponseMap = {
   };
   "/api/user/auth/check": Tables<"users">;
   "/api/food/search/list": Array<Tables<"foods">>;
+  "/api/agree/check/service/policy": { isValid: boolean };
 };
 
 export interface RQDefaultParams<
