@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { XIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useId, type PropsWithChildren } from "react";
+import { useId, type PropsWithChildren } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -39,7 +39,6 @@ function Layout({ children }: PropsWithChildren) {
   });
 
   const { data: assemble } = useQuery(assembleQuery.queryOptions);
-  console.log("edit: ", assemble?.title);
 
   const form = useForm<z.infer<typeof assembleFormSchema>>({
     resolver: zodResolver(assembleFormSchema),
@@ -47,12 +46,6 @@ function Layout({ children }: PropsWithChildren) {
       title: assemble?.title ?? "",
     },
   });
-
-  useEffect(() => {
-    return () => {
-      console.log("hello");
-    };
-  }, []);
 
   const {
     mutateAsync: updateAssemble,

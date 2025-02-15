@@ -17,7 +17,6 @@ authAxios.interceptors.response.use(
   },
   async (error) => {
     if (typeof window !== "undefined") {
-      console.log("intercept: ", error.response?.status);
       if (error.response?.status === 400) {
         toast.error("요청이 실했습니다. 다시 시도해주세요.");
       }

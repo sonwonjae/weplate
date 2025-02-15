@@ -1,6 +1,7 @@
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 
+import { assembleFormSchema } from "@/pages-src/assemble/[assembleId]/edit/layout";
 import {
   FormControl,
   FormField,
@@ -9,8 +10,6 @@ import {
   FormInput,
   FormMessage,
 } from "@/shad-cn/components/ui/form";
-
-import { assembleFormSchema } from "../../layout";
 
 function AssembleForm() {
   const form = useFormContext<z.infer<typeof assembleFormSchema>>();
@@ -21,7 +20,6 @@ function AssembleForm() {
         control={form.control}
         name="title"
         render={({ field }) => {
-          console.log({ field });
           return (
             <FormItem>
               <FormLabel required>모임명</FormLabel>

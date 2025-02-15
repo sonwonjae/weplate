@@ -138,7 +138,6 @@ export class RQ<
           params: this.params,
           withCredentials: true,
         });
-        console.log({ data });
         return data as TQueryFnData;
       } catch (error) {
         throw error as AxiosError;
