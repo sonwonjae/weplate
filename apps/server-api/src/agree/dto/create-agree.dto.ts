@@ -7,6 +7,4 @@ export class AgreeServicePolicyDto {
   isTermsOfUseAgreed: boolean;
   @IsBoolean()
   isPrivacyPolicyAgreed: boolean;
-  @IsBoolean()
-  isThirdPartyDataSharingAgreed: boolean;
 }

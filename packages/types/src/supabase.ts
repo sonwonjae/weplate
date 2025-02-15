@@ -257,7 +257,6 @@ export type Database = {
           isAdultAgreed: boolean;
           isPrivacyPolicyAgreed: boolean;
           isTermsOfUseAgreed: boolean;
-          isThirdPartyDataSharingAgreed: boolean;
           userId: string;
         };
         Insert: {
@@ -266,7 +265,6 @@ export type Database = {
           isAdultAgreed?: boolean;
           isPrivacyPolicyAgreed?: boolean;
           isTermsOfUseAgreed?: boolean;
-          isThirdPartyDataSharingAgreed?: boolean;
           userId?: string;
         };
         Update: {
@@ -275,7 +273,6 @@ export type Database = {
           isAdultAgreed?: boolean;
           isPrivacyPolicyAgreed?: boolean;
           isTermsOfUseAgreed?: boolean;
-          isThirdPartyDataSharingAgreed?: boolean;
           userId?: string;
         };
         Relationships: [

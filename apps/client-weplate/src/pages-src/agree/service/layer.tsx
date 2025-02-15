@@ -10,7 +10,6 @@ export const serviceAgreeForm = z.object({
   isAdultAgreed: z.boolean(), // 만 14세 이상
   isTermsOfUseAgreed: z.boolean(), // 서비스 이용약관 동의
   isPrivacyPolicyAgreed: z.boolean(), // 개인정보 수집 및 이용 동의
-  isThirdPartyDataSharingAgreed: z.boolean(), // 개인정보 제3자 제공 동의
 });
 
 function ServiceAgreeFormLayer({ children }: PropsWithChildren) {
@@ -20,7 +19,6 @@ function ServiceAgreeFormLayer({ children }: PropsWithChildren) {
       isAdultAgreed: false,
       isTermsOfUseAgreed: false,
       isPrivacyPolicyAgreed: false,
-      isThirdPartyDataSharingAgreed: false,
     },
   });
 

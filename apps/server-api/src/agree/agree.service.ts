@@ -13,7 +13,6 @@ export class AgreeService {
       isAdultAgreed,
       isTermsOfUseAgreed,
       isPrivacyPolicyAgreed,
-      isThirdPartyDataSharingAgreed,
     }: AgreeServicePolicyDto,
     userInfo: Tables<'users'>,
   ) {
@@ -22,7 +21,6 @@ export class AgreeService {
       isAdultAgreed,
       isTermsOfUseAgreed,
       isPrivacyPolicyAgreed,
-      isThirdPartyDataSharingAgreed,
     });
     return true;
   }

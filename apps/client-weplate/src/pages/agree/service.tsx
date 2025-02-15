@@ -39,11 +39,6 @@ const AGREE_LIST: Array<{
     title: "개인정보 수집 및 이용 동의 (필수)",
     url: "https://achieved-arthropod-648.notion.site/17939793c46d80ae9015e981635f9b8d?pvs=4",
   },
-  {
-    fieldName: "isThirdPartyDataSharingAgreed",
-    title: "개인정보 제3자 제공 동의 (선택)",
-    url: "https://achieved-arthropod-648.notion.site/17939793c46d80ae9015e981635f9b8d?pvs=4",
-  },
 ];
 
 function AgreeServicePage() {
@@ -53,7 +48,7 @@ function AgreeServicePage() {
         "w-full",
         "flex",
         "flex-col",
-        "items-center",
+        "items-start",
         "gap-12",
         "h-full",
         "py-4",
