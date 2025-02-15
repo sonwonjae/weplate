@@ -32,20 +32,17 @@ function AssembleInviteUserPage() {
   );
 
   const shareAssembleLink = async () => {
+    const url = `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/invitee-room`;
     try {
-      if (navigator.canShare()) {
+      if (navigator.canShare({ url })) {
         try {
-          await navigator.share({
-            url: `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/invitee-room`,
-          });
+          await navigator.share({ url });
           return toast.info("공유 성공");
         } catch {
           return toast.error("공유 실패");
         }
       } else {
-        await navigator.clipboard.writeText(
-          `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/invitee-room`,
-        );
+        await navigator.clipboard.writeText(url);
         toast.info("클립보드에 복사되었어요.", {
           position: "bottom-left",
         });
