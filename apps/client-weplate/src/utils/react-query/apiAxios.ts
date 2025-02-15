@@ -19,8 +19,8 @@ apiAxios.interceptors.response.use(
     if (typeof window !== "undefined") {
       console.log("intercept: ", error.response?.status);
       if (error.response?.status === 400) {
-        /** FIXME: 추후 전역 Errorboundary로 이동 예정 */
         toast.error("요청이 실했습니다. 다시 시도해주세요.");
+        throw error;
       }
       if (error.response?.status === 403) {
         window.location.href = `/login?redirectUrl=${window.location.pathname}`; // 리다이렉션

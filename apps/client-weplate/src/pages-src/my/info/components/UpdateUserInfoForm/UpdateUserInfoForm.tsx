@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { BAD_WORD_LIST } from "@/constants/validation";
 import {
   Form,
   FormControl,
@@ -19,7 +20,6 @@ import { cn } from "@/utils/tailwind";
 
 import { useUpdatableUserInfoStore } from "../../stores/updatable-user-info";
 
-import { BAD_WORD_LIST } from "./UpdateUserInfoForm.constants";
 import UserInfoFormSubmitButton from "./UserInfoFormSubmitButton";
 
 export const userInfoForm = z.object({
@@ -41,7 +41,7 @@ function UpdateUserInfoForm() {
 
   const form = useForm<z.infer<typeof userInfoForm>>({
     resolver: zodResolver(userInfoForm),
-    defaultValues: {
+    values: {
       nickname: userInfo?.nickname ?? "",
     },
   });
@@ -53,6 +53,15 @@ function UpdateUserInfoForm() {
   useEffect(() => {
     form.reset();
   }, [router.pathname]);
+
+  useEffect(() => {
+    if (isUpdatable) {
+      const $input = document.querySelector(
+        "input[name=nickname]",
+      ) as HTMLInputElement;
+      $input?.focus?.();
+    }
+  }, [isUpdatable]);
 
   return (
     <section className={cn("w-full", "py-4", "px-5", "bg-background")}>

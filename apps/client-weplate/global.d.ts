@@ -1,3 +1,5 @@
+import "@tanstack/react-query";
+
 type Nullable<T> = T | null;
 
 type UnionToIntersection<U> = (
@@ -5,3 +7,9 @@ type UnionToIntersection<U> = (
 ) extends (x: infer I) => void
   ? I
   : never;
+
+declare module "@tanstack/react-query" {
+  interface Register {
+    defaultError: AxiosError;
+  }
+}

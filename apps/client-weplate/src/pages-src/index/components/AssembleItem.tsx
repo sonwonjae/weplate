@@ -38,6 +38,7 @@ function AssembleItem({
   id: assembleId,
   title,
   userAssembleList,
+  permission,
 }: AssembleItemProps) {
   const toolsContainerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -138,7 +139,14 @@ function AssembleItem({
                 `${userAssembleList.length}명 참여 중`}
             </span>
           </div>
-          <div ref={toolsContainerRef} className={cn("relative", "h-12")}>
+          <div
+            ref={toolsContainerRef}
+            className={cn(
+              "relative",
+              "h-12",
+              permission !== "owner" && "hidden",
+            )}
+          >
             <div
               hidden={toolsState === "active"}
               className={cn(

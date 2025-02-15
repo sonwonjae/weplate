@@ -1,3 +1,4 @@
+import { Enums } from "@package/types";
 import {
   InfiniteData,
   QueryKey,
@@ -23,11 +24,12 @@ export type InfinityResponseMap = {
       udpatedAt: string;
       userAssembleList: Array<{
         id: string;
-        permission: "owner" | "member";
+        permission: Enums<"permission">;
         userId: string | undefined;
         nickname: string | undefined;
         isRegisted: boolean;
       }>;
+      permission: Enums<"permission">;
     }>;
     cursor: string | null;
   };
@@ -105,6 +107,9 @@ export class RQInfinity<
   >["queryFn"] {
     return async ({ pageParam: cursor }) => {
       try {
+        if (globalThis.window) {
+          throw new Error("he");
+        }
         const { data: { list, cursor: nextCursor } = {} } =
           await this.axiosInstance(this.url, {
             method: this.#method,

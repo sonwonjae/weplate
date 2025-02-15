@@ -1,3 +1,5 @@
+import type { Response as ExpressResponse } from 'express';
+
 import { ConflictException, HttpException, Injectable } from '@nestjs/common';
 import { Tables } from '@package/types';
 import { SupabaseService } from 'src/supabase/supabase.service';
@@ -82,7 +84,7 @@ export class AssembleService {
       .select(
         `
           *,
-          user__assembles!inner(userId)
+          user__assembles!inner(*)
         `,
       )
       .eq('user__assembles.userId', userInfo.id);
@@ -126,13 +128,14 @@ export class AssembleService {
 
     const mappedMyAssembleList = await Promise.all(
       (myAssembleList ?? []).map(
-        async ({ id, title, createdAt, updatedAt }) => {
+        async ({ id, title, createdAt, updatedAt, user__assembles }) => {
           return {
             id,
             title,
             createdAt,
             updatedAt,
             userAssembleList: await this.getAssembleUserList(id, userInfo),
+            permission: user__assembles[0].permission,
           };
         },
       ),
@@ -309,7 +312,11 @@ export class AssembleService {
     } as const;
   }
 
-  async requestJoinFromInvitee(userInfo: Tables<'users'>, assembleId: string) {
+  async requestJoinFromInvitee(
+    res: ExpressResponse,
+    assembleId: string,
+    userInfo: Tables<'users'>,
+  ) {
     const { data: newUserAssemble } = await this.supabaseService.client
       .from('user__assembles')
       .insert({
@@ -324,7 +331,7 @@ export class AssembleService {
     if (!newUserAssemble) {
       throw new ConflictException();
     }
-    return true;
+    return res.redirect(`/assemble/${assembleId}`);
   }
 
   async checkRegistedFoodMember(userInfo: Tables<'users'>, assembleId: string) {

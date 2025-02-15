@@ -23,7 +23,7 @@ function EditFoodSurveyFormLayer({ children }: PropsWithChildren) {
 
   const form = useForm<z.infer<typeof foodSurveyForm>>({
     resolver: zodResolver(foodSurveyForm),
-    defaultValues: {
+    values: {
       favorite: {
         searchKeyword: "",
         preList: [],

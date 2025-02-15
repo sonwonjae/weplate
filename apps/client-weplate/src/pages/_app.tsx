@@ -6,12 +6,15 @@ import {
   HydrationBoundary,
   QueryClient,
   QueryClientProvider,
+  QueryErrorResetBoundary,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { NextPage } from "next";
 import Head from "next/head";
 import React, { useState } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
+import { Button } from "@/shad-cn/components/ui/button";
 import { cn } from "@/utils/tailwind";
 
 export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
@@ -145,11 +148,45 @@ export default function MyApp({
             "flex-col",
           )}
         >
-          <PageLayer>
-            <PageLayout>
-              <PageComponent {...pageProps} />
-            </PageLayout>
-          </PageLayer>
+          <QueryErrorResetBoundary>
+            {({ reset }) => {
+              return (
+                <ErrorBoundary
+                  onReset={reset}
+                  fallbackRender={({ resetErrorBoundary }) => {
+                    return (
+                      <div
+                        className={cn(
+                          "flex",
+                          "flex-col",
+                          "items-center",
+                          "justify-center",
+                          "gap-4",
+                          "mt-48",
+                          "w-100",
+                          "text-center",
+                        )}
+                      >
+                        <h1>문제가 발생했습니다.</h1>
+                        <Button
+                          color="destructive"
+                          onClick={resetErrorBoundary}
+                        >
+                          다시 시도해주세요.
+                        </Button>
+                      </div>
+                    );
+                  }}
+                >
+                  <PageLayer>
+                    <PageLayout>
+                      <PageComponent {...pageProps} />
+                    </PageLayout>
+                  </PageLayer>
+                </ErrorBoundary>
+              );
+            }}
+          </QueryErrorResetBoundary>
         </div>
       </HydrationBoundary>
     </QueryClientProvider>

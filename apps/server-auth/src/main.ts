@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
@@ -10,7 +10,9 @@ async function bootstrap() {
     throw new Error('환경변수에 PORT를 설정해주세요.');
   }
 
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new ConsoleLogger(),
+  });
   app.enableCors({
     origin: [process.env.HOST as string],
     credentials: true,

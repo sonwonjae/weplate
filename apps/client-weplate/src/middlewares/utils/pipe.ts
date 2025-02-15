@@ -29,10 +29,13 @@ export const pipe = <
         req.queryClient = new QueryClient();
       }
 
-      const { props, redirect, notFound } =
-        ((await middleware(req, res, next)) as UnionToIntersection<
-          GetServerSidePropsResult<Props>
-        >) || {};
+      const {
+        props = {},
+        redirect,
+        notFound,
+      } = ((await middleware(req, res, next)) as UnionToIntersection<
+        GetServerSidePropsResult<Props>
+      >) || {};
 
       if (redirect) {
         return { redirect };
@@ -41,12 +44,10 @@ export const pipe = <
         return { notFound };
       }
 
-      if (props) {
-        accProps = {
-          ...accProps,
-          ...props,
-        };
-      }
+      accProps = {
+        ...accProps,
+        ...props,
+      };
     }
 
     return {

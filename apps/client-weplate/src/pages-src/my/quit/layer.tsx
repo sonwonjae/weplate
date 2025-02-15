@@ -16,7 +16,7 @@ export const myQuitForm = z.object({
 function Layer({ children }: PropsWithChildren) {
   const form = useForm<z.infer<typeof myQuitForm>>({
     resolver: zodResolver(myQuitForm),
-    defaultValues: {
+    values: {
       isVerified: false,
       isAgree: false,
       reason: "",

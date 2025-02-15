@@ -25,7 +25,7 @@ function AssembleForm() {
             <FormLabel required>모임명</FormLabel>
             <FormControl>
               <FormInput
-                placeholder="ex. 연말 동창회, 크리스마스 파티"
+                placeholder="ex. 연말 동창회"
                 counter
                 maxLength={20}
                 {...field}

@@ -12,7 +12,7 @@ import { Form } from "@/shad-cn/components/ui/form";
 function RegistFoodSurveyFormLayer({ children }: PropsWithChildren) {
   const form = useForm<z.infer<typeof foodSurveyForm>>({
     resolver: zodResolver(foodSurveyForm),
-    defaultValues: {
+    values: {
       favorite: {
         searchKeyword: "",
         preList: [],

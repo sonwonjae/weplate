@@ -137,10 +137,9 @@ export class RQ<
           params: this.params,
           withCredentials: true,
         });
-
+        console.log({ data });
         return data as TQueryFnData;
       } catch (error) {
-        console.log("luke: ", (error as AxiosError)?.response?.status);
         throw error as AxiosError;
       }
     };

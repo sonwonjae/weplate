@@ -79,7 +79,7 @@ export class AssembleModule {
         path: 'assemble/:assembleId/check/countdown',
         method: RequestMethod.GET,
       })
-      .apply(RequiredAuthMiddleware, CheckFullAssembleMiddleware)
+      .apply(OptionalAuthMiddleware, CheckFullAssembleMiddleware)
       .forRoutes({
         path: 'assemble/:assembleId/request/join',
         method: RequestMethod.GET,

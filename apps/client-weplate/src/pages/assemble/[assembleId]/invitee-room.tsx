@@ -1,7 +1,8 @@
 import type { CustomIncomingMessage } from "@/middlewares/type";
 import type { ServerResponse } from "http";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
 
@@ -10,7 +11,7 @@ import Head from "@/pages-src/assemble/[assembleId]/invitee-room/head";
 import Layout from "@/pages-src/assemble/[assembleId]/invitee-room/layout";
 import middleware from "@/pages-src/assemble/[assembleId]/invitee-room/middleware";
 import { Button } from "@/shad-cn/components/ui/button";
-import { apiAxios, RQClient } from "@/utils/react-query";
+import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
 const router = createRouter<CustomIncomingMessage, ServerResponse>();
@@ -32,20 +33,9 @@ function AssembleInviteeRoomPage() {
   const { data: checkJoinable } = useQuery(checkJoinableQuery.queryOptions);
   const { joinable = true } = checkJoinable || {};
 
-  const { mutateAsync: requestJoin } = useMutation({
-    mutationFn: async () => {
-      try {
-        await apiAxios.get(
-          `/api/assemble/${router.query.assembleId}/request/join`,
-        );
-        router.replace(`/assemble/${router.query.assembleId}`);
-      } catch {
-        router.replace(
-          `/login?redirectUrl=/api/assemble/${router.query.assembleId}/request/join`,
-        );
-      }
-    },
-  });
+  const requestJoin = () => {
+    router.replace(`/api/assemble/${router.query.assembleId}/request/join`);
+  };
 
   return (
     <section
@@ -54,12 +44,12 @@ function AssembleInviteeRoomPage() {
         "px-5",
         "flex",
         "flex-col",
-        "gap-14",
+        "gap-8",
         "justify-center",
         "items-center",
       )}
     >
-      <div className={cn("w-24", "h-24", "rounded-full", "bg-slate-200")} />
+      <Image width={110} height={128} src="/plate_chief.svg" alt="chief" />
       <div
         className={cn(
           "flex",

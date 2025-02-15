@@ -59,19 +59,19 @@ export class CheckAssembleMaximumMiddleware implements NestMiddleware {
 export class CheckFullAssembleMiddleware implements NestMiddleware {
   constructor(private readonly assembleService: AssembleService) {}
 
-  async use(req: RequestWithUserInfo, _: Response, next: NextFunction) {
+  async use(req: RequestWithUserInfo, res: Response, next: NextFunction) {
     if (!req.userInfo) {
-      return next();
+      return res.redirect(`/login?redirectUrl=${req.url}`);
     }
     const assembleId = req.params.assembleId as string;
 
-    const { joinable, message } = await this.assembleService.checkJoinable(
+    const { joinable } = await this.assembleService.checkJoinable(
       assembleId,
       req.userInfo,
     );
 
     if (!joinable) {
-      throw new HttpException(message, 400);
+      return res.redirect(`/assemble/${assembleId}/invitee-room`);
     }
     return next();
   }

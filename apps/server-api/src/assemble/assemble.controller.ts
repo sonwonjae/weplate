@@ -1,3 +1,5 @@
+import type { Response as ExpressResponse } from 'express';
+
 import {
   Controller,
   Get,
@@ -8,6 +10,7 @@ import {
   Delete,
   Query,
   Redirect,
+  Res,
 } from '@nestjs/common';
 import { Tables } from '@package/types';
 import { UserInfo } from 'src/auth/auth.decorator';
@@ -79,10 +82,15 @@ export class AssembleController {
   @Get(':assembleId/request/join')
   @Redirect('/assemble/:assembleId')
   async requestJoinFromInvitee(
-    @UserInfo() userInfo: Tables<'users'>,
     @Param('assembleId') assembleId: string,
+    @Res({ passthrough: true }) res: ExpressResponse,
+    @UserInfo() userInfo: Tables<'users'>,
   ) {
-    await this.assembleService.requestJoinFromInvitee(userInfo, assembleId);
+    await this.assembleService.requestJoinFromInvitee(
+      res,
+      assembleId,
+      userInfo,
+    );
 
     return {
       url: `/assemble/${assembleId}`,

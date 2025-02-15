@@ -7,7 +7,6 @@ import {
   checkFoodSurveyStatus,
   checkRecommendedFoodListStatus,
 } from "@/middlewares/pages/assemble";
-import { checkAuth } from "@/middlewares/pages/auth";
 import { pipe } from "@/middlewares/utils/pipe";
 import { RQServer } from "@/utils/react-query";
 
@@ -34,7 +33,6 @@ const prefetch: Middleware<Req> = async (req, res) => {
 };
 
 const middleware = pipe<Req>(
-  checkAuth(),
   checkAssembleMember(),
   checkFoodSurveyStatus({ permission: "complete" }),
   checkRecommendedFoodListStatus({ permission: "complete" }),

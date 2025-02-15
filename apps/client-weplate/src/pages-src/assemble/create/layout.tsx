@@ -7,6 +7,7 @@ import { useId, type PropsWithChildren } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { BAD_WORD_LIST } from "@/constants/validation";
 import { Header, Main, Footer } from "@/layouts";
 import { Button } from "@/shad-cn/components/ui/button";
 import { Form } from "@/shad-cn/components/ui/form";
@@ -16,8 +17,13 @@ import { cn } from "@/utils/tailwind";
 export const assembleFormSchema = z.object({
   title: z
     .string()
-    .nonempty({ message: "모임 이름을 입력해주세요." })
-    .max(20, "모임 이름은 20자 이내로 입력해주세요."),
+    .nonempty({ message: "모임명을 입력해주세요." })
+    .max(20, "모임 이름은 20자 이내로 입력해주세요.")
+    .refine((value) => {
+      return !BAD_WORD_LIST.some((badWord) => {
+        return value.includes(badWord);
+      });
+    }, "부적절한 어휘가 포함되어 있습니다."),
 });
 
 function Layout({ children }: PropsWithChildren) {
@@ -34,7 +40,7 @@ function Layout({ children }: PropsWithChildren) {
 
   const form = useForm<z.infer<typeof assembleFormSchema>>({
     resolver: zodResolver(assembleFormSchema),
-    defaultValues: {
+    values: {
       title: "",
     },
   });
