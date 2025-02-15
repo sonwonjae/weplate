@@ -33,22 +33,15 @@ function AssembleInviteUserPage() {
 
   const shareAssembleLink = async () => {
     const url = `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/invitee-room`;
-    try {
-      if (navigator.canShare({ url })) {
-        try {
-          await navigator.share({ url });
-          return toast.info("공유 성공");
-        } catch {
-          return toast.error("공유 실패");
-        }
-      } else {
+    if (navigator.canShare({ url })) {
+      await navigator.share({ url });
+    } else {
+      try {
         await navigator.clipboard.writeText(url);
-        toast.info("클립보드에 복사되었어요.", {
-          position: "bottom-left",
-        });
+        toast.info("클립보드에 복사되었어요.", { position: "bottom-left" });
+      } catch {
+        toast.error("복사 실패", { position: "bottom-left" });
       }
-    } catch {
-      return toast.error("공유 실패");
     }
   };
 
