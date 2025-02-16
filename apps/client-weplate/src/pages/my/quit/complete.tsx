@@ -33,8 +33,8 @@ function QuitComplete() {
         )}
       >
         <Image
-          width={110}
-          height={128}
+          width={90}
+          height={104}
           src="/plate_chief_smile.svg"
           alt="chief"
         />
