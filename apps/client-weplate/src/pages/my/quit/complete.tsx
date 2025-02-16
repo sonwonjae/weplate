@@ -32,7 +32,12 @@ function QuitComplete() {
           "bg-background",
         )}
       >
-        <Image width={110} height={128} src="/plate_chief_smile.svg" alt="chief" />
+        <Image
+          width={110}
+          height={128}
+          src="/plate_chief_smile.svg"
+          alt="chief"
+        />
         <div
           className={cn(
             "flex",
