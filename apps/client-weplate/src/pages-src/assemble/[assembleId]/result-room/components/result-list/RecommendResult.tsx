@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 
-import HyperText from "@/shad-cn/components/ui/hyper-text";
+import { TextAnimate } from "@/shad-cn/components/ui/text-animate";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
 
@@ -73,7 +73,11 @@ function RecommendResult() {
                 "[box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
               )}
             >
-              {reRecommendStatus === "end" && <HyperText>{foodName}</HyperText>}
+              {reRecommendStatus === "end" && (
+                <TextAnimate animation="slideLeft" by="character">
+                  {foodName}
+                </TextAnimate>
+              )}
               {reRecommendStatus !== "end" && foodName}
             </li>
           );
