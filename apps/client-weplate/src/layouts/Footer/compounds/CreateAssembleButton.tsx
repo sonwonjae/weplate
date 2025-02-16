@@ -20,7 +20,7 @@ function CreateAssembleButton() {
     if (isWithinCreationLimit) {
       router.push("/assemble/create");
     } else {
-      toast.info(`모임 갯수는 ${limit}개를 초과할 수 없습니다.`);
+      toast.error(`모임 갯수는 ${limit}개를 초과할 수 없습니다.`);
     }
   };
 
