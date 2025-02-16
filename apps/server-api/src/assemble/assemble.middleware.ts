@@ -72,7 +72,7 @@ export class CheckFullAssembleMiddleware implements NestMiddleware {
 
     if (!joinable) {
       if (message === 'full assemble') {
-        return res.redirect(`/assemble/${assembleId}/invitee-room/full`);
+        return res.redirect(`/assemble/${assembleId}/invitee-room/full-member`);
       } else {
         return res.redirect(`/assemble/${assembleId}/invitee-room`);
       }

@@ -28,12 +28,9 @@ const prefetch: Middleware<Req> = async (req, res) => {
     );
 
     if (!isWithinCreationLimit) {
-      /** NOTE: 참여 가능한 모임 개수를 초과한 경우에는 모임 개수 초과 페이지로 이동 */
+      /** NOTE: 참여 가능한 모임 개수를 초과한 경우에는 해당 페이지 통과 */
       return {
-        redirect: {
-          destination: `/assemble/${assembleId}/invitee-room/max-assemble`,
-          permanent: true,
-        },
+        props: { dehydratedState: dehydrate(req.queryClient) },
       };
     }
 
@@ -53,12 +50,15 @@ const prefetch: Middleware<Req> = async (req, res) => {
           permanent: true,
         },
       };
+    } else {
+      /** NOTE: 이 외의 경우에는 초대 페이지로 이동 */
+      return {
+        redirect: {
+          destination: `/assemble/${assembleId}/invitee-room`,
+          permanent: true,
+        },
+      };
     }
-
-    /** NOTE: 이 외의 경우에는 통과 */
-    return {
-      props: { dehydratedState: dehydrate(req.queryClient) },
-    };
   } catch {
     return {
       redirect: {

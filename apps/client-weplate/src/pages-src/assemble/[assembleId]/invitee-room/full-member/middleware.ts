@@ -19,11 +19,28 @@ const prefetch: Middleware<Req> = async (req, res) => {
   await req.queryClient.fetchQuery(assembleUserListQuery.queryOptions);
 
   try {
+    const isWithinCreationLimitQuery = new RQServer({
+      url: "/api/assemble/check/within-creation-limit",
+      res,
+    });
+    const { isWithinCreationLimit } = await req.queryClient.fetchQuery(
+      isWithinCreationLimitQuery.queryOptions,
+    );
+
+    if (!isWithinCreationLimit) {
+      /** NOTE: 참여 가능한 모임 개수를 초과한 경우에는 모임 개수 초과 페이지로 이동 */
+      return {
+        redirect: {
+          destination: `/assemble/${assembleId}/invitee-room/max-assemble`,
+          permanent: true,
+        },
+      };
+    }
+
     const checkJoinableQuery = new RQServer({
       url: `/api/assemble/${assembleId}/check/full`,
       res,
     });
-
     const { joinable, message } = await req.queryClient.fetchQuery(
       checkJoinableQuery.queryOptions,
     );

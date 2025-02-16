@@ -7,9 +7,9 @@ import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
-import Head from "@/pages-src/assemble/[assembleId]/invitee-room/full/head";
-import Layout from "@/pages-src/assemble/[assembleId]/invitee-room/full/layout";
-import middleware from "@/pages-src/assemble/[assembleId]/invitee-room/full/middleware";
+import Head from "@/pages-src/assemble/[assembleId]/invitee-room/full-member/head";
+import Layout from "@/pages-src/assemble/[assembleId]/invitee-room/full-member/layout";
+import middleware from "@/pages-src/assemble/[assembleId]/invitee-room/full-member/middleware";
 import { Button } from "@/shad-cn/components/ui/button";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
