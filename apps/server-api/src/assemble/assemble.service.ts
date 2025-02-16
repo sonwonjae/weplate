@@ -161,7 +161,7 @@ export class AssembleService {
 
     const onwerId = assemble?.user__assembles.filter(({ permission }) => {
       return permission === 'owner';
-    })[0].userId;
+    })[0]?.userId;
 
     if (!onwerId) {
       throw new HttpException('this assemble has not owner', 400);
