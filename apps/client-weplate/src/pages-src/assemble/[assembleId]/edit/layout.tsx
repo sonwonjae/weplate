@@ -25,7 +25,7 @@ export const assembleFormSchema = z.object({
   title: z
     .string()
     .nonempty({ message: "모임명을 입력해주세요." })
-    .max(20, "모임 이름은 20자 이내로 입력해주세요.")
+    .max(20, "모임명은 20자 이내로 입력해주세요.")
     .refine(checkOnlySpace, checkOnlySpaceErrorMessage)
     .refine(checkBadWord, createCheckBadWordErrorMessage),
 });
