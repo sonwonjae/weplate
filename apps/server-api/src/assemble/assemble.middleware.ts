@@ -65,13 +65,17 @@ export class CheckFullAssembleMiddleware implements NestMiddleware {
     }
     const assembleId = req.params.assembleId as string;
 
-    const { joinable } = await this.assembleService.checkJoinable(
+    const { joinable, message } = await this.assembleService.checkJoinable(
       assembleId,
       req.userInfo,
     );
 
     if (!joinable) {
-      return res.redirect(`/assemble/${assembleId}/invitee-room`);
+      if (message === 'full assemble') {
+        return res.redirect(`/assemble/${assembleId}/invitee-room/full`);
+      } else {
+        return res.redirect(`/assemble/${assembleId}/invitee-room`);
+      }
     }
     return next();
   }

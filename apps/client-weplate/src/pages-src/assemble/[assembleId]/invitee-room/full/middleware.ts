@@ -23,22 +23,23 @@ const prefetch: Middleware<Req> = async (req, res) => {
       url: `/api/assemble/${assembleId}/check/full`,
       res,
     });
+
     const { joinable, message } = await req.queryClient.fetchQuery(
       checkJoinableQuery.queryOptions,
     );
 
     if (!joinable && message === "full assemble") {
       return {
+        props: { dehydratedState: dehydrate(req.queryClient) },
+      };
+    } else {
+      return {
         redirect: {
-          destination: `/assemble/${assembleId}/invitee-room/full`,
+          destination: `/assemble/${assembleId}/invitee-room`,
           permanent: true,
         },
       };
     }
-
-    return {
-      props: { dehydratedState: dehydrate(req.queryClient) },
-    };
   } catch {
     return {
       redirect: {

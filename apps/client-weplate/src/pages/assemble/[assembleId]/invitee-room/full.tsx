@@ -7,9 +7,9 @@ import { useRouter } from "next/router";
 import { createRouter } from "next-connect";
 
 import { makeGetServerSideProps } from "@/middlewares/common/makeGetServerSideProps";
-import Head from "@/pages-src/assemble/[assembleId]/invitee-room/head";
-import Layout from "@/pages-src/assemble/[assembleId]/invitee-room/layout";
-import middleware from "@/pages-src/assemble/[assembleId]/invitee-room/middleware";
+import Head from "@/pages-src/assemble/[assembleId]/invitee-room/full/head";
+import Layout from "@/pages-src/assemble/[assembleId]/invitee-room/full/layout";
+import middleware from "@/pages-src/assemble/[assembleId]/invitee-room/full/middleware";
 import { Button } from "@/shad-cn/components/ui/button";
 import { RQClient } from "@/utils/react-query";
 import { cn } from "@/utils/tailwind";
@@ -26,15 +26,8 @@ function AssembleInviteeRoomPage() {
   });
   const { data: assemble } = useQuery(assembleQuery.queryOptions);
 
-  /** FIXME: 기획 상 풀방인 경우는 어떻게 할지 논의 필요 */
-  const checkJoinableQuery = new RQClient({
-    url: `/api/assemble/${router.query.assembleId}/check/full`,
-  });
-  const { data: checkJoinable } = useQuery(checkJoinableQuery.queryOptions);
-  const { joinable = true } = checkJoinable || {};
-
-  const requestJoin = () => {
-    router.replace(`/api/assemble/${router.query.assembleId}/request/join`);
+  const moveCreateAssemblePage = () => {
+    router.replace("/assemble/create");
   };
 
   return (
@@ -49,12 +42,7 @@ function AssembleInviteeRoomPage() {
         "items-center",
       )}
     >
-      <Image
-        width={110}
-        height={128}
-        src="/plate_chief_smile.svg"
-        alt="chief"
-      />
+      <Image width={110} height={128} src="/plate_chief_cry.svg" alt="chief" />
       <div
         className={cn(
           "flex",
@@ -64,13 +52,6 @@ function AssembleInviteeRoomPage() {
           "items-center",
         )}
       >
-        <h4 className={cn("font-bold")}>
-          <span className={cn("text-primary")}>
-            {assemble?.ownerInfo?.nickname}
-          </span>
-          님이 초대합니다.
-        </h4>
-        <h2 className={cn("font-bold", "text-xl")}>{assemble?.title}</h2>
         <p
           className={cn(
             "text-sm",
@@ -79,19 +60,24 @@ function AssembleInviteeRoomPage() {
             "text-center",
           )}
         >
-          초대를 수락하고 모임을 계획해보세요! 취향에 맞는 메뉴 추천으로 더욱
-          즐거운 시간을 만들어 드립니다.
+          <span className={cn("font-bold")}>앗!</span>
+          <br />
+          <span className={cn("font-bold", "text-primary")}>
+            {assemble?.ownerInfo?.nickname}
+          </span>
+          <span>님의 모임 인원이 가득 찼어요.</span>
+          <br />
+          <span>새로운 모임을 생성해보세요.</span>
         </p>
       </div>
 
       <Button
         size="lg"
         round
-        disabled={!joinable}
         className={cn("w-full")}
-        onClick={requestJoin}
+        onClick={moveCreateAssemblePage}
       >
-        초대 수락하기
+        새로운 모임 만들기
       </Button>
     </section>
   );
