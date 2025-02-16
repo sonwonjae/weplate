@@ -25,7 +25,7 @@ function QuitComplete() {
           "flex-col",
           "items-center",
           "justify-center",
-          "gap-5",
+          "gap-8",
           "h-full",
           "py-2",
           "px-5",
@@ -56,6 +56,24 @@ function QuitComplete() {
             진심으로 감사드립니다.
             <br />
             언제든 다시 찾아주시면 따뜻하게 환영하겠습니다. 😊
+          </p>
+        </div>
+        <div
+          className={cn(
+            "w-full",
+            "flex",
+            "flex-col",
+            "gap-4",
+            "items-center",
+            "bg-gray-100",
+            "rounded-xl",
+            "max-w-96",
+            "p-5",
+          )}
+        >
+          <h4 className={cn("text-primary", "font-bold")}>오늘의 메뉴 추천</h4>
+          <p className={cn("w-full", "bg-white", "py-3", "px-5", "rounded-xl")}>
+            🍚 든든한 집밥 한 끼, 어때요?
           </p>
         </div>
       </section>
