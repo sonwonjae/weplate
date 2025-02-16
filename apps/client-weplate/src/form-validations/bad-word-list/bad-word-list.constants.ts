@@ -594,4 +594,9 @@ export const BAD_WORD_LIST = [
   "pennis",
   "pussy",
   "sex",
+
+  /** FIXME: 시스템 예약어 문자 리스트는 별도로 분리 필요 */
+  "운영자",
+  "관리자",
+  "admin",
 ];
