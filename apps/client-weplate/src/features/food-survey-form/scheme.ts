@@ -16,18 +16,12 @@ const listScheme = z.array(
 
 export const foodSurveyForm = z.object({
   favorite: z.object({
-    searchKeyword: z
-      .string()
-      .min(1, "음식명을 입력해주세요.")
-      .max(50, "최대 50글자까지 입력할 수 있어요."),
+    searchKeyword: z.string().max(50, "최대 50글자까지 입력할 수 있어요."),
     preList: preListScheme,
     list: listScheme,
   }),
   hate: z.object({
-    searchKeyword: z
-      .string()
-      .min(1, "음식명을 입력해주세요.")
-      .max(50, "최대 50글자까지 입력할 수 있어요."),
+    searchKeyword: z.string().max(50, "최대 50글자까지 입력할 수 있어요."),
     preList: preListScheme,
     list: listScheme,
   }),
