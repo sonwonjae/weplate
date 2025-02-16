@@ -314,9 +314,7 @@ export class FoodService {
             )
           `,
       )
-      .eq('assembleId', assembleId)
-      .gte('createdAt', today.toISOString())
-      .lt('createdAt', tomorrow.toISOString());
+      .eq('assembleId', assembleId);
 
     const alreadyRecommendedAssembleFoodList =
       alreadyRecommendedList?.flatMap(({ recommend__foods }) => {
@@ -338,7 +336,7 @@ export class FoodService {
               {
                 foodId: alreadyRecommendedAssembleFood.foodId,
                 foodName: alreadyRecommendedAssembleFood.foods?.name ?? '',
-                score: -9999,
+                score: -5,
               },
             ];
           }
@@ -350,7 +348,7 @@ export class FoodService {
               return {
                 foodId: alreadyRecommendedAssembleFood.foodId,
                 foodName: alreadyRecommendedAssembleFood.foods?.name ?? '',
-                score: preScoredFood.score - 9999,
+                score: preScoredFood.score - 5,
               };
             }
 
@@ -449,7 +447,7 @@ export class FoodService {
       );
     let mostFavoriteFood: (typeof favoriteFoodList)[number];
 
-    // NOTE [A]: 선호 정보 가져와서 점수 책정 후 음식 도출
+    // NOTE [C]: 선호 정보 가져와서 점수 책정 후 음식 도출
     mostFavoriteFood = favoriteFoodList
       .filter((favoriteFood) => {
         const hasScoredAlreadyRecommendedAssembleFood =
@@ -468,12 +466,10 @@ export class FoodService {
 
         return !hasHateFood && !hasScoredAlreadyRecommendedAssembleFood;
       })
-      .sort((a, b) => {
-        return b.score - a.score;
-      })[0];
+      .draw();
 
     if (!mostFavoriteFood) {
-      // NOTE [D]: 선호 정보로 음식을 추천할 수 없는 경우 cuisine이 하나인 음식 뽑아서 싫어하는 음식 score 계산 후 제공
+      // NOTE [A]: 선호 정보로 음식을 추천할 수 없는 경우 cuisine이 하나인 음식 뽑아서 싫어하는 음식 score 계산 후 제공
       mostFavoriteFood = (await this.getFoodWithCuisine())
         .map((food) => {
           const alreadyRecommendedAssembleFood =
@@ -496,13 +492,11 @@ export class FoodService {
               (alreadyRecommendedAssembleFood?.score ?? 0),
           };
         })
-        .sort((a, b) => {
-          return b.score - a.score;
-        })[0];
+        .draw();
     }
 
     // NOTE [B]: cuisine이 두개 이상인 음식 뽑아서 싫어하는 음식 score 계산 후 제공
-    const fusionCuisineFoodList = (
+    const fusionCuisineFood = (
       await this.getFoodWithCuisine({ cuisineCount: 2 })
     )
       .map((food) => {
@@ -526,13 +520,10 @@ export class FoodService {
             (alreadyRecommendedAssembleFood?.score ?? 0),
         };
       })
-      .sort((a, b) => {
-        return b.score - a.score;
-      });
-    const fusionCuisineFood = fusionCuisineFoodList[0];
+      .draw();
 
-    // NOTE [B]: A또는 D에서 나온 cuisine을 제외하고 cuisine이 한개인 음식 뽑아서 싫어하는 음식 score 계산 후 제공
-    const singleCuisineFoodList = (
+    // NOTE [D]: A또는 C에서 나온 cuisine을 제외하고 cuisine이 한개인 음식 뽑아서 싫어하는 음식 score 계산 후 제공
+    const singleCuisineFood = (
       await this.getFoodWithCuisine({
         ninCuisineIdList: [mostFavoriteFood.cuisineList[0].id],
         ninFoodIdList: [mostFavoriteFood.foodId],
@@ -559,10 +550,7 @@ export class FoodService {
             (alreadyRecommendedAssembleFood?.score ?? 0),
         };
       })
-      .sort((a, b) => {
-        return b.score - a.score;
-      });
-    const singleCuisineFood = singleCuisineFoodList[0];
+      .draw();
 
     const { data: recommend } = await this.supabaseService.client
       .from('recommends')
@@ -633,7 +621,6 @@ export class FoodService {
       )
       .eq('assembleId', assembleId)
       .order('createdAt', { ascending: false });
-    // .single();
 
     const recommend = recommendList?.[0];
 
@@ -654,7 +641,6 @@ export class FoodService {
     if (!mostFavoriteFood || !multiCuisineFood || !singleCuisineFood) {
       throw new HttpException('fail load recommend food list', 400);
     }
-
     return [mostFavoriteFood, multiCuisineFood, singleCuisineFood].map(
       ({ foodId, foods }) => {
         return {

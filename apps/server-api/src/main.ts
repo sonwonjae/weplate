@@ -2,8 +2,28 @@ import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as cookieParser from 'cookie-parser';
+import * as es from 'es-toolkit';
 
 import { AppModule } from './app.module';
+
+Array.prototype.shuffle = function shuffle<T>(): T[] {
+  return es.shuffle(this as T[]);
+};
+Array.prototype.draw = function draw<T extends { score: number }>(): T {
+  return (this as T[])
+    .reduce(
+      (acc, currentList: T) => {
+        if (currentList.score > acc.maxScore) {
+          return { maxScore: currentList.score, resultList: [currentList] };
+        } else if (currentList.score === acc.maxScore) {
+          acc.resultList.push(currentList);
+        }
+        return acc;
+      },
+      { maxScore: -Infinity, resultList: [] as T[] },
+    )
+    .resultList.shuffle()[0];
+};
 
 async function bootstrap() {
   if (!process.env.PORT) {
