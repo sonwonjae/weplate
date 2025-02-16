@@ -297,7 +297,7 @@ export class AssembleService {
       .eq('assembleId', assembleId);
 
     if (
-      (userAssembleList ?? []).length >
+      (userAssembleList ?? []).length >=
       Number(process.env.ASSEMBLE_MAX_USER_COUNT)
     ) {
       return {
