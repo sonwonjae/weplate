@@ -114,7 +114,7 @@ function HomePage() {
           )}
         >
           <Link
-            href="https://achieved-arthropod-648.notion.site/17939793c46d80ae9015e981635f9b8d?pvs=4"
+            href="https://achieved-arthropod-648.notion.site/17e39793c46d80f7bb90ed4d3b42e606?pvs=4"
             target="_blank"
           >
             개인정보처리방침

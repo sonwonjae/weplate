@@ -8,7 +8,7 @@ function ConnectRequestNewFoodGoogleForm() {
       <div
         className={cn("flex", "bg-amber-50", "rounded-md", "py-3", "px-4")}
         onClick={() => {
-          window.open("http://bit.ly/3VQOABC", "_blank");
+          window.open("https://forms.gle/eNM4D4fzhqPdXc9j6", "_blank");
         }}
       >
         <p className={cn("flex-1")}>

@@ -111,7 +111,7 @@ function FoodListSection() {
           round
           className={cn("font-bold")}
           onClick={() => {
-            window.open("http://bit.ly/3VQOABC", "_blank");
+            window.open("https://forms.gle/eNM4D4fzhqPdXc9j6", "_blank");
           }}
         >
           <MailPlusIcon size={20} />

@@ -71,7 +71,7 @@ function MyInfo() {
           <li className={cn(titleVariants())}>음식 추가</li>
           <li>
             <Link
-              href="http://bit.ly/3VQOABC"
+              href="https://forms.gle/eNM4D4fzhqPdXc9j6"
               target="_blank"
               className={cn(itemVariants())}
             >
@@ -82,7 +82,16 @@ function MyInfo() {
           <li className={cn(titleVariants())}>고객 지원</li>
           <li>
             <Link
-              href="https://bit.ly/4hbv8HX"
+              href="https://achieved-arthropod-648.notion.site/18c39793c46d80f28010d9c5dd7690d2?pvs=4"
+              target="_blank"
+              className={cn(itemVariants())}
+            >
+              공지사항
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="https://forms.gle/XnxMD4WqzivDFNq76"
               target="_blank"
               className={cn(itemVariants())}
             >
@@ -91,7 +100,7 @@ function MyInfo() {
           </li>
           <li>
             <Link
-              href="https://bit.ly/4jafrm8"
+              href="https://forms.gle/YKSWu4NueGN9uXbz5"
               target="_blank"
               className={cn(itemVariants())}
             >
