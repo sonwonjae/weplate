@@ -60,8 +60,7 @@ function SubmitFoodList({ type }: SubmitFoodListProps) {
   const isLastStep = useFoodSurveyStepsStore((state) => {
     return state.isLastStep();
   });
-  const isReadySubmitFoodList =
-    isLastStep && !!list.length && searchActiveState !== "in";
+  const isReadySubmitFoodList = isLastStep && searchActiveState !== "in";
 
   if (!isReadySubmitFoodList) {
     return null;
@@ -78,6 +77,7 @@ function SubmitFoodList({ type }: SubmitFoodListProps) {
       size="lg"
       round
       className={cn("w-full")}
+      disabled={!list.length}
       onClick={form.handleSubmit(submitFoodList)}
     >
       비선호 음식 등록 완료
