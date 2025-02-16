@@ -257,7 +257,7 @@ function FoodListSection() {
                 )}
                 onClick={() => {
                   if (foodStatus === "registed") {
-                    toast.info("이미 등록된 음식입니다.");
+                    toast.error("이미 등록된 음식입니다.");
                   }
 
                   changeFoodStatus({
