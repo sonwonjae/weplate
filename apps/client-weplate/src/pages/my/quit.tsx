@@ -200,7 +200,7 @@ function MyQuit() {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className={cn("!-mt-6")} />
               </FormItem>
             );
           }}

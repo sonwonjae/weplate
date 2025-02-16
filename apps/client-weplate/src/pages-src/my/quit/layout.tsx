@@ -27,8 +27,11 @@ function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const form = useFormContext<z.infer<typeof myQuitForm>>();
-  const { isVerified = false, isAgree = false } =
-    useWatch<z.infer<typeof myQuitForm>>();
+  const {
+    isVerified = false,
+    isAgree = false,
+    suggestion = "",
+  } = useWatch<z.infer<typeof myQuitForm>>();
 
   const { mutateAsync: submitMyQuitForm } = useMutation({
     mutationFn: async () => {
@@ -92,7 +95,7 @@ function Layout({ children }: PropsWithChildren) {
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                disabled={!isVerified || !isAgree}
+                disabled={!isVerified || !isAgree || suggestion.length > 500}
                 type="button"
                 size="lg"
                 className={cn("flex-1")}
