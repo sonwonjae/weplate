@@ -73,19 +73,20 @@ function ReRecommendFoodButton() {
         const currentRecommendCountdown = Number(
           queryClient.getQueryData(recommendCountdownQuery.queryKey),
         );
-
-        if (currentRecommendCountdown > 0) {
-          toast.info(
-            `메뉴 추천이 ${queryClient.getQueryData(recommendCountdownQuery.queryKey)}회 남았습니다.`,
-          );
-        } else {
-          toast.info(
-            <p>
-              매일 밤 자정, 새로운 메뉴 추천이 활성화됩니다!
-              <br />
-              하루 20번의 추천을 마음껏 즐겨보세요.
-            </p>,
-          );
+        if (recommendCountdown <= 5) {
+          if (currentRecommendCountdown > 0) {
+            toast.info(
+              `메뉴 추천이 ${queryClient.getQueryData(recommendCountdownQuery.queryKey)}회 남았습니다.`,
+            );
+          } else {
+            toast.info(
+              <p>
+                매일 밤 자정, 새로운 메뉴 추천이 활성화됩니다!
+                <br />
+                하루 20번의 추천을 마음껏 즐겨보세요.
+              </p>,
+            );
+          }
         }
       } catch (error) {
         throw error as AxiosError;
