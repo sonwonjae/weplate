@@ -37,7 +37,7 @@ const AGREE_LIST: Array<{
   {
     fieldName: "isPrivacyPolicyAgreed",
     title: "개인정보 수집 및 이용 동의 (필수)",
-    url: "https://achieved-arthropod-648.notion.site/17939793c46d80ae9015e981635f9b8d?pvs=4",
+    url: "https://achieved-arthropod-648.notion.site/17e39793c46d80f7bb90ed4d3b42e606?pvs=4",
   },
 ];
 
