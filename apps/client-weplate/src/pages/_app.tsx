@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+
 import type { AppProps } from "next/app";
 
 import {
@@ -10,6 +11,7 @@ import {
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { NextPage } from "next";
+import localFont from "next/font/local";
 import Head from "next/head";
 import React, { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -32,6 +34,10 @@ export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps<{ dehydratedState: DehydratedState }> & {
   Component: NextPageWithLayout;
 };
+
+const pretendard = localFont({
+  src: "../../public/font/PretendardVariable.woff2",
+});
 
 export default function MyApp({
   Component: PageComponent,
@@ -135,6 +141,7 @@ export default function MyApp({
         <PageHead />
         <div
           className={cn(
+            pretendard.className,
             "fixed",
             "top-0",
             "bottom-0",
