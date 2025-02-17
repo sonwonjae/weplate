@@ -25,7 +25,7 @@ function Head() {
     <NextHead>
       <title>{title}</title>
       <meta name="Description" content={description} />
-      <InviteMeta />
+      <InviteMeta description={description} />
     </NextHead>
   );
 }
