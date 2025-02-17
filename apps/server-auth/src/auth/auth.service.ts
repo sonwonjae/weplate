@@ -96,9 +96,9 @@ export class AuthService {
   async issueToken(res: ExpressResponse, userId: string) {
     const accessToken = uuidv4();
     const refreshToken = uuidv4();
-    const accessTokenExpires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7);
+    const accessTokenExpires = new Date(Date.now() + 1000 * 60 * 60);
     const refreshTokenExpires = new Date(
-      Date.now() + 1000 * 60 * 60 * 24 * 7 * 8,
+      Date.now() + 1000 * 60 * 60 * 24 * 7 * 2,
     );
 
     const COMMON_COOKIE_OPTION: CookieOptions = {
