@@ -16,6 +16,7 @@ import Head from "next/head";
 import React, { useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 
+import Favicons from "@/meta/Favicons";
 import { Button } from "@/shad-cn/components/ui/button";
 import { cn } from "@/utils/tailwind";
 
@@ -64,6 +65,7 @@ export default function MyApp({
       <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-right" />
       <HydrationBoundary state={pageProps.dehydratedState}>
         <Head>
+          <Favicons />
           <title>취향 존중 메뉴 추천 - 위플레이트(Weplate)</title>
           <meta
             name="Description"
