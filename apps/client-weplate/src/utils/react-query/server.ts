@@ -43,9 +43,6 @@ export class RQServer<
     return async () => {
       try {
         const { data, headers } = await this.axiosInstance(this.url, {
-          baseURL: /^\/api\/user/.test(this.url)
-            ? "http://localhost:5555"
-            : "http://localhost:7777",
           method: this.#method,
           params: this.params,
           withCredentials: true,
