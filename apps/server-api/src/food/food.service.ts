@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { Tables } from '@package/types';
+import { AssembleService } from 'src/assemble/assemble.service';
 import { SupabaseService } from 'src/supabase/supabase.service';
 
 import { CheckFoodSurveyDto } from './dto/check-food-survey.dto';
@@ -13,7 +14,10 @@ import { UpdateFoodSurveyDto } from './dto/update-food-survey.dto';
 
 @Injectable()
 export class FoodService {
-  constructor(private readonly supabaseService: SupabaseService) {}
+  constructor(
+    private readonly supabaseService: SupabaseService,
+    private readonly assembleService: AssembleService,
+  ) {}
 
   async searchFoodList({ search }: SearchFoodListDto) {
     let query = this.supabaseService.client.from('foods').select('*');
@@ -278,6 +282,11 @@ export class FoodService {
   }
 
   async recommendFoodList({ assembleId }: RecommendFoodListDto) {
+    const remainChanceCount =
+      await this.assembleService.countdownRecommendChance(assembleId);
+    if (remainChanceCount <= 0) {
+      throw new HttpException('is already use all chance', 400);
+    }
     const { data: userAssembleFoodList } = await this.supabaseService.client
       .from('user__assemble__foods')
       .select(

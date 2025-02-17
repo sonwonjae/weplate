@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 
@@ -35,6 +34,17 @@ function ReRecommendFoodButton() {
     url: `/api/assemble/${router.query.assembleId}/check/new-registed-food-member`,
   });
 
+  const terminateRecommend = async () => {
+    await sleep(1000);
+    changeReRecommendStatus("end");
+    await queryClient.refetchQueries({
+      queryKey: recommendCountdownQuery.queryKey,
+    });
+    await queryClient.refetchQueries({
+      queryKey: newRegistedFoodMemberListQuery.queryKey,
+    });
+  };
+
   const { mutateAsync: reRecommendFoodList } = useMutation({
     mutationFn: async () => {
       try {
@@ -61,14 +71,7 @@ function ReRecommendFoodButton() {
         ]);
 
         // NOTE: 4. 1000ms 후 결과 제공
-        await sleep(1000);
-        changeReRecommendStatus("end");
-        await queryClient.refetchQueries({
-          queryKey: recommendCountdownQuery.queryKey,
-        });
-        await queryClient.refetchQueries({
-          queryKey: newRegistedFoodMemberListQuery.queryKey,
-        });
+        await terminateRecommend();
 
         const currentRecommendCountdown = Number(
           queryClient.getQueryData(recommendCountdownQuery.queryKey),
@@ -88,8 +91,15 @@ function ReRecommendFoodButton() {
             );
           }
         }
-      } catch (error) {
-        throw error as AxiosError;
+      } catch {
+        await terminateRecommend();
+        toast.info(
+          <p>
+            오늘의 메뉴 추천이 모두 소진되었어요.
+            <br />
+            내일 다시 새로운 추천을 받아보세요!
+          </p>,
+        );
       }
     },
   });

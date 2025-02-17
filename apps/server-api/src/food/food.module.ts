@@ -2,6 +2,7 @@ import { Agent } from 'node:https';
 
 import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
+import { AssembleService } from 'src/assemble/assemble.service';
 import { RequiredAuthMiddleware } from 'src/auth/auth.middleware';
 import { SupabaseService } from 'src/supabase/supabase.service';
 
@@ -18,7 +19,7 @@ import { FoodService } from './food.service';
     }),
   ],
   controllers: [FoodController],
-  providers: [FoodService, SupabaseService],
+  providers: [FoodService, AssembleService, SupabaseService],
 })
 export class FoodModule {
   configure(consumer: MiddlewareConsumer) {
