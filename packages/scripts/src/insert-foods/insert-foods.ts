@@ -14,7 +14,7 @@ const main = async () => {
     throw new Error('파일 양식이 잘못되었습니다.');
   }
 
-  const foodListInScript = file.split('\r\n').map((str) => {
+  const foodListInScript = file.split(/\r|\n/).map((str) => {
     const [foodName, cuisineList] = str
       .split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/)
       .map((item) => {
