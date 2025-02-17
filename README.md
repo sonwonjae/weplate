@@ -1,2 +1,2 @@
-# momuk
-momuk repo
+# weplate
+weplate repo
