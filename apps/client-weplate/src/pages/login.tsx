@@ -50,8 +50,10 @@ function LoginPage() {
             취향 존중 메뉴 추천
           </h2>
           <p className={cn("text-slate-600")}>
-            <span className={cn("text-primary")}>위플레이트</span>에서
-            경험하세요!
+            <span className={cn("font-semibold", "text-primary")}>
+              위플레이트
+            </span>
+            에서 경험하세요!
           </p>
         </div>
       </div>
