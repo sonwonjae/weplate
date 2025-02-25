@@ -77,6 +77,10 @@ function SearchSection() {
                   }}
                   onFocus={() => {
                     updateInputFocusState("focus");
+                    window.scrollTo({
+                      top: 0,
+                      behavior: "smooth",
+                    });
                   }}
                   {...field}
                 />
