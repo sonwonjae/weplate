@@ -16,7 +16,7 @@ import { cn } from "@/utils/tailwind";
 
 const router = createRouter<HomePageReq, ServerResponse>();
 router.get(middleware).use((req, res, next) => {
-  return next()
+  return next();
 });
 
 export const getServerSideProps = makeGetServerSideProps(router);
