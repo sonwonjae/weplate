@@ -105,15 +105,17 @@ function AssembleItem({
           "px-6",
         )}
       >
-        <div className={cn("flex", "gap-3", "w-full", "items-center")}>
+        <Link
+          prefetch={false}
+          shallow={false}
+          href={`/assemble/${assembleId}`}
+          className={cn("flex", "gap-3", "w-full", "items-center")}
+        >
           <MemberList memberList={userAssembleList} />
           <div
             className={cn("flex-1", "flex", "flex-col", "gap-1", "truncate")}
           >
-            <Link
-              prefetch={false}
-              shallow={false}
-              href={`/assemble/${assembleId}`}
+            <span
               className={cn(
                 "flex-1",
                 "block",
@@ -123,7 +125,7 @@ function AssembleItem({
               )}
             >
               {title}
-            </Link>
+            </span>
             <span
               className={cn(
                 "inline-block",
@@ -246,7 +248,7 @@ function AssembleItem({
               </Dialog>
             </div>
           </div>
-        </div>
+        </Link>
       </li>
     </>
   );
