@@ -13,6 +13,7 @@ const prefetch: Middleware<Req> = async (req, res) => {
   const { search = "" } = req.query;
   const foodListQuery = new RQServer({
     url: `/api/food/detail/list?${qs.stringify({ search })}`,
+    req,
     res,
   });
   await req.queryClient.fetchQuery(foodListQuery.queryOptions);

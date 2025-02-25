@@ -14,6 +14,7 @@ const prefetch: Middleware<Req> = async (req, res) => {
 
   const assembleUserListQuery = new RQServer({
     url: `/api/assemble/${assembleId}/user/list`,
+    req,
     res,
   });
   await req.queryClient.fetchQuery(assembleUserListQuery.queryOptions);
@@ -21,6 +22,7 @@ const prefetch: Middleware<Req> = async (req, res) => {
   try {
     const isWithinCreationLimitQuery = new RQServer({
       url: "/api/assemble/check/within-creation-limit",
+      req,
       res,
     });
     const { isWithinCreationLimit } = await req.queryClient.fetchQuery(
@@ -36,6 +38,7 @@ const prefetch: Middleware<Req> = async (req, res) => {
 
     const checkJoinableQuery = new RQServer({
       url: `/api/assemble/${assembleId}/check/full`,
+      req,
       res,
     });
     const { joinable, message } = await req.queryClient.fetchQuery(

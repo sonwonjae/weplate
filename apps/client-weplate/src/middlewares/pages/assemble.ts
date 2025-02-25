@@ -31,6 +31,7 @@ export const checkWithInCreationLimit =
     return pipe(checkAuth(), async (req, res) => {
       const isWithinCreationLimitQuery = new RQServer({
         url: "/api/assemble/check/within-creation-limit",
+        req,
         res,
       });
       await req.queryClient.fetchQuery(isWithinCreationLimitQuery.queryOptions);
@@ -59,6 +60,7 @@ export const checkAssembleMember = (
 
     const assembleQuery = new RQServer({
       url: `/api/assemble/${assembleId}/item`,
+      req,
       res,
     });
     const assemble = await req.queryClient.fetchQuery(
@@ -98,6 +100,7 @@ export const checkAssembleOwner = (): Middleware<
 
       const assembleQuery = new RQServer({
         url: `/api/assemble/${assembleId}/item`,
+        req,
         res,
       });
       const assemble = await req.queryClient.fetchQuery(
@@ -127,6 +130,7 @@ export const checkAssembleGuest = (): Middleware<CustomIncomingMessage> => {
 
     const assembleQuery = new RQServer({
       url: `/api/assemble/${assembleId}/item`,
+      req,
       res,
     });
     const assemble = await req.queryClient.fetchQuery(
@@ -167,6 +171,7 @@ export const checkFoodSurveyStatus = ({
     try {
       const foodSurveyCompleteQuery = new RQServer({
         url: `/api/food/${assembleId}/check/survey/complete`,
+        req,
         res,
       });
       await req.queryClient.fetchQuery(foodSurveyCompleteQuery.queryOptions);
@@ -217,6 +222,7 @@ export const checkRecommendedFoodListStatus = ({
     try {
       const recommendedFoodResultQuery = new RQServer({
         url: `/api/food/${assembleId}/recommend/result`,
+        req,
         res,
       });
       const hasRecommendedFoodList = !!(

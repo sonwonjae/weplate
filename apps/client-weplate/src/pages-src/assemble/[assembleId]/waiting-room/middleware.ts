@@ -17,6 +17,7 @@ const prefetch: Middleware<Req> = async (req, res) => {
 
   const assembleUserListQuery = new RQServer({
     url: `/api/assemble/${assembleId}/user/list`,
+    req,
     res,
   });
   await req.queryClient.fetchQuery(assembleUserListQuery.queryOptions);

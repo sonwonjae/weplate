@@ -88,17 +88,20 @@ export class AuthService {
       throw new ForbiddenException();
     }
 
-    await this.reissueToken(req, res, authToken.userId);
-    return this.getUserWithUserId(authToken.userId);
+    await this.issueToken(res, authToken.userId);
+
+    return await this.getUserWithUserId(authToken.userId);
   }
 
   /** NOTE: CREATE token */
   async issueToken(res: ExpressResponse, userId: string) {
     const accessToken = uuidv4();
     const refreshToken = uuidv4();
-    const accessTokenExpires = new Date(Date.now() + 1000 * 60 * 60);
+    const accessTokenExpires = new Date(
+      Date.now() + 1000 * 60 * 60 /** NOTE: 1시간 */,
+    );
     const refreshTokenExpires = new Date(
-      Date.now() + 1000 * 60 * 60 * 24 * 7 * 2,
+      Date.now() + 1000 * 60 * 60 * 24 * 7 * 2 /** NOTE: 2주 */,
     );
 
     const COMMON_COOKIE_OPTION: CookieOptions = {
@@ -149,7 +152,7 @@ export class AuthService {
   async expireToken(req: ExpressRequest, res: ExpressResponse) {
     const { accessToken } = this.getToken(req);
     if (accessToken) {
-      this.cacheManager.del(
+      await this.cacheManager.del(
         `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
       );
     }
@@ -172,16 +175,6 @@ export class AuthService {
       '',
       EXPIRED_COOKIE_OPTION,
     );
-  }
-
-  /** NOTE: UPDATE token */
-  async reissueToken(
-    req: ExpressRequest,
-    res: ExpressResponse,
-    userId: string,
-  ) {
-    await this.expireToken(req, res);
-    await this.issueToken(res, userId);
   }
 
   /** NOTE: READ user with userId */

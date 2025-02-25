@@ -4,8 +4,6 @@ import Cookies from "js-cookie";
 import { GetServerSideProps, GetServerSidePropsResult } from "next";
 import qs from "query-string";
 
-import { apiAxios, authAxios } from "@/utils/react-query";
-
 export const makeGetServerSideProps = <PageProps extends object, Router>(
   router: Router,
 ) => {
@@ -25,10 +23,6 @@ export const makeGetServerSideProps = <PageProps extends object, Router>(
     /** FIXME: type으로 제어할 수 있게 수정가능하다면 수정 시도하기 */
     // @ts-expect-error: attach query to req.query
     req.query = qs.parse(parse(req.url).query);
-
-    /** NOTE: next serverside req에는 cookie가 안 담기기 때문에 강제 cookie 주입 */
-    apiAxios.defaults.headers.Cookie = req.headers.cookie!;
-    authAxios.defaults.headers.Cookie = req.headers.cookie!;
 
     function overloadCookieGet(): { [key: string]: string };
     function overloadCookieGet(name: string): string;

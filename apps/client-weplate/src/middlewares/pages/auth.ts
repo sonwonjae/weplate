@@ -36,10 +36,11 @@ export const checkAuth = (
 
   return async (req, res) => {
     try {
-      const authQuery = new RQServer({ url: "/api/user/auth/check", res });
+      const authQuery = new RQServer({ url: "/api/user/auth/check", req, res });
       const userInfo = await req.queryClient.fetchQuery(authQuery.queryOptions);
       const agreeServicePolicyQuery = new RQServer({
         url: "/api/agree/check/service/policy",
+        req,
         res,
       });
       const agreeServicePolicy = await req.queryClient.fetchQuery(
@@ -96,7 +97,7 @@ export const checkGuest = (
 ): Middleware<CustomIncomingMessage> => {
   return async (req, res) => {
     try {
-      const authQuery = new RQServer({ url: "/api/user/auth/check", res });
+      const authQuery = new RQServer({ url: "/api/user/auth/check", req, res });
       await req.queryClient.fetchQuery(authQuery.queryOptions);
 
       if (required) {

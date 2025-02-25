@@ -23,6 +23,7 @@ const prefetch: Middleware<HomePageReq> = async (req, res) => {
   const myAssembleListQuery = new RQInfinityServer({
     url: "/api/assemble/list/my",
     params: req.query,
+    req,
     res,
   });
   await req.queryClient.fetchInfiniteQuery(myAssembleListQuery.queryOptions);

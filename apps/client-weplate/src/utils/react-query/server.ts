@@ -1,11 +1,10 @@
-import type { ServerResponse } from "http";
-
 import {
   InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { GetServerSidePropsContext } from "next";
 
 import { RQ } from "./base";
 import { ResponseMap, RQDefaultParams } from "./base";
@@ -19,23 +18,47 @@ interface RQServerParams<
   TQueryFnData extends ResponseMap[ReqURL],
   ReqURL extends keyof ResponseMap,
 > extends RQDefaultParams<TQueryFnData, ReqURL> {
-  res: ServerResponse;
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
 }
+
+const setCookie = ({
+  setCookieHeader,
+  req,
+  res,
+}: {
+  setCookieHeader?: string[];
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}) => {
+  if (!setCookieHeader) {
+    return;
+  }
+  res.setHeader("Set-Cookie", setCookieHeader);
+  req.headers.cookie = setCookieHeader
+    .map((cookie) => {
+      return cookie.split("; ")[0];
+    })
+    .join("; ");
+};
 
 export class RQServer<
   ReqURL extends keyof ResponseMap,
   TQueryFnData extends ResponseMap[ReqURL],
 > extends RQ<ReqURL, TQueryFnData> {
   #method = "GET";
-  res: ServerResponse;
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
 
   constructor({
     url,
     params,
+    req,
     res,
     customQueryOptions,
   }: RQServerParams<TQueryFnData, ReqURL>) {
     super({ url, params, customQueryOptions });
+    this.req = req;
     this.res = res;
   }
 
@@ -45,13 +68,17 @@ export class RQServer<
         const { data, headers } = await this.axiosInstance(this.url, {
           method: this.#method,
           params: this.params,
+          headers: {
+            Cookie: this.req.headers.cookie ?? "",
+          },
           withCredentials: true,
         });
-        const setCookieHeader = headers["set-cookie"];
 
-        if (setCookieHeader) {
-          this.res.setHeader("Set-Cookie", setCookieHeader);
-        }
+        setCookie({
+          setCookieHeader: headers["set-cookie"],
+          req: this.req,
+          res: this.res,
+        });
 
         return data as TQueryFnData;
       } catch (error) {
@@ -63,7 +90,8 @@ export class RQServer<
 
 interface RQInfinityServerParams<ReqURL extends keyof InfinityResponseMap>
   extends RQInfinityDefaultParams<ReqURL> {
-  res: ServerResponse;
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
 }
 
 export class RQInfinityServer<
@@ -71,10 +99,12 @@ export class RQInfinityServer<
   TQueryFnData extends InfinityResponseMap[ReqURL],
 > extends RQInfinity<ReqURL, TQueryFnData> {
   #method = "GET";
-  res: ServerResponse;
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
 
-  constructor({ url, params, res }: RQInfinityServerParams<ReqURL>) {
+  constructor({ url, params, req, res }: RQInfinityServerParams<ReqURL>) {
     super({ url, params });
+    this.req = req;
     this.res = res;
   }
 
@@ -95,13 +125,17 @@ export class RQInfinityServer<
               ...this.params,
               cursor,
             },
+            headers: {
+              Cookie: this.req.headers.cookie ?? "",
+            },
             withCredentials: true,
           });
-        const setCookieHeader = headers["set-cookie"];
 
-        if (setCookieHeader) {
-          this.res.setHeader("Set-Cookie", setCookieHeader);
-        }
+        setCookie({
+          setCookieHeader: headers["set-cookie"],
+          req: this.req,
+          res: this.res,
+        });
 
         return {
           list,

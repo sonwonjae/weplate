@@ -7,6 +7,7 @@ const middleware = pipe(async (req, res) => {
   try {
     const agreeServicePolicyQuery = new RQServer({
       url: "/api/agree/check/service/policy",
+      req,
       res,
     });
     const agreeServicePolicy = await req.queryClient.fetchQuery(

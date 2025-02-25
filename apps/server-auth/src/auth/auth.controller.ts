@@ -80,7 +80,7 @@ export class AuthController {
       oauthUserInfo.providerId,
       oauthUserInfo,
     );
-    await this.authService.reissueToken(req, res, userInfo.id);
+    await this.authService.issueToken(res, userInfo.id);
 
     const redirectUrl = state;
     return res.status(302).redirect(redirectUrl);

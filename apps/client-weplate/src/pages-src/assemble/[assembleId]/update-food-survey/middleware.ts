@@ -16,6 +16,7 @@ const middleware = pipe(
     const assembleId = req.params?.assembleId as string;
     const foodSurveyQuery = new RQServer({
       url: `/api/food/${assembleId}/survey`,
+      req,
       res,
     });
     await req.queryClient.fetchQuery(foodSurveyQuery.queryOptions);
