@@ -1,6 +1,7 @@
 import { Agent } from 'node:https';
 
 import { HttpModule } from '@nestjs/axios';
+import { CacheModule } from '@nestjs/cache-manager';
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { RequiredAuthMiddleware } from 'src/auth/auth.middleware';
 import { SupabaseService } from 'src/supabase/supabase.service';
@@ -15,6 +16,7 @@ import { AgreeService } from './agree.service';
         rejectUnauthorized: process.env.MODE !== 'dev',
       }),
     }),
+    CacheModule.register(),
   ],
   controllers: [AgreeController],
   providers: [AgreeService, SupabaseService],
