@@ -25,10 +25,19 @@ export const useSearchFoodStore = create<SearchFoodState>()(
       ...SEARCH_FOOD_INITIAL_STATE,
       search: (newSearchKeyword) => {
         return set(() => {
-          return {
-            searchKeyword: newSearchKeyword,
-            inputFocusState: "focus",
-          };
+          const searchActiveState = get().searchActiveState();
+
+          const isSearchUsable =
+            !!newSearchKeyword && searchActiveState === "in";
+
+          if (isSearchUsable) {
+            return {
+              searchKeyword: newSearchKeyword,
+              inputFocusState: "focus",
+            };
+          }
+
+          return {};
         });
       },
       endSearch: () => {

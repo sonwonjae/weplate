@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { CheckIcon, MailPlusIcon } from "lucide-react";
+import { useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { toast } from "sonner";
+import { useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
 import { foodSurveyForm } from "@/features/food-survey-form/scheme";
@@ -25,6 +27,16 @@ function FoodListSection() {
   const searchKeyword = useSearchFoodStore((state) => {
     return state.searchKeyword;
   });
+
+  const search = useSearchFoodStore((state) => {
+    return state.search;
+  });
+
+  const debounceSearch = useDebouncedCallback(search, 350);
+
+  useEffect(() => {
+    debounceSearch(foodSurveyFormValue[currentStep]?.searchKeyword ?? "");
+  }, [foodSurveyFormValue[currentStep]?.searchKeyword]);
 
   const foodListQuery = new RQClient({
     url: "/api/food/search/list",

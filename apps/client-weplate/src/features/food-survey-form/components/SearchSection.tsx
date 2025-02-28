@@ -18,9 +18,6 @@ function SearchSection() {
   const currentStep = useFoodSurveyStepsStore((state) => {
     return state.currentStep();
   });
-  const searchActiveState = useSearchFoodStore((state) => {
-    return state.searchActiveState();
-  });
   const updateInputFocusState = useSearchFoodStore((state) => {
     return state.updateInputFocusState;
   });
@@ -37,18 +34,6 @@ function SearchSection() {
         return "ex. 꼼장어구이";
     }
   })();
-
-  const searchFoodList = (formValue: z.infer<typeof foodSurveyForm>) => {
-    if (!formValue[currentStep].searchKeyword) {
-      return;
-    }
-
-    if (searchActiveState !== "in") {
-      return;
-    }
-
-    search(formValue[currentStep].searchKeyword);
-  };
 
   return (
     <section
@@ -93,7 +78,9 @@ function SearchSection() {
       <button
         type="submit"
         hidden
-        onClick={form.handleSubmit(searchFoodList)}
+        onClick={form.handleSubmit((formValue) => {
+          search(formValue[currentStep].searchKeyword);
+        })}
       />
     </section>
   );
