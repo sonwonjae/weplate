@@ -17,6 +17,9 @@ jobs:
       - name: Fetch all branches
         run: git fetch --all
 
+      - name: Checkout ${{ github.event.pull_request.head.ref }} branch
+        run: git checkout ${{ github.event.pull_request.head.ref }}
+
       - name: Checkout develop branch
         run: git checkout develop
 
