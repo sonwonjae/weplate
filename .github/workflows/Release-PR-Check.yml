@@ -15,10 +15,10 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Fetch all branches
-        run: git fetch origin +refs/heads/*:refs/remotes/origin*
+        run: git fetch --all
 
       - name: Checkout develop branch
-        run: git checkout origin/develop
+        run: git checkout develop
 
       - name: Attempt to merge PR branch into develop
         run: |
