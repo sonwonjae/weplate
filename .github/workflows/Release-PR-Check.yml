@@ -17,15 +17,12 @@ jobs:
       - name: Fetch all branches
         run: git fetch --all
 
-      - name: Checkout ${{ github.event.pull_request.head.ref }} branch
-        run: git checkout ${{ github.event.pull_request.head.ref }}
-
       - name: Checkout develop branch
         run: git checkout develop
 
       - name: Attempt to merge PR branch into develop
         run: |
-          git merge --no-commit --no-ff ${{ github.event.pull_request.head.ref }} || (
+          git merge --no-commit --no-ff --allow-unrelated-histories ${{ github.event.pull_request.head.ref }} || (
             echo "Merge conflict detected with develop branch!" && exit 1
           )
 
