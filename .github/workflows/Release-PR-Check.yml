@@ -13,26 +13,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Fetch all branches
-        run: git fetch --all
-
       - name: Set up Git user information
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
+      - name: Fetch target branches
+        run: |
+          git fetch origin ${{ github.event.pull_request.head.ref }}
+          git fetch origin develop
+
       - name: Checkout develop branch
         run: git checkout develop
 
-      - name: Cat Files
-        run: cat README.md
-
       - name: Attempt to merge PR branch into develop
         run: git merge --no-commit --no-ff --allow-unrelated-histories ${{ github.event.pull_request.head.ref }}
-
-      - name: Check Conflict
-        run: cat README.md
 
       - name: Merge successful
         if: success()
