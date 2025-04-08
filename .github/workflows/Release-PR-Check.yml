@@ -19,6 +19,11 @@ jobs:
         run: |
           git fetch origin develop
 
+      - name: Set up Git user information
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: Test mergeability of release to develop
         id: merge-test
         run: |
