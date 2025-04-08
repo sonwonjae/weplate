@@ -17,6 +17,11 @@ jobs:
       - name: Fetch all branches
         run: git fetch --all
 
+      - name: Set up Git user information
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+
       - name: Checkout develop branch
         run: git checkout develop
 
