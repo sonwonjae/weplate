@@ -23,6 +23,11 @@ jobs:
           git fetch origin ${{ github.event.pull_request.head.ref }}
           git fetch origin develop
 
+      - name: Checkout target branch
+        run: |
+          git switch ${{ github.event.pull_request.head.ref }}
+          git pull origin ${{ github.event.pull_request.head.ref }}
+
       - name: Checkout develop branch
         run: git checkout develop
 
