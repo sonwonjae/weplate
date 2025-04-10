@@ -18,4 +18,4 @@ jobs:
           type: now
           from_branch: main
           target_branch: develop
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.WEPLATE_RELEASE_PAT_TOKEN }}
