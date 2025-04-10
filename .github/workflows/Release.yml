@@ -29,7 +29,7 @@ jobs:
         run: |
           git fetch origin develop
           git checkout develop
-          git merge origin/main --no-ff --allow-unrelated-histories -m "Auto-merge main into develop by ${{ github.actor }} [skip ci]"
+          git merge origin/main --no-ff --allow-unrelated-histories -m "Auto-merge main into develop by ${{ github.actor }}"
           git push origin develop
 
       - name: Checkout main
@@ -39,7 +39,12 @@ jobs:
       - name: Get latest tag
         id: get_tag
         run: |
-          tag=$(git describe --tags `git rev-list --tags --max-count=1` 2>/dev/null || echo "v1.0.0")
+          tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
+          if [ -z "$tag" ]; then
+            echo "❌ No tag found. Exiting..."
+            exit 1
+          fi
+          echo "✅ Found tag: $tag"
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
       - name: Bump minor version
