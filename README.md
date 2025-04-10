@@ -1,2 +1,2 @@
 # weplate
-weplate repo
+weplate repo 🚀

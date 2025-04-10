@@ -1,31 +1,21 @@
-name: Release PR Check
-run-name: ${{ github.actor }} attempts to merge the release branch. 🚀
+name: Release
+run-name: ${{ github.actor }} start release. 🚀
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - main
 jobs:
-  Test-Develop-Merge:
+  Merge-Master-Branch-In-Develop-Branch:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@master
+
+      - name: Merge master -> develop
+        uses: devmasx/merge-branch@master
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Fetch all branches
-        run: git fetch origin +refs/heads/*:refs/remotes/origin*
-
-      - name: Checkout develop branch
-        run: git checkout origin/develop
-
-      - name: Attempt to merge PR branch into develop
-        run: |
-          git merge --no-commit --no-ff ${{ github.event.pull_request.head.ref }} || (
-            echo "Merge conflict detected with develop branch!" && exit 1
-          )
-
-      - name: Merge successful
-        if: success()
-        run: echo "The branch can be merged into develop successfully!"
+          type: now
+          from_branch: main
+          target_branch: develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
