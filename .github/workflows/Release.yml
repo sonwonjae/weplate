@@ -47,7 +47,7 @@ jobs:
           echo "✅ Found tag: $tag"
           echo "tag=$tag" >> $GITHUB_OUTPUT
 
-      - name: Bump minor version ((this))
+      - name: Bump minor version ((this is conflict in release branch))
         id: bump_version
         run: |
           version="${{ steps.get_tag.outputs.tag }}"
