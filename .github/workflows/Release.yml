@@ -14,8 +14,10 @@ jobs:
 
       - name: Merge master -> develop
         uses: devmasx/merge-branch@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.WEPLATE_RELEASE_PAT_TOKEN }}
         with:
           type: now
           from_branch: main
           target_branch: develop
-          github_token: ${{ secrets.WEPLATE_RELEASE_PAT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
