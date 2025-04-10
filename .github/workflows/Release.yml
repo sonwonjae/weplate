@@ -11,21 +11,23 @@ on:
 jobs:
   Merge-Master-Branch-In-Develop-Branch:
     runs-on: ubuntu-latest
-    if: github.event.pusher.name != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch develop branches
+        run: |
+          git fetch origin develop
 
       - name: Set Git User
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Fetch develop branch
-        run: git fetch origin develop:develop
 
       - name: Merge main into develop
         run: |
