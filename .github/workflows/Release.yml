@@ -11,7 +11,7 @@ on:
 jobs:
   Merge-Master-Branch-In-Develop-Branch:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -20,12 +20,14 @@ jobs:
           ref: main
           token: ${{ secrets.WEPLATE_RELEASE_PAT_TOKEN }}
 
-      - name: Fetch develop branches
+      - name: Set Git User
         run: |
-          git fetch origin develop
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Merge main into develop
         run: |
-          git switch develop
-          git merge main --no-ff --allow-unrelated-histories -m "Auto-merge main into develop by ${{ github.actor }} [skip ci]"
+          git fetch origin develop
+          git checkout develop
+          git merge origin/main --no-ff --allow-unrelated-histories -m "Auto-merge main into develop by ${{ github.actor }} [skip ci]"
           git push origin develop
