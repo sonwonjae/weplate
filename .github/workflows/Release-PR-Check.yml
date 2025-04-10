@@ -1,41 +1,21 @@
-name: Release PR Check
-run-name: ${{ github.actor }} attempts to merge the release branch. 🚀
+name: Release
+run-name: ${{ github.actor }} start release. 🚀
 on:
   pull_request:
+    types:
+      - closed
     branches:
       - main
 jobs:
-  Test-Develop-Merge:
+  Merge-Master-Branch-In-Develop-Branch:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@master
+
+      - name: Merge master -> develop
+        uses: devmasx/merge-branch@master
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref }}
-
-      - name: Fetch develop branches
-        run: |
-          git fetch origin develop
-
-      - name: Set up Git user information
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
-      - name: Test mergeability of release to develop
-        id: merge-test
-        run: |
-          git checkout develop
-          git merge --no-commit --no-ff --allow-unrelated-histories ${{ github.event.pull_request.head.ref }} || echo "::set-output name=mergeable::false"
-          echo "::set-output name=mergeable::true"
-
-      - name: Output mergeability result
-        run: |
-          if [ "${{ steps.merge-test.outputs.mergeable }}" == "false" ]; then
-            echo "Merge conflict detected between release and develop."
-            exit 1
-          else
-            echo "Release branch can be merged into develop without conflicts."
-          fi
+          type: now
+          from_branch: main
+          target_branch: develop
+          github_token: ${{ secrets.GITHUB_TOKEN }}
