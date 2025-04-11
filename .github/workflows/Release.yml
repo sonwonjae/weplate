@@ -92,5 +92,8 @@ jobs:
             DIR=${services[$name]}
             IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/weplate/$name:latest
 
-            echo "🔨 Building $name from $IMAGE_URI"
+            echo "🔨 Building $name from $DIR"
+            docker build -t $IMAGE_URI $DIR
+            docker push $IMAGE_URI
+            echo "IMAGE_URI_${name//-/_}=$IMAGE_URI" >> $GITHUB_ENV
           done
