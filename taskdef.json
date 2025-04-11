@@ -1,0 +1,59 @@
+{
+  "family": "weplate-multi-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "clinet-weplate",
+      "image": "<IMAGE_URI_CLIENT>",
+      "essential": false,
+      "portMappings": [
+        {
+          "containerPort": 1111,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "server-api",
+      "image": "<IMAGE_URI_API>",
+      "essential": false,
+      "portMappings": [
+        {
+          "containerPort": 7777,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "server-auth",
+      "image": "<IMAGE_URI_AUTH>",
+      "essential": false,
+      "portMappings": [
+        {
+          "containerPort": 5555,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    {
+      "name": "nginx",
+      "image": "<IMAGE_URI_NGINX>",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ],
+      "dependsOn": [
+        { "containerName": "clinet-weplate", "condition": "START" },
+        { "containerName": "server-api", "condition": "START" },
+        { "containerName": "server-auth", "condition": "START" }
+      ]
+    }
+  ]
+}
