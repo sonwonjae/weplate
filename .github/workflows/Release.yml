@@ -34,7 +34,7 @@ jobs:
         run: |
           git fetch origin develop
           git checkout develop
-          git merge origin/main --no-ff --allow-unrelated-histories -m "Auto-merge main into develop by ${{ github.actor }}"
+          git merge origin/main --no-ff --no-edit --allow-unrelated-histories
           git push origin develop
 
       - name: Checkout main
