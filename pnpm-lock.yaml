@@ -163,6 +163,8 @@ importers:
         specifier: ^5
         version: 5.7.2
 
+  apps/nginx: {}
+
   apps/server-api:
     dependencies:
       '@nestjs/axios':

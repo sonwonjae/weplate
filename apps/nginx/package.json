@@ -1,0 +1,6 @@
+{
+  "name": "nginx",
+  "scripts": {
+    "dev": "bash ./dev.sh"
+  }
+}
