@@ -1,0 +1,24 @@
+services:
+  clinet-weplate:
+    build: ./apps/clinet-weplate
+    ports:
+      - "1111:1111"
+  
+  server-api:
+    build: ./apps/server-api
+    ports:
+      - "7777:7777"
+
+  server-auth:
+    build: ./apps/server-auth
+    ports:
+      - "5555:5555"
+
+  nginx:
+    build: ./apps/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - clinet-weplate
+      - server-api
+      - server-auth
