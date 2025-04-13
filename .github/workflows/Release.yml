@@ -89,7 +89,7 @@ jobs:
           )
 
           for name in "${!services[@]}"; do
-            DIR=${services[$name]}
+            DIR=apps/${services[$name]}
             IMAGE_URI=$ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com/weplate/$name:latest
 
             echo "🔨 Building $name from $DIR"
