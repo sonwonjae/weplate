@@ -24,7 +24,7 @@ authAxios.interceptors.response.use(
         window.location.href = `/login?redirectUrl=${window.location.pathname}`; // 리다이렉션
       }
     }
-    return error;
+    throw error;
   },
 );
 

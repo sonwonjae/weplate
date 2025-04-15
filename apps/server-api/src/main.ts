@@ -26,15 +26,15 @@ Array.prototype.draw = function draw<T extends { score: number }>(): T {
 };
 
 async function bootstrap() {
-  if (!process.env.PORT) {
-    throw new Error('환경변수에 PORT를 설정해주세요.');
+  if (!process.env.API_SERVER_PORT) {
+    throw new Error('환경변수에 API_SERVER_PORT를 설정해주세요.');
   }
 
   const app = await NestFactory.create(AppModule, {
     logger: new ConsoleLogger(),
   });
   app.enableCors({
-    origin: [process.env.HOST as string],
+    origin: true,
     credentials: true,
   });
   app.useGlobalPipes(
@@ -57,6 +57,6 @@ async function bootstrap() {
 
   // 모든 경로가 /api로 시작하도록 설정
   app.setGlobalPrefix('api');
-  await app.listen(process.env.PORT ?? 7777);
+  await app.listen(process.env.API_SERVER_PORT ?? 7777);
 }
 bootstrap();

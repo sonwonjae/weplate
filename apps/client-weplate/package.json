@@ -3,10 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "set:env": "dotenv -e .env",
-    "dev": "pnpm set:env -- next dev",
-    "build": "pnpm set:env -- next build",
-    "start": "pnpm set:env -- next start",
+    "dev": "dotenv -e ../../.env -- sh -c 'PORT=$WEB_SERVER_PORT next dev'",
+    "build": "dotenv -e ../../.env -- sh -c 'PORT=$WEB_SERVER_PORT next build'",
+    "start": "dotenv -e ../../.env -- sh -c 'PORT=$WEB_SERVER_PORT next start'",
     "lint": "next lint"
   },
   "dependencies": {
@@ -31,7 +30,7 @@
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.468.0",
     "motion": "^11.15.0",
-    "next": "15.2.4",
+    "next": "15.0.3",
     "next-connect": "^1.0.0",
     "next-themes": "^0.4.4",
     "query-string": "^9.1.1",
@@ -61,5 +60,10 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "packageManager": "pnpm@9.12.2",
+  "author": "sonwonjae",
+  "engines": {
+    "node": "22.14.0"
   }
 }

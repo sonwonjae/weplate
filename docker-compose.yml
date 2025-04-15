@@ -1,24 +1,35 @@
+version: '3'
 services:
-  clinet-weplate:
-    build: ./apps/clinet-weplate
+  client-weplate:
+    container_name: client-weplate
+    build:
+      context: .
+      dockerfile: apps/client-weplate/Dockerfile
     ports:
       - "1111:1111"
   
   server-api:
-    build: ./apps/server-api
+    container_name: server-api
+    build:
+      context: .
+      dockerfile: apps/server-api/Dockerfile
     ports:
       - "7777:7777"
 
   server-auth:
-    build: ./apps/server-auth
+    container_name: server-auth
+    build:
+      context: .
+      dockerfile: apps/server-auth/Dockerfile
     ports:
       - "5555:5555"
 
   nginx:
-    build: ./apps/nginx
+    container_name: nginx
+    build: apps/nginx
     ports:
       - "80:80"
     depends_on:
-      - clinet-weplate
+      - client-weplate
       - server-api
       - server-auth

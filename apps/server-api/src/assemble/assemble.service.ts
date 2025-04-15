@@ -51,7 +51,7 @@ export class AssembleService {
     if (!userInfo) {
       return {
         isWithinCreationLimit: true,
-        limit: Number(process.env.ASSEMBLE_CREATION_LIMIT),
+        limit: Number(process.env.NEXT_PUBLIC_ASSEMBLE_CREATION_LIMIT),
       };
     }
 
@@ -62,16 +62,16 @@ export class AssembleService {
 
     if (
       Array.isArray(userAssemble) &&
-      userAssemble.length >= Number(process.env.ASSEMBLE_CREATION_LIMIT)
+      userAssemble.length >= Number(process.env.NEXT_PUBLIC_ASSEMBLE_CREATION_LIMIT)
     ) {
       return {
         isWithinCreationLimit: false,
-        limit: Number(process.env.ASSEMBLE_CREATION_LIMIT),
+        limit: Number(process.env.NEXT_PUBLIC_ASSEMBLE_CREATION_LIMIT),
       };
     }
     return {
       isWithinCreationLimit: true,
-      limit: Number(process.env.ASSEMBLE_CREATION_LIMIT),
+      limit: Number(process.env.NEXT_PUBLIC_ASSEMBLE_CREATION_LIMIT),
     };
   }
 
@@ -298,7 +298,7 @@ export class AssembleService {
 
     if (
       (userAssembleList ?? []).length >=
-      Number(process.env.ASSEMBLE_MAX_USER_COUNT)
+      Number(process.env.NEXT_PUBLIC_ASSEMBLE_MAX_USER_COUNT)
     ) {
       return {
         joinable: false,
@@ -393,7 +393,7 @@ export class AssembleService {
       .gte('createdAt', today.toISOString())
       .lt('createdAt', tomorrow.toISOString());
 
-    const max = Number(process.env.TODAY_MAX_RECOMMEND_FOOD_COUNT) ?? 0;
+    const max = Number(process.env.NEXT_PUBLIC_TODAY_MAX_RECOMMEND_FOOD_COUNT) ?? 0;
     const remainCount = max - (recommendList?.length ?? 0);
 
     return remainCount >= 0 ? remainCount : 0;

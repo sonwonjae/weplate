@@ -13,7 +13,7 @@ import { AuthService } from './auth.service';
   imports: [
     HttpModule.register({
       httpsAgent: new Agent({
-        rejectUnauthorized: process.env.MODE !== 'dev',
+        rejectUnauthorized: process.env.NEXT_PUBLIC_MODE !== 'dev',
       }),
     }),
   ],

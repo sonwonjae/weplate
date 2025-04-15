@@ -24,9 +24,9 @@ export class AuthService {
   /** NOTE: READ token */
   getToken(req: ExpressRequest) {
     const accessToken: string | undefined =
-      req.cookies[process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string];
+      req.cookies[process.env.NEXT_PUBLIC_AUTH_ACCESS_TOKEN_COOKIE_NAME as string];
     const refreshToken: string | undefined =
-      req.cookies[process.env.AUTH_REFRESH_TOKEN_COOKIE_NAME as string];
+      req.cookies[process.env.NEXT_PUBLIC_AUTH_REFRESH_TOKEN_COOKIE_NAME as string];
 
     return {
       accessToken,
@@ -45,7 +45,7 @@ export class AuthService {
 
       const userId = await (async () => {
         const cachedUserId = await this.cacheManager.get<string>(
-          `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
+          `${process.env.NEXT_PUBLIC_AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
         );
 
         if (cachedUserId) {
@@ -88,9 +88,10 @@ export class AuthService {
       throw new ForbiddenException();
     }
 
-    await this.issueToken(res, authToken.userId);
-
-    return await this.getUserWithUserId(authToken.userId);
+    return {
+      setCookie: await this.issueToken(res, authToken.userId),
+      ...(await this.getUserWithUserId(authToken.userId)),
+    };
   }
 
   /** NOTE: CREATE token */
@@ -105,7 +106,7 @@ export class AuthService {
     );
 
     const COMMON_COOKIE_OPTION: CookieOptions = {
-      domain: process.env.DOMAIN as string,
+      domain: process.env.NEXT_PUBLIC_APP_DOMAIN as string,
       httpOnly: true,
       sameSite: 'none',
       secure: true,
@@ -119,19 +120,20 @@ export class AuthService {
       ...COMMON_COOKIE_OPTION,
       expires: refreshTokenExpires,
     };
+
     res.cookie(
-      process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string,
+      process.env.NEXT_PUBLIC_AUTH_ACCESS_TOKEN_COOKIE_NAME as string,
       accessToken,
       ACCESS_TOKEN_COOKIE_OPTION,
     );
     res.cookie(
-      process.env.AUTH_REFRESH_TOKEN_COOKIE_NAME as string,
+      process.env.NEXT_PUBLIC_AUTH_REFRESH_TOKEN_COOKIE_NAME as string,
       refreshToken,
       REFRESH_TOKEN_COOKIE_OPTION,
     );
 
     await this.cacheManager.set(
-      `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
+      `${process.env.NEXT_PUBLIC_AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
       userId,
       Number(accessTokenExpires) - Date.now(),
     );
@@ -146,6 +148,8 @@ export class AuthService {
       },
       { onConflict: 'userId' },
     );
+
+    return res.getHeader('Set-Cookie');
   }
 
   /** NOTE: DELETE token */
@@ -153,12 +157,12 @@ export class AuthService {
     const { accessToken } = this.getToken(req);
     if (accessToken) {
       await this.cacheManager.del(
-        `${process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
+        `${process.env.NEXT_PUBLIC_AUTH_ACCESS_TOKEN_COOKIE_NAME as string}:${accessToken}`,
       );
     }
 
     const EXPIRED_COOKIE_OPTION: CookieOptions = {
-      domain: process.env.DOMAIN as string,
+      domain: process.env.NEXT_PUBLIC_APP_DOMAIN as string,
       httpOnly: true,
       sameSite: 'none',
       secure: true,
@@ -166,12 +170,12 @@ export class AuthService {
       expires: new Date(0),
     };
     res.cookie(
-      process.env.AUTH_ACCESS_TOKEN_COOKIE_NAME as string,
+      process.env.NEXT_PUBLIC_AUTH_ACCESS_TOKEN_COOKIE_NAME as string,
       '',
       EXPIRED_COOKIE_OPTION,
     );
     res.cookie(
-      process.env.AUTH_REFRESH_TOKEN_COOKIE_NAME as string,
+      process.env.NEXT_PUBLIC_AUTH_REFRESH_TOKEN_COOKIE_NAME as string,
       '',
       EXPIRED_COOKIE_OPTION,
     );
