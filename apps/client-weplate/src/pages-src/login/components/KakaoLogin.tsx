@@ -14,7 +14,9 @@ function KakaoLogin() {
     if (/^\/.*/.test(baseRedirectUrl)) {
       return `${process.env.NEXT_PUBLIC_APP_HOST}${baseRedirectUrl}`;
     }
-    if (new RegExp(`/^${process.env.NEXT_PUBLIC_APP_HOST}`).test(baseRedirectUrl)) {
+    if (
+      new RegExp(`/^${process.env.NEXT_PUBLIC_APP_HOST}`).test(baseRedirectUrl)
+    ) {
       return baseRedirectUrl;
     }
     return `${process.env.NEXT_PUBLIC_APP_HOST}${baseRedirectUrl}`;
