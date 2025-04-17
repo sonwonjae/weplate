@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const apiAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_HOST,
+  baseURL: process.env.NEXT_PUBLIC_APP_HOST,
   timeout: 1000 * 60,
   withCredentials: true,
   httpsAgent: new https.Agent({
