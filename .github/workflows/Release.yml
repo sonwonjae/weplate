@@ -44,7 +44,7 @@ jobs:
             - name: Get latest tag
               id: get_tag
               run: |
-                  tag=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
+                  tag=$(git tag --sort=-v:refname | head -n 1)
                   if [ -z "$tag" ]; then
                     echo "❌ No tag found. Exiting..."
                     exit 1
