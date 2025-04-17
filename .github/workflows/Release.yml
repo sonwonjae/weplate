@@ -55,9 +55,9 @@ jobs:
             - name: Bump minor version
               id: bump_version
               run: |
-                  VERSION="${{ steps.get_tag.outputs.tag }}"
-                  VERSION="${VERSION#v}"
-                  IFS='.' read -r major minor patch <<< "$VERSION"
+                  version="${{ steps.get_tag.outputs.tag }}"
+                  version="${version#v}"
+                  IFS='.' read -r major minor patch <<< "$version"
                   new_tag="v$major.$((minor + 1)).$patch"
                   echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
 
@@ -80,7 +80,7 @@ jobs:
               run: |
                   ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
                   REGION=${{ env.AWS_REGION }}
-                  VERSION="${{ steps.get_tag.outputs.tag }}"
+                  version="${{ steps.get_tag.outputs.tag }}"
 
                   echo "${{ secrets.APP_ENV }}" > .env
                   docker-compose build
@@ -94,7 +94,7 @@ jobs:
 
                   for NAME in "${!services[@]}"; do
                     echo "🔨 Pushing $NAME"
-                    docker tag $NAME:$VERSION $ACCOUNT_ID/$NAME:$VERSION
-                    docker push $ACCOUNT_ID/$NAME:$VERSION
+                    docker tag $NAME:$version $ACCOUNT_ID/$NAME:$version
+                    docker push $ACCOUNT_ID/$NAME:$version
                     echo "🔨 Push Complete $NAME"
                   done
