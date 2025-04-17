@@ -76,6 +76,14 @@ jobs:
             - name: Login to Amazon ECR
               uses: aws-actions/amazon-ecr-login@v2
 
+            - name: Set up Docker Compose
+              run: |
+                sudo curl -SL https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+                sudo chmod +x /usr/local/bin/docker-compose
+
+            - name: Set up Docker
+              uses: docker/setup-buildx-action@v2
+
             - name: Build, tag and push all Docker images to ECR
               run: |
                   ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
