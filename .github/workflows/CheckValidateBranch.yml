@@ -1,0 +1,26 @@
+name: Validate Branch for PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+
+      - name: Validate Branch Name
+        run: |
+            BRANCH_NAME=${GITHUB_HEAD_REF}
+            echo "Checking branch name: $BRANCH_NAME"
+
+            # hotfix 또는 release로 시작하지 않으면 실패
+            if [[ ! "$BRANCH_NAME" =~ ^(hotfix|release) ]]; then
+              echo "Error: Branch name must start with 'hotfix' or 'release'."
+              exit 1
+            fi
+
+            echo "Branch name is valid."

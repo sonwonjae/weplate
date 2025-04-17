@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const authAxios = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_HOST,
+  baseURL: process.env.NEXT_PUBLIC_APP_HOST,
   timeout: 1000 * 60,
   withCredentials: true,
   httpsAgent: new https.Agent({
@@ -24,7 +24,7 @@ authAxios.interceptors.response.use(
         window.location.href = `/login?redirectUrl=${window.location.pathname}`; // 리다이렉션
       }
     }
-    return error;
+    throw error;
   },
 );
 

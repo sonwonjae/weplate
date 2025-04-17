@@ -52,7 +52,7 @@ function Layout({ children }: PropsWithChildren) {
 
   const shareAssembleLink = async () => {
     await shareLink({
-      url: `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}`,
+      url: `${process.env.NEXT_PUBLIC_APP_HOST}/assemble/${router.query.assembleId}`,
     });
   };
 

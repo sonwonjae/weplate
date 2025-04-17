@@ -28,21 +28,9 @@ const prefetch: Middleware<Req> = async (req, res) => {
 };
 
 const middleware = pipe<Req>(
-  () => {
-    return { props: {} };
-  },
   checkAssembleMember(),
-  () => {
-    return { props: {} };
-  },
   checkFoodSurveyStatus({ permission: "complete" }),
-  () => {
-    return { props: {} };
-  },
   checkRecommendedFoodListStatus({ permission: "not-yet" }),
-  () => {
-    return { props: {} };
-  },
   prefetch,
   (req) => {
     return { props: { dehydratedState: dehydrate(req.queryClient) } };

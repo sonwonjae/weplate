@@ -5,7 +5,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
 COPY . .
-RUN pnpm install
-RUN pnpm build
+RUN pnpm install --filter server-api
+RUN pnpm build --filter server-api
 
-CMD ["pnpm", "start"]
+CMD ["pnpm", "--filter", "server-api", "start"]

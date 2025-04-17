@@ -12,7 +12,7 @@ function Auth() {
   if (!userInfo) {
     return (
       <Link
-        href={`${process.env.NEXT_PUBLIC_HOST}/api/user/kakao/login?redirectUrl=${process.env.NEXT_PUBLIC_HOST}`}
+        href={`${process.env.NEXT_PUBLIC_APP_HOST}/api/user/kakao/login?redirectUrl=${process.env.NEXT_PUBLIC_APP_HOST}`}
         className={cn(buttonVariants())}
       >
         로그인

@@ -32,7 +32,7 @@ function AssembleInviteUserPage() {
   );
 
   const shareAssembleLink = async () => {
-    const url = `${process.env.NEXT_PUBLIC_HOST}/assemble/${router.query.assembleId}/invitee-room`;
+    const url = `${process.env.NEXT_PUBLIC_APP_HOST}/assemble/${router.query.assembleId}/invitee-room`;
     if (navigator.canShare({ url })) {
       await navigator.share({ url });
     } else {

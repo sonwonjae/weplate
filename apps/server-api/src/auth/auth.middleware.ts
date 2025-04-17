@@ -16,16 +16,19 @@ export class RequiredAuthMiddleware implements NestMiddleware {
     try {
       const { data: userInfo } = await firstValueFrom(
         this.httpService
-          .get<Tables<'users'>>(`${process.env.HOST}/api/user/auth/check`, {
-            headers: {
-              // FIXME: 자동화 유틸 만들어서 공통화 또는 자동화 하기
-              Cookie: Object.entries(req.cookies)
-                .map(([key, value]) => {
-                  return `${key}=${value}`;
-                })
-                .join('; '),
+          .get<Tables<'users'>>(
+            `${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/api/user/auth/check`,
+            {
+              headers: {
+                // FIXME: 자동화 유틸 만들어서 공통화 또는 자동화 하기
+                Cookie: Object.entries(req.cookies)
+                  .map(([key, value]) => {
+                    return `${key}=${value}`;
+                  })
+                  .join('; '),
+              },
             },
-          })
+          )
           .pipe(
             catchError((error) => {
               throw error;
@@ -49,16 +52,19 @@ export class OptionalAuthMiddleware implements NestMiddleware {
     try {
       const { data: userInfo } = await firstValueFrom(
         this.httpService
-          .get<Tables<'users'>>(`${process.env.HOST}/api/user/auth/check`, {
-            headers: {
-              // FIXME: 자동화 유틸 만들어서 공통화 또는 자동화 하기
-              Cookie: Object.entries(req.cookies)
-                .map(([key, value]) => {
-                  return `${key}=${value}`;
-                })
-                .join('; '),
+          .get<Tables<'users'>>(
+            `${process.env.NEXT_PUBLIC_AUTH_BASE_URL}/api/user/auth/check`,
+            {
+              headers: {
+                // FIXME: 자동화 유틸 만들어서 공통화 또는 자동화 하기
+                Cookie: Object.entries(req.cookies)
+                  .map(([key, value]) => {
+                    return `${key}=${value}`;
+                  })
+                  .join('; '),
+              },
             },
-          })
+          )
           .pipe(
             catchError((error) => {
               throw error;
