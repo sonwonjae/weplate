@@ -49,11 +49,16 @@ export class AuthController {
     );
 
     if (userInfo) {
-      res.cookie(process.env.AUTH_CHECK_COOKIE_NAME as string, 'success', {
-        sameSite: 'none',
-        secure: true,
-        path: '/',
-      });
+      res.cookie(
+        process.env.NEXT_PUBLIC_AUTH_CHECK_COOKIE_NAME as string,
+        'success',
+        {
+          domain: process.env.NEXT_PUBLIC_APP_DOMAIN as string,
+          sameSite: 'none',
+          secure: true,
+          path: '/',
+        },
+      );
     }
     const redirectUrl = state;
     return res.status(302).redirect(redirectUrl);

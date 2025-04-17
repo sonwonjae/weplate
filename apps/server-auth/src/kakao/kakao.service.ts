@@ -91,7 +91,6 @@ export class KakaoService {
       } as const;
     } catch (err) {
       const error = err as AxiosError;
-      console.error(error?.response?.data);
       throw error as AxiosError;
     }
   }

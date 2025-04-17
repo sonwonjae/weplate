@@ -49,6 +49,7 @@ export class RQServer<
   #method = "GET";
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
+  baseURL: string;
 
   constructor({
     url,
@@ -60,12 +61,22 @@ export class RQServer<
     super({ url, params, customQueryOptions });
     this.req = req;
     this.res = res;
+    this.baseURL = (() => {
+      switch (true) {
+        case /^\/api\/user/.test(this.url):
+          return process.env.NEXT_PUBLIC_AUTH_BASE_URL as string;
+        case /^\/api/.test(this.url):
+        default:
+          return process.env.NEXT_PUBLIC_API_BASE_URL as string;
+      }
+    })();
   }
 
   get queryFn() {
     return async () => {
       try {
         const { data, headers } = await this.axiosInstance(this.url, {
+          baseURL: this.baseURL,
           method: this.#method,
           params: this.params,
           headers: {
@@ -75,7 +86,7 @@ export class RQServer<
         });
 
         setCookie({
-          setCookieHeader: headers["set-cookie"],
+          setCookieHeader: headers?.["set-cookie"],
           req: this.req,
           res: this.res,
         });
@@ -101,11 +112,21 @@ export class RQInfinityServer<
   #method = "GET";
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
+  baseURL: string;
 
   constructor({ url, params, req, res }: RQInfinityServerParams<ReqURL>) {
     super({ url, params });
     this.req = req;
     this.res = res;
+    this.baseURL = (() => {
+      switch (true) {
+        case /^\/api\/user/.test(this.url):
+          return process.env.NEXT_PUBLIC_AUTH_BASE_URL as string;
+        case /^\/api/.test(this.url):
+        default:
+          return process.env.NEXT_PUBLIC_API_BASE_URL as string;
+      }
+    })();
   }
 
   get queryFn(): UseInfiniteQueryOptions<
@@ -120,6 +141,7 @@ export class RQInfinityServer<
       try {
         const { data: { list, cursor: nextCursor } = {}, headers } =
           await this.axiosInstance(this.url, {
+            baseURL: this.baseURL,
             method: this.#method,
             params: {
               ...this.params,
@@ -132,7 +154,7 @@ export class RQInfinityServer<
           });
 
         setCookie({
-          setCookieHeader: headers["set-cookie"],
+          setCookieHeader: headers?.["set-cookie"],
           req: this.req,
           res: this.res,
         });

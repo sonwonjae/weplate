@@ -5,7 +5,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 
 COPY . .
-RUN pnpm install
-RUN pnpm build
+RUN pnpm install --filter client-weplate
+RUN pnpm build --filter client-weplate
 
-CMD ["pnpm", "start"]
+CMD ["pnpm", "--filter", "client-weplate", "start"]
