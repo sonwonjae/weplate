@@ -12,7 +12,6 @@
       "portMappings": [
         {
           "containerPort": 1111,
-          "hostPort": 1111,
           "protocol": "tcp"
         }
       ]
@@ -25,7 +24,6 @@
       "portMappings": [
         {
           "containerPort": 7777,
-          "hostPort": 7777,
           "protocol": "tcp"
         }
       ]
@@ -38,7 +36,6 @@
       "portMappings": [
         {
           "containerPort": 5555,
-          "hostPort": 5555,
           "protocol": "tcp"
         }
       ]
@@ -51,7 +48,6 @@
       "portMappings": [
         {
           "containerPort": 80,
-          "hostPort": 80,
           "protocol": "tcp"
         }
       ],
