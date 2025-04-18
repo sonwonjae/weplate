@@ -55,9 +55,9 @@ jobs:
             - name: Bump minor version
               id: bump_version
               run: |
-                  version="${{ steps.get_tag.outputs.tag }}"
-                  version="${version#v}"
-                  IFS='.' read -r major minor patch <<< "$version"
+                  VERSION="${{ steps.get_tag.outputs.tag }}"
+                  VERSION="${VERSION#v}"
+                  IFS='.' read -r major minor patch <<< "$VERSION"
                   new_tag="v$major.$((minor + 1)).$patch"
                   echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
 
@@ -84,11 +84,19 @@ jobs:
             - name: Set up Docker
               uses: docker/setup-buildx-action@v2
 
+            - name: Generate docker-compose.yml from template
+              run: |
+                ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+                export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
+                export VERSION=${{ steps.get_tag.outputs.tag }}
+
+                envsubst < docker-compose.template.yml > docker-compose.yml
+
             - name: Build, tag and push all Docker images to ECR
               run: |
                   ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
                   REGION=${{ env.AWS_REGION }}
-                  version="${{ steps.get_tag.outputs.tag }}"
+                  VERSION="${{ steps.get_tag.outputs.tag }}"
 
                   echo "${{ secrets.APP_ENV }}" > .env
                   docker-compose build
@@ -101,8 +109,8 @@ jobs:
                   )
 
                   for NAME in "${!services[@]}"; do
-                    echo "🔨 Pushing $NAME"
-                    docker tag $NAME:$version $ACCOUNT_ID/$NAME:$version
-                    docker push $ACCOUNT_ID/$NAME:$version
-                    echo "🔨 Push Complete $NAME"
+                    echo "🔨 Pushing weplate/$NAME"
+                    docker tag $NAME:$VERSION $ACCOUNT_ID/weplate/$NAME:$VERSION
+                    docker push $ACCOUNT_ID/weplate/$NAME:$VERSION
+                    echo "🔨 Push Complete weplate/$NAME"
                   done
