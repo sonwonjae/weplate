@@ -1,5 +1,5 @@
 {
-  "family": "weplate-multi-task",
+  "family": "weplate-task",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "1024",
@@ -8,7 +8,7 @@
   "containerDefinitions": [
     {
       "name": "clinet-weplate",
-      "image": "<IMAGE_URI_CLIENT>",
+      "image": "${ECR_REGISTRY}/weplate/client-weplate:${VERSION}",
       "essential": false,
       "portMappings": [
         {
@@ -19,7 +19,7 @@
     },
     {
       "name": "server-api",
-      "image": "<IMAGE_URI_API>",
+      "image": "${ECR_REGISTRY}/weplate/server-api:${VERSION}",
       "essential": false,
       "portMappings": [
         {
@@ -30,7 +30,7 @@
     },
     {
       "name": "server-auth",
-      "image": "<IMAGE_URI_AUTH>",
+      "image": "${ECR_REGISTRY}/weplate/server-auth:${VERSION}",
       "essential": false,
       "portMappings": [
         {
@@ -41,7 +41,7 @@
     },
     {
       "name": "nginx",
-      "image": "<IMAGE_URI_NGINX>",
+      "image": "${ECR_REGISTRY}/weplate/nginx:${VERSION}",
       "essential": true,
       "portMappings": [
         {
