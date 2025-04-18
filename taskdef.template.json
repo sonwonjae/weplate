@@ -1,18 +1,17 @@
 {
   "family": "weplate-task",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "1024",
-  "memory": "2048",
+  "networkMode": "bridge",
+  "requiresCompatibilities": ["EC2"],
   "executionRoleArn": "arn:aws:iam::${ACCOUNT_ID}:role/ECSTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "clinet-weplate",
+      "name": "client-weplate",
       "image": "${ECR_REGISTRY}/weplate/client-weplate:${VERSION}",
       "essential": false,
       "portMappings": [
         {
           "containerPort": 1111,
+          "hostPort": 1111,
           "protocol": "tcp"
         }
       ]
@@ -24,6 +23,7 @@
       "portMappings": [
         {
           "containerPort": 7777,
+          "hostPort": 7777,
           "protocol": "tcp"
         }
       ]
@@ -35,6 +35,7 @@
       "portMappings": [
         {
           "containerPort": 5555,
+          "hostPort": 5555,
           "protocol": "tcp"
         }
       ]
@@ -46,11 +47,12 @@
       "portMappings": [
         {
           "containerPort": 80,
+          "hostPort": 80,
           "protocol": "tcp"
         }
       ],
       "dependsOn": [
-        { "containerName": "clinet-weplate", "condition": "START" },
+        { "containerName": "client-weplate", "condition": "START" },
         { "containerName": "server-api", "condition": "START" },
         { "containerName": "server-auth", "condition": "START" }
       ]
