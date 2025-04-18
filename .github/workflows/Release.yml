@@ -10,8 +10,6 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: weplate
-  IMAGE_TAG: latest
 
 jobs:
   Merge-Master-Branch-In-Develop-Branch:
@@ -92,8 +90,7 @@ jobs:
       - name: Build, tag and push all Docker images to ECR
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
-          REGION=${{ env.AWS_REGION }}
+          ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
           VERSION="${{ steps.bump_version.outputs.new_tag }}"
 
           echo "${{ secrets.APP_ENV }}" > .env
@@ -113,3 +110,19 @@ jobs:
             docker push $ECR_REGISTRY/weplate/$NAME:$VERSION
             echo "🔨 Push Complete weplate/$NAME:$VERSION in $ECR_REGISTRY"
           done
+
+      - name: Generate ECS task definition
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+          export VERSION="${{ steps.bump_version.outputs.new_tag }}"
+          envsubst < taskdef.template.json > taskdef.json
+
+      - name: Register ECS Task Definition
+        run: |
+          TASK_REVISION=$(aws ecs register-task-definition \
+            --cli-input-json file://taskdef.json \
+            --query 'taskDefinition.revision' \
+            --output text)
+          echo "✅ Task registered with revision: $TASK_REVISION"
+          echo "TASK_REVISION=$TASK_REVISION" >> $GITHUB_ENV
