@@ -113,7 +113,7 @@ jobs:
 
       - name: Generate ECS task definition
         run: |
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
           export VERSION="${{ steps.bump_version.outputs.new_tag }}"
           envsubst < taskdef.template.json > taskdef.json
