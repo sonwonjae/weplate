@@ -88,7 +88,7 @@ jobs:
               run: |
                 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
                 export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
-                export VERSION=${{ steps.get_tag.outputs.tag }}
+                export VERSION=${{ steps.bump_version.outputs.new_tag }}
 
                 envsubst < docker-compose.template.yml > docker-compose.yml
 
@@ -96,7 +96,7 @@ jobs:
               run: |
                   ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
                   REGION=${{ env.AWS_REGION }}
-                  VERSION="${{ steps.get_tag.outputs.tag }}"
+                  VERSION="${{ steps.bump_version.outputs.new_tag }}"
 
                   echo "${{ secrets.APP_ENV }}" > .env
                   docker-compose build
@@ -110,6 +110,7 @@ jobs:
 
                   for NAME in "${!services[@]}"; do
                     echo "🔨 Pushing weplate/$NAME"
+                    docker image ls
                     docker tag $NAME:$VERSION $ACCOUNT_ID/weplate/$NAME:$VERSION
                     docker push $ACCOUNT_ID/weplate/$NAME:$VERSION
                     echo "🔨 Push Complete weplate/$NAME"
