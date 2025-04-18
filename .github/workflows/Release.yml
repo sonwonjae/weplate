@@ -126,21 +126,3 @@ jobs:
             --output text)
           echo "✅ Task registered with revision: $TASK_REVISION"
           echo "TASK_REVISION=$TASK_REVISION" >> $GITHUB_ENV
-
-      - name: Update ECS Service to use new Task Definition
-        run: |
-          CLUSTER_NAME=weplate-cluster
-          SERVICE_NAME=weplate-service
-          
-          TASK_DEF_ARN=$(aws ecs describe-task-definition \
-            --task-definition weplate-task \
-            --query 'taskDefinition.taskDefinitionArn' \
-            --output text)
-
-          echo "🟢 Updating ECS service with task: $TASK_DEF_ARN"
-
-          aws ecs update-service \
-            --cluster $CLUSTER_NAME \
-            --service $SERVICE_NAME \
-            --task-definition $TASK_DEF_ARN \
-            --force-new-deployment
