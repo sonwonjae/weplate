@@ -2,114 +2,115 @@ name: Release
 run-name: ${{ github.actor }} start release. 🚀
 
 on:
-    pull_request:
-        types:
-            - closed
-        branches:
-            - main
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
 
 env:
-    AWS_REGION: ap-northeast-2
-    ECR_REPOSITORY: weplate
-    IMAGE_TAG: latest
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: weplate
+  IMAGE_TAG: latest
 
 jobs:
-    Merge-Master-Branch-In-Develop-Branch:
-        runs-on: ubuntu-latest
-        if: github.actor != 'github-actions[bot]'
-        steps:
-            - name: Checkout main
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-                  ref: main
-                  token: ${{ secrets.WEPLATE_RELEASE_PAT_TOKEN }}
+  Merge-Master-Branch-In-Develop-Branch:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.WEPLATE_RELEASE_PAT_TOKEN }}
 
-            - name: Set Git User
-              run: |
-                  git config user.name "${{ github.actor }}"
-                  git config user.email "${{ github.actor }}@users.noreply.github.com"
+      - name: Set Git User
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-            - name: Merge main into develop
-              run: |
-                  git fetch origin develop
-                  git checkout develop
-                  git merge origin/main --no-ff --no-edit --allow-unrelated-histories
-                  git push origin develop
+      - name: Merge main into develop
+        run: |
+          git fetch origin develop
+          git checkout develop
+          git merge origin/main --no-ff --no-edit --allow-unrelated-histories
+          git push origin develop
 
-            - name: Checkout main
-              run: |
-                  git checkout main
+      - name: Checkout main
+        run: |
+          git checkout main
 
-            - name: Get latest tag
-              id: get_tag
-              run: |
-                  tag=$(git tag --sort=-v:refname | head -n 1)
-                  if [ -z "$tag" ]; then
-                    echo "❌ No tag found. Exiting..."
-                    exit 1
-                  fi
-                  echo "✅ Found tag: $tag"
-                  echo "tag=$tag" >> $GITHUB_OUTPUT
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          tag=$(git tag --sort=-v:refname | head -n 1)
+          if [ -z "$tag" ]; then
+            echo "❌ No tag found. Exiting..."
+            exit 1
+          fi
+          echo "✅ Found tag: $tag"
+          echo "tag=$tag" >> $GITHUB_OUTPUT
 
-            - name: Bump minor version
-              id: bump_version
-              run: |
-                  VERSION="${{ steps.get_tag.outputs.tag }}"
-                  VERSION="${VERSION#v}"
-                  IFS='.' read -r major minor patch <<< "$VERSION"
-                  new_tag="v$major.$((minor + 1)).$patch"
-                  echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+      - name: Bump minor version
+        id: bump_version
+        run: |
+          VERSION="${{ steps.get_tag.outputs.tag }}"
+          VERSION="${VERSION#v}"
+          IFS='.' read -r major minor patch <<< "$VERSION"
+          new_tag="v$major.$((minor + 1)).$patch"
+          echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
 
-            - name: Push new tag
-              run: |
-                  git tag ${{ steps.bump_version.outputs.new_tag }}
-                  git push origin ${{ steps.bump_version.outputs.new_tag }}
+      - name: Push new tag
+        run: |
+          git tag ${{ steps.bump_version.outputs.new_tag }}
+          git push origin ${{ steps.bump_version.outputs.new_tag }}
 
-            - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@v2
-              with:
-                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  aws-region: ${{ env.AWS_REGION }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
-            - name: Login to Amazon ECR
-              uses: aws-actions/amazon-ecr-login@v2
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
 
-            - name: Set up Docker Compose
-              run: |
-                sudo curl -SL https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-                sudo chmod +x /usr/local/bin/docker-compose
+      - name: Set up Docker Compose
+        run: |
+          sudo curl -SL https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
 
-            - name: Set up Docker
-              uses: docker/setup-buildx-action@v2
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
 
-            - name: Generate docker-compose.yml from template
-              run: |
-                export VERSION=${{ steps.bump_version.outputs.new_tag }}
+      - name: Generate docker-compose.yml from template
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
+          export VERSION=${{ steps.bump_version.outputs.new_tag }}
+          envsubst < docker-compose.template.yml > docker-compose.yml
 
-                envsubst < docker-compose.template.yml > docker-compose.yml
+      - name: Build, tag and push all Docker images to ECR
+        run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
+          REGION=${{ env.AWS_REGION }}
+          VERSION="${{ steps.bump_version.outputs.new_tag }}"
 
-            - name: Build, tag and push all Docker images to ECR
-              run: |
-                  ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-                  ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
-                  REGION=${{ env.AWS_REGION }}
-                  VERSION="${{ steps.bump_version.outputs.new_tag }}"
+          echo "${{ secrets.APP_ENV }}" > .env
+          docker-compose build
 
-                  echo "${{ secrets.APP_ENV }}" > .env
-                  docker-compose build
+          declare -A services=(
+            [client-weplate]=client-weplate
+            [server-api]=server-api
+            [server-auth]=server-auth
+            [nginx]=nginx
+          )
 
-                  declare -A services=(
-                    [client-weplate]=client-weplate
-                    [server-api]=server-api
-                    [server-auth]=server-auth
-                    [nginx]=nginx
-                  )
-
-                  for NAME in "${!services[@]}"; do
-                    echo "🔨 Pushing weplate/$NAME"
-                    docker tag $NAME:$VERSION $ECR_REGISTRY/weplate/$NAME:$VERSION
-                    docker push $ECR_REGISTRY/weplate/$NAME:$VERSION
-                    echo "🔨 Push Complete weplate/$NAME"
-                  done
+          for NAME in "${!services[@]}"; do
+            echo "🔨 Pushing weplate/$NAME"
+            docker tag $NAME:$VERSION $ECR_REGISTRY/weplate/$NAME:$VERSION
+            docker push $ECR_REGISTRY/weplate/$NAME:$VERSION
+            echo "🔨 Push Complete weplate/$NAME"
+          done
