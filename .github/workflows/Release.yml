@@ -109,8 +109,9 @@ jobs:
           )
 
           for NAME in "${!services[@]}"; do
-            echo "🔨 Pushing weplate/$NAME"
+            echo "🔨 Pushing weplate/$NAME:$VERSION"
             docker tag $NAME:$VERSION $ECR_REGISTRY/weplate/$NAME:$VERSION
+            echo "🔨 $NAME:$VERSION tagging clear"
             docker push $ECR_REGISTRY/weplate/$NAME:$VERSION
-            echo "🔨 Push Complete weplate/$NAME"
+            echo "🔨 Push Complete weplate/$NAME:$VERSION in $ECR_REGISTRY"
           done
