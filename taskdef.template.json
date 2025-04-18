@@ -8,6 +8,7 @@
       "name": "client-weplate",
       "image": "${ECR_REGISTRY}/weplate/client-weplate:${VERSION}",
       "essential": false,
+      "memoryReservation": 256,
       "portMappings": [
         {
           "containerPort": 1111,
@@ -20,6 +21,7 @@
       "name": "server-api",
       "image": "${ECR_REGISTRY}/weplate/server-api:${VERSION}",
       "essential": false,
+      "memoryReservation": 256,
       "portMappings": [
         {
           "containerPort": 7777,
@@ -32,6 +34,7 @@
       "name": "server-auth",
       "image": "${ECR_REGISTRY}/weplate/server-auth:${VERSION}",
       "essential": false,
+      "memoryReservation": 256,
       "portMappings": [
         {
           "containerPort": 5555,
@@ -44,6 +47,7 @@
       "name": "nginx",
       "image": "${ECR_REGISTRY}/weplate/nginx:${VERSION}",
       "essential": true,
+      "memoryReservation": 128,
       "portMappings": [
         {
           "containerPort": 80,
