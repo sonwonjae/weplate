@@ -86,8 +86,6 @@ jobs:
 
       - name: Generate docker-compose.yml from template
         run: |
-          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
           export VERSION=${{ steps.bump_version.outputs.new_tag }}
           envsubst < docker-compose.template.yml > docker-compose.yml
 
