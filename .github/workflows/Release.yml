@@ -95,6 +95,7 @@ jobs:
             - name: Build, tag and push all Docker images to ECR
               run: |
                   ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+                  ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com
                   REGION=${{ env.AWS_REGION }}
                   VERSION="${{ steps.bump_version.outputs.new_tag }}"
 
@@ -110,8 +111,7 @@ jobs:
 
                   for NAME in "${!services[@]}"; do
                     echo "🔨 Pushing weplate/$NAME"
-                    docker image ls
                     docker tag $NAME:$VERSION $ACCOUNT_ID/weplate/$NAME:$VERSION
-                    docker push $ACCOUNT_ID/weplate/$NAME:$VERSION
+                    docker push $ECR_REGISTRY/weplate/$NAME:$VERSION
                     echo "🔨 Push Complete weplate/$NAME"
                   done
