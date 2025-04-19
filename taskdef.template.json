@@ -1,6 +1,6 @@
 {
   "family": "weplate-task",
-  "networkMode": "awsvpc",
+  "networkMode": "bridge",
   "requiresCompatibilities": ["EC2"],
   "executionRoleArn": "arn:aws:iam::${ACCOUNT_ID}:role/ECSTaskExecutionRole",
   "containerDefinitions": [
