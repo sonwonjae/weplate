@@ -7,6 +7,7 @@ import { AppService } from './app.service';
 import { AssembleModule } from './assemble/assemble.module';
 import { AuthModule } from './auth/auth.module';
 import { FoodModule } from './food/food.module';
+import { PingModule } from './ping/ping.module';
 import { SupabaseModule } from './supabase/supabase.module';
 
 @Module({
@@ -19,6 +20,7 @@ import { SupabaseModule } from './supabase/supabase.module';
     AuthModule,
     FoodModule,
     AgreeModule,
+    PingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
