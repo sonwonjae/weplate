@@ -3,18 +3,11 @@ Resources:
   - TargetService:
       Type: AWS::ECS::Service
       Properties:
-        TaskDefinition: weplate-task:$TASK_REVISION
+        TaskDefinition: "weplate-task:$TASK_REVISION"
         LoadBalancerInfo:
           ContainerName: nginx
           ContainerPort: 80
         CapacityProviderStrategy:
-          - CapacityProvider: Infra-ECS-Cluster-weplate-bluegreen-cluster-ea0db565-AsgCapacityProvider-mva3b6WcV6XW
+          - CapacityProvider: "Infra-ECS-Cluster-weplate-bluegreen-cluster-ea0db565-AsgCapacityProvider-mva3b6WcV6XW"
             Base: 0
             Weight: 1
-
-Hooks:
-  BeforeInstall: []
-  AfterInstall: []
-  AfterAllowTestTraffic: []
-  BeforeAllowTraffic: []
-  AfterAllowTraffic: []
