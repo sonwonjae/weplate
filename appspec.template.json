@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "Resources": [
+    {
+      "TargetService": {
+        "Type": "AWS::ECS::Service",
+        "Properties": {
+          "TaskDefinition": "weplate-task:${TASK_REVISION}",
+          "LoadBalancerInfo": {
+            "ContainerName": "nginx",
+            "ContainerPort": 80
+          },
+          "CapacityProviderStrategy": [
+            {
+              "CapacityProvider": "weplate-capacity-provider",
+              "Base": 0,
+              "Weight": 1
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "Hooks": [
+    {
+      "BeforeInstall": [],
+      "AfterInstall": [],
+      "AfterAllowTestTraffic": [],
+      "BeforeAllowTraffic": [],
+      "AfterAllowTraffic": []
+    }
+  ]
+}
