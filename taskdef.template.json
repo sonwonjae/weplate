@@ -12,17 +12,9 @@
       "portMappings": [
         {
           "containerPort": 1111,
-          "hostPort": 0,
           "protocol": "tcp"
         }
-      ],
-      "healthCheck": {
-        "command": ["CMD-SHELL", "curl -f http://localhost:1111/ping || exit 1"],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 30
-      }
+      ]
     },
     {
       "name": "server-api",
@@ -32,17 +24,9 @@
       "portMappings": [
         {
           "containerPort": 7777,
-          "hostPort": 0,
           "protocol": "tcp"
         }
-      ],
-      "healthCheck": {
-        "command": ["CMD-SHELL", "curl -f http://localhost:7777/ping || exit 1"],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 30
-      }
+      ]
     },
     {
       "name": "server-auth",
@@ -52,17 +36,9 @@
       "portMappings": [
         {
           "containerPort": 5555,
-          "hostPort": 0,
           "protocol": "tcp"
         }
-      ],
-      "healthCheck": {
-        "command": ["CMD-SHELL", "curl -f http://localhost:5555/ping || exit 1"],
-        "interval": 30,
-        "timeout": 5,
-        "retries": 3,
-        "startPeriod": 30
-      }
+      ]
     },
     {
       "name": "nginx",
@@ -71,8 +47,7 @@
       "memoryReservation": 128,
       "portMappings": [
         {
-          "containerPort": 8080,
-          "hostPort": 0,
+          "containerPort": 80,
           "protocol": "tcp"
         }
       ],
@@ -82,11 +57,11 @@
         { "containerName": "server-auth", "condition": "START" }
       ],
       "healthCheck": {
-        "command": ["CMD-SHELL", "curl -f http://localhost:8080/ping || exit 1"],
+        "command": ["CMD-SHELL", "curl -f http://localhost/ping || exit 1"],
         "interval": 30,
         "timeout": 5,
         "retries": 3,
-        "startPeriod": 30
+        "startPeriod": 60
       }
     }
   ]

@@ -5,15 +5,6 @@ import { createEdgeRouter } from "next-connect";
 
 const router = createEdgeRouter<NextRequest, NextFetchEvent>();
 
-router.get("/ping", () => {
-  return new NextResponse("pong", {
-    status: 200,
-    headers: {
-      "Content-Type": "text/plain",
-    },
-  });
-});
-
 router.use(async (request, event, next) => {
   return next();
 });
