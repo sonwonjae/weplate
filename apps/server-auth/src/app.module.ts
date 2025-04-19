@@ -5,8 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { KakaoModule } from './kakao/kakao.module';
+import { PingModule } from './ping/ping.module';
 import { SupabaseModule } from './supabase/supabase.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -15,6 +15,7 @@ import { SupabaseModule } from './supabase/supabase.module';
     SupabaseModule,
     KakaoModule,
     AuthModule,
+    PingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
