@@ -10,6 +10,9 @@ on:
 
 env:
   AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: weplate-bucket
+  CODEDEPLOY_APP_NAME: weplate-codedeploy-app
+  CODEDEPLOY_DEPLOYMENT_GROUP: weplate-deploy-group
 
 jobs:
   Merge-Master-Branch-In-Develop-Branch:
@@ -126,3 +129,25 @@ jobs:
             --output text)
           echo "✅ Task registered with revision: $TASK_REVISION"
           echo "TASK_REVISION=$TASK_REVISION" >> $GITHUB_ENV
+
+      - name: Generate AppSpec file
+        run: |
+          envsubst < appspec.template.json > appspec.json
+
+      - name: Zip deploy bundle
+        run: |
+          zip deploy.zip taskdef.json appspec.json
+
+      - name: Upload to S3
+        run: |
+          DEPLOY_BUNDLE_PATH="ecs-releases/weplate-task-${{ steps.bump_version.outputs.new_tag }}.zip"
+          aws s3 cp deploy.zip s3://${{ env.S3_BUCKET_NAME }}/$DEPLOY_BUNDLE_PATH
+          echo "DEPLOY_BUNDLE_PATH=$DEPLOY_BUNDLE_PATH" >> $GITHUB_ENV
+
+      - name: Create CodeDeploy Deployment
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.CODEDEPLOY_APP_NAME }} \
+            --deployment-group-name ${{ env.CODEDEPLOY_DEPLOYMENT_GROUP }} \
+            --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=$DEPLOY_BUNDLE_PATH,bundleType=zip \
+            --file-exists-behavior OVERWRITE
