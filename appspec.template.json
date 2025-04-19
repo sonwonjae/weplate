@@ -12,7 +12,7 @@
           },
           "CapacityProviderStrategy": [
             {
-              "CapacityProvider": "weplate-capacity-provider",
+              "CapacityProvider": "Infra-ECS-Cluster-weplate-bluegreen-cluster-ea0db565-AsgCapacityProvider-mva3b6WcV6XW",
               "Base": 0,
               "Weight": 1
             }
