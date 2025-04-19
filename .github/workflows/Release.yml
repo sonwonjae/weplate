@@ -150,4 +150,3 @@ jobs:
             --application-name ${{ env.CODEDEPLOY_APP_NAME }} \
             --deployment-group-name ${{ env.CODEDEPLOY_DEPLOYMENT_GROUP }} \
             --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=$DEPLOY_BUNDLE_PATH,bundleType=zip \
-            --file-exists-behavior OVERWRITE
