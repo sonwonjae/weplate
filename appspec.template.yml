@@ -3,7 +3,7 @@ Resources:
   - TargetService:
       Type: AWS::ECS::Service
       Properties:
-        TaskDefinition: "weplate-task:$TASK_REVISION"
+        TaskDefinition: "weplate-task"
         LoadBalancerInfo:
           ContainerName: nginx
           ContainerPort: 80
