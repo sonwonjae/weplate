@@ -123,12 +123,12 @@ jobs:
 
       - name: Register ECS Task Definition
         run: |
-          TASK_REVISION=$(aws ecs register-task-definition \
+          TASK_DEF_ARN=$(aws ecs register-task-definition \
             --cli-input-json file://taskdef.json \
-            --query 'taskDefinition.revision' \
+            --query 'taskDefinition.taskDefinitionArn' \
             --output text)
-          echo "✅ Task registered with revision: $TASK_REVISION"
-          echo "TASK_REVISION=$TASK_REVISION" >> $GITHUB_ENV
+            echo "✅ Registered: $TASK_DEF_ARN"
+            echo "TASK_DEFINITION_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
 
       - name: Generate AppSpec file
         run: |
