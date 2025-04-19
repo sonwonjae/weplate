@@ -132,11 +132,11 @@ jobs:
 
       - name: Generate AppSpec file
         run: |
-          envsubst < appspec.template.yml > appspec.yml
+          envsubst < appspec.template.yaml > appspec.yaml
 
       - name: Zip deploy bundle
         run: |
-          zip deploy.zip taskdef.json appspec.yml
+          zip deploy.zip taskdef.json appspec.yaml
 
       - name: Upload to S3
         run: |
