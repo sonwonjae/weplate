@@ -115,7 +115,7 @@ jobs:
             echo "🔨 Push Complete weplate/$NAME:$VERSION in $ECR_REGISTRY"
           done
 
-      - name: Determine ASG for deployment
+      - name: Determine ASG and Apply Desired Scaling
         run: |
           BLUE_COUNT=$(aws autoscaling describe-auto-scaling-groups \
             --auto-scaling-group-names weplate-blue-asg \
@@ -128,34 +128,54 @@ jobs:
           echo "Green count: $GREEN_COUNT"
 
           if [ "$BLUE_COUNT" -eq 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
+            echo "🟦 No ASG running. Blue will be launched."
             TARGET_ASG="weplate-blue-asg"
             DELETE_ASG=""
+
+            aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --min-size 1 --desired-capacity 1
+            aws autoscaling start-instance-refresh \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --strategy Rolling
+
           elif [ "$BLUE_COUNT" -gt 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
+            echo "🟩 Blue is running. Deploying to Green."
             TARGET_ASG="weplate-green-asg"
             DELETE_ASG="weplate-blue-asg"
+
+            aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --min-size 1 --desired-capacity 1
+            aws autoscaling start-instance-refresh \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --strategy Rolling
+
           elif [ "$GREEN_COUNT" -gt 0 ] && [ "$BLUE_COUNT" -eq 0 ]; then
+            echo "🟦 Green is running. Deploying to Blue."
             TARGET_ASG="weplate-blue-asg"
             DELETE_ASG="weplate-green-asg"
+
+            aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --min-size 1 --desired-capacity 1
+            aws autoscaling start-instance-refresh \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --strategy Rolling
+
           else
-            echo "❌ Error: both ASGs have instances. Cannot safely determine deployment target."
-            exit 1
+            echo "⚠️ Blue and Green are both alive. Forcing deploy to Blue & shutting down Green."
+            TARGET_ASG="weplate-blue-asg"
+            DELETE_ASG="weplate-green-asg"
+
+            aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --min-size 1 --desired-capacity 1
+            aws autoscaling start-instance-refresh \
+              --auto-scaling-group-name "$TARGET_ASG" \
+              --strategy Rolling
+
+            aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name "$DELETE_ASG" \
+              --min-size 0 --desired-capacity 0
           fi
-
-          echo "TARGET_ASG=$TARGET_ASG" >> $GITHUB_ENV
-          echo "DELETE_ASG=$DELETE_ASG" >> $GITHUB_ENV
-
-      - name: Launch Target ASG
-        run: |
-          aws autoscaling update-auto-scaling-group \
-            --auto-scaling-group-name "$TARGET_ASG" \
-            --min-size 1 --desired-capacity 1
-          aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name "$TARGET_ASG" \
-            --strategy Rolling
-
-      - name: Shutdown Previous ASG
-        if: ${{ env.DELETE_ASG != '' }}
-        run: |
-          aws autoscaling update-auto-scaling-group \
-            --auto-scaling-group-name "$DELETE_ASG" \
-            --min-size 0 --desired-capacity 0
