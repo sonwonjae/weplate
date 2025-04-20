@@ -134,7 +134,7 @@ jobs:
 
             aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name "$TARGET_ASG" \
-              --min-size 1 --desired-capacity 1
+              --min-size 1 --max-size 1 --desired-capacity 1
             aws autoscaling start-instance-refresh \
               --auto-scaling-group-name "$TARGET_ASG" \
               --strategy Rolling
@@ -146,7 +146,7 @@ jobs:
 
             aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name "$TARGET_ASG" \
-              --min-size 1 --desired-capacity 1
+              --min-size 1 --max-size 1 --desired-capacity 1
             aws autoscaling start-instance-refresh \
               --auto-scaling-group-name "$TARGET_ASG" \
               --strategy Rolling
@@ -158,7 +158,7 @@ jobs:
 
             aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name "$TARGET_ASG" \
-              --min-size 1 --desired-capacity 1
+              --min-size 1 --max-size 1 --desired-capacity 1
             aws autoscaling start-instance-refresh \
               --auto-scaling-group-name "$TARGET_ASG" \
               --strategy Rolling
@@ -170,7 +170,7 @@ jobs:
 
             aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name "$TARGET_ASG" \
-              --min-size 1 --desired-capacity 1
+              --min-size 1 --max-size 1 --desired-capacity 1
             aws autoscaling start-instance-refresh \
               --auto-scaling-group-name "$TARGET_ASG" \
               --strategy Rolling
