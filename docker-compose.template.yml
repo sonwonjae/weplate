@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: apps/client-weplate/Dockerfile
-    image: weplate/client-weplate:$VERSION
+    image: $ECR_REGISTRY/weplate/client-weplate:$VERSION
     ports:
       - "1111:1111"
 
@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: apps/server-api/Dockerfile
-    image: weplate/server-api:$VERSION
+    image: $ECR_REGISTRY/weplate/server-api:$VERSION
     ports:
       - "7777:7777"
 
@@ -23,14 +23,14 @@ services:
     build:
       context: .
       dockerfile: apps/server-auth/Dockerfile
-    image: weplate/server-auth:$VERSION
+    image: $ECR_REGISTRY/weplate/server-auth:$VERSION
     ports:
       - "5555:5555"
 
   nginx:
     container_name: nginx
     build: apps/nginx
-    image: weplate/nginx:$VERSION
+    image: $ECR_REGISTRY/weplate/nginx:$VERSION
     ports:
       - "80:80"
     depends_on:
