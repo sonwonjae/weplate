@@ -1,7 +1,14 @@
-FROM nginx:stable-alpine
+FROM amazonlinux:2023
 
-COPY nginx.op.conf /etc/nginx/nginx.conf
+RUN dnf -y update && \
+    dnf install -y nginx jq gettext curl && \
+    dnf clean all
+
+COPY nginx.op.template.conf /etc/nginx/nginx.op.template.conf
+COPY entrypoint.sh /entrypoint.sh
+
+RUN chmod +x /entrypoint.sh
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["/entrypoint.sh"]
