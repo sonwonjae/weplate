@@ -87,6 +87,8 @@ jobs:
 
       - name: Generate docker-compose.yml from template and Upload to S3
         run: |
+          export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
           export VERSION=${{ steps.bump_version.outputs.new_tag }}
           envsubst < docker-compose.template.yml > docker-compose.yml
           aws s3 cp docker-compose.yml s3://${{ env.S3_BUCKET_NAME }}/ecs-releases/docker-compose.yml
