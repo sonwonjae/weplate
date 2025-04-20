@@ -152,10 +152,6 @@ jobs:
               --auto-scaling-group-name "$TARGET_ASG" \
               --strategy Rolling
 
-            aws autoscaling update-auto-scaling-group \
-            --auto-scaling-group-name "$DELETE_ASG" \
-            --min-size 0  --max-size 0 --desired-capacity 0
-
           elif [ "$GREEN_COUNT" -gt 0 ] && [ "$BLUE_COUNT" -eq 0 ]; then
             echo "🟦 Green is running. Deploying to Blue."
             TARGET_ASG="weplate-blue-asg"
@@ -167,10 +163,6 @@ jobs:
             aws autoscaling start-instance-refresh \
               --auto-scaling-group-name "$TARGET_ASG" \
               --strategy Rolling
-
-            aws autoscaling update-auto-scaling-group \
-              --auto-scaling-group-name "$DELETE_ASG" \
-              --min-size 0  --max-size 0 --desired-capacity 0
 
           else
             echo "⚠️ Blue and Green are both alive. Forcing deploy to Blue & shutting down Green."
@@ -186,5 +178,68 @@ jobs:
 
             aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name "$DELETE_ASG" \
-              --min-size 0  --max-size 0 --desired-capacity 0
+              --min-size 0 --max-size 0 --desired-capacity 0
+          fi
+
+          echo "TARGET_ASG=$TARGET_ASG" >> $GITHUB_ENV
+          echo "DELETE_ASG=$DELETE_ASG" >> $GITHUB_ENV
+
+      - name: Wait for ALB Health Check → Switch Listener → Shutdown old ASG
+        run: |
+          TG_NAME="weplate-tg-${TARGET_ASG##*-}"
+          TG_ARN=$(aws elbv2 describe-target-groups \
+            --names "$TG_NAME" \
+            --query "TargetGroups[0].TargetGroupArn" --output text)
+
+          echo "🩺 Waiting for healthy target group: $TG_NAME"
+
+          START_TIME=$(date +%s)
+          while true; do
+            STATUS=$(aws elbv2 describe-target-health \
+              --target-group-arn "$TG_ARN" \
+              --query "TargetHealthDescriptions[].TargetHealth.State" \
+              --output text)
+
+            echo "Current target status: $STATUS"
+
+            if [[ "$STATUS" == "healthy" ]]; then
+              echo "✅ All targets healthy"
+              break
+            fi
+
+            NOW=$(date +%s)
+            ELAPSED=$((NOW - START_TIME))
+            if [[ "$ELAPSED" -gt 300 ]]; then
+              echo "❌ Timeout after 5 minutes waiting for ALB health check"
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+          echo "🔁 Switching ALB listener to target group $TG_NAME"
+
+          for PORT in 80 443; do
+            LISTENER_ARN=$(aws elbv2 describe-listeners \
+              --load-balancer-arn ${{ secrets.WEPLATE_ALB_ARN }} \
+              --query "Listeners[?Port==\`${PORT}\`].ListenerArn" \
+              --output text)
+
+            echo "🔄 Modifying listener on port $PORT: $LISTENER_ARN"
+
+            aws elbv2 modify-listener \
+              --listener-arn "$LISTENER_ARN" \
+              --default-actions Type=forward,TargetGroupArn="$TG_ARN"
+          done
+
+          echo "✅ ALB listener now forwards to $TG_NAME"
+
+          if [ "$DELETE_ASG" != "" ]; then
+            echo "📦 Shutting down previous ASG: $DELETE_ASG"
+            aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name "$DELETE_ASG" \
+              --min-size 0 --desired-capacity 0 --max-size 0
+            echo "✅ $DELETE_ASG is now disabled"
+          else
+            echo "ℹ️ No previous ASG to shut down"
           fi
