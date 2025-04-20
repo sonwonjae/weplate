@@ -85,10 +85,11 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
 
-      - name: Generate docker-compose.yml from template
+      - name: Generate docker-compose.yml from template and Upload to S3
         run: |
           export VERSION=${{ steps.bump_version.outputs.new_tag }}
           envsubst < docker-compose.template.yml > docker-compose.yml
+          aws s3 cp docker-compose.yml s3://${{ env.S3_BUCKET_NAME }}/ecs-releases/docker-compose.yml
 
       - name: Build, tag and push all Docker images to ECR
         run: |
@@ -114,39 +115,47 @@ jobs:
             echo "🔨 Push Complete weplate/$NAME:$VERSION in $ECR_REGISTRY"
           done
 
-      - name: Generate ECS task definition
+      - name: Determine ASG for deployment
         run: |
-          export ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-          export ECR_REGISTRY=$ACCOUNT_ID.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
-          export VERSION="${{ steps.bump_version.outputs.new_tag }}"
-          envsubst < taskdef.template.json > taskdef.json
+          BLUE_COUNT=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names weplate-blue-asg \
+            --query "AutoScalingGroups[0].Instances | length(@)" --output text)
+          GREEN_COUNT=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names weplate-green-asg \
+            --query "AutoScalingGroups[0].Instances | length(@)" --output text)
 
-      - name: Register ECS Task Definition
-        run: |
-          TASK_DEF_ARN=$(aws ecs register-task-definition \
-            --cli-input-json file://taskdef.json \
-            --query 'taskDefinition.taskDefinitionArn' \
-            --output text)
-            echo "✅ Registered: $TASK_DEF_ARN"
-            echo "TASK_DEFINITION_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
+          echo "Blue count: $BLUE_COUNT"
+          echo "Green count: $GREEN_COUNT"
 
-      - name: Generate AppSpec file
-        run: |
-          envsubst < appspec.template.yaml > appspec.yaml
+          if [ "$BLUE_COUNT" -eq 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
+            TARGET_ASG="weplate-blue-asg"
+            DELETE_ASG=""
+          elif [ "$BLUE_COUNT" -gt 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
+            TARGET_ASG="weplate-green-asg"
+            DELETE_ASG="weplate-blue-asg"
+          elif [ "$GREEN_COUNT" -gt 0 ] && [ "$BLUE_COUNT" -eq 0 ]; then
+            TARGET_ASG="weplate-blue-asg"
+            DELETE_ASG="weplate-green-asg"
+          else
+            echo "❌ Error: both ASGs have instances. Cannot safely determine deployment target."
+            exit 1
+          fi
 
-      - name: Zip deploy bundle
-        run: |
-          zip deploy.zip taskdef.json appspec.yaml
+          echo "TARGET_ASG=$TARGET_ASG" >> $GITHUB_ENV
+          echo "DELETE_ASG=$DELETE_ASG" >> $GITHUB_ENV
 
-      - name: Upload to S3
+      - name: Launch Target ASG
         run: |
-          DEPLOY_BUNDLE_PATH="ecs-releases/weplate-task-${{ steps.bump_version.outputs.new_tag }}.zip"
-          aws s3 cp deploy.zip s3://${{ env.S3_BUCKET_NAME }}/$DEPLOY_BUNDLE_PATH
-          echo "DEPLOY_BUNDLE_PATH=$DEPLOY_BUNDLE_PATH" >> $GITHUB_ENV
+          aws autoscaling update-auto-scaling-group \
+            --auto-scaling-group-name "$TARGET_ASG" \
+            --min-size 1 --desired-capacity 1
+          aws autoscaling start-instance-refresh \
+            --auto-scaling-group-name "$TARGET_ASG" \
+            --strategy Rolling
 
-      - name: Create CodeDeploy Deployment
+      - name: Shutdown Previous ASG
+        if: ${{ env.DELETE_ASG != '' }}
         run: |
-          aws deploy create-deployment \
-            --application-name ${{ env.CODEDEPLOY_APP_NAME }} \
-            --deployment-group-name ${{ env.CODEDEPLOY_DEPLOYMENT_GROUP }} \
-            --s3-location bucket=${{ env.S3_BUCKET_NAME }},key=$DEPLOY_BUNDLE_PATH,bundleType=zip
+          aws autoscaling update-auto-scaling-group \
+            --auto-scaling-group-name "$DELETE_ASG" \
+            --min-size 0 --desired-capacity 0
