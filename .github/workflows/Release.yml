@@ -186,7 +186,9 @@ jobs:
 
       - name: Wait for ALB Health Check → Switch Listener → Shutdown old ASG
         run: |
-          TG_NAME="weplate-tg-${TARGET_ASG##*-}"
+          ASG_COLOR="${TARGET_ASG##*-}"
+          TG_NAME="weplate-tg-${ASG_COLOR}"
+          echo "✅ [$ASG_COLOR] start"
           TG_ARN=$(aws elbv2 describe-target-groups \
             --names "$TG_NAME" \
             --query "TargetGroups[0].TargetGroupArn" --output text)
