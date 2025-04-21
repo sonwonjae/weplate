@@ -115,51 +115,92 @@ jobs:
             docker push $ECR_REGISTRY/weplate/$NAME:$VERSION
             echo "🔨 Push Complete weplate/$NAME:$VERSION in $ECR_REGISTRY"
           done
-
       - name: Determine ASG and Apply Desired Scaling
         run: |
           BLUE_NAME="blue"
           GREEN_NAME="green"
-          BLUE_ASG="weplate-$BLUE_NAME-asg"
-          GREEN_ASG="weplate-$GREEN_NAME-asg"
 
-          BLUE_COUNT=$(aws autoscaling describe-auto-scaling-groups \
-            --auto-scaling-group-names "$BLUE_ASG" \
-            --query "AutoScalingGroups[0].Instances | length(@)" --output text)
-          GREEN_COUNT=$(aws autoscaling describe-auto-scaling-groups \
-            --auto-scaling-group-names "$GREEN_ASG" \
-            --query "AutoScalingGroups[0].Instances | length(@)" --output text)
+          # ALB 리스너로부터 TG ARN 확인
+          LISTENER_ARN_80=$(aws elbv2 describe-listeners \
+            --load-balancer-arn ${{ secrets.WEPLATE_ALB_ARN }} \
+            --query "Listeners[?Port==\`80\`].ListenerArn" --output text)
 
-          echo "Blue count: $BLUE_COUNT"
-          echo "Green count: $GREEN_COUNT"
+          LISTENER_ARN_8080=$(aws elbv2 describe-listeners \
+            --load-balancer-arn ${{ secrets.WEPLATE_ALB_ARN }} \
+            --query "Listeners[?Port==\`8080\`].ListenerArn" --output text)
 
-          if [ "$BLUE_COUNT" -eq 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
-            ACTIVE_ASG_COLOR="$BLUE_NAME"
-            DELETE_ASG_COLOR="$GREEN_NAME"
-          elif [ "$BLUE_COUNT" -gt 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
-            ACTIVE_ASG_COLOR="$GREEN_NAME"
-            DELETE_ASG_COLOR="$BLUE_NAME"
-          elif [ "$GREEN_COUNT" -gt 0 ] && [ "$BLUE_COUNT" -eq 0 ]; then
-            ACTIVE_ASG_COLOR="$BLUE_NAME"
-            DELETE_ASG_COLOR="$GREEN_NAME"
-          else
-            ACTIVE_ASG_COLOR="$BLUE_NAME"
-            DELETE_ASG_COLOR="$GREEN_NAME"
-          fi
+          TG_ARN_80=$(aws elbv2 describe-listeners \
+            --listener-arn "$LISTENER_ARN_80" \
+            --query "Listeners[0].DefaultActions[0].TargetGroupArn" --output text)
+
+          TG_ARN_8080=$(aws elbv2 describe-listeners \
+            --listener-arn "$LISTENER_ARN_8080" \
+            --query "Listeners[0].DefaultActions[0].TargetGroupArn" --output text)
+
+          echo "🌐 Port 80 TG ARN: $TG_ARN_80"
+          echo "🛠️  Port 8080 TG ARN: $TG_ARN_8080"
+
+          # 등록된 Target Group 이름 확인
+          TG_NAME_80=$(aws elbv2 describe-target-groups \
+            --target-group-arns "$TG_ARN_80" \
+            --query "TargetGroups[0].TargetGroupName" --output text)
+
+          TG_NAME_8080=$(aws elbv2 describe-target-groups \
+            --target-group-arns "$TG_ARN_8080" \
+            --query "TargetGroups[0].TargetGroupName" --output text)
+
+          echo "🎯 Port 80 TargetGroup Name: $TG_NAME_80"
+          echo "🎯 Port 8080 TargetGroup Name: $TG_NAME_8080"
+
+          # 이름 끝의 색상 추출
+          DELETE_ASG_COLOR=$(echo "$TG_NAME_80" | awk -F'-' '{ print $NF }')
+          ACTIVE_ASG_COLOR=$(echo "$TG_NAME_8080" | awk -F'-' '{ print $NF }')
+
+          echo "🔁 DELETE_ASG_COLOR from port 80: $DELETE_ASG_COLOR"
+          echo "🚀 ACTIVE_ASG_COLOR from port 8080: $ACTIVE_ASG_COLOR"
 
           ACTIVE_ASG="weplate-$ACTIVE_ASG_COLOR-asg"
           DELETE_ASG="weplate-$DELETE_ASG_COLOR-asg"
 
-          # Apply scaling
+          # 현재 ACTIVE_ASG 인스턴스 확인 및 종료
+          ACTIVE_COUNT=$(aws autoscaling describe-auto-scaling-groups \
+            --auto-scaling-group-names "$ACTIVE_ASG" \
+            --query "AutoScalingGroups[0].Instances | length(@)" --output text)
+
+          if [ "$ACTIVE_COUNT" -gt 0 ]; then
+            echo "🛑 $ACTIVE_ASG already has $ACTIVE_COUNT instance(s) running. Scaling to 0 before redeploy."
+
+            aws autoscaling update-auto-scaling-group \
+              --auto-scaling-group-name "$ACTIVE_ASG" \
+              --min-size 0 --desired-capacity 0 --max-size 0
+
+            echo "⏳ Waiting for $ACTIVE_ASG to fully scale down..."
+            while true; do
+              INSTANCE_COUNT=$(aws autoscaling describe-auto-scaling-groups \
+                --auto-scaling-group-names "$ACTIVE_ASG" \
+                --query "AutoScalingGroups[0].Instances | length(@)" --output text)
+
+              echo "🔄 $ACTIVE_ASG instance count: $INSTANCE_COUNT"
+
+              if [ "$INSTANCE_COUNT" -eq 0 ]; then
+                echo "✅ All instances in $ACTIVE_ASG have been terminated."
+                break
+              fi
+
+              sleep 10
+            done
+          else
+            echo "✅ $ACTIVE_ASG is already empty. Proceeding to launch."
+          fi
+
+          echo "🚀 Launching new instance in $ACTIVE_ASG"
           aws autoscaling update-auto-scaling-group \
             --auto-scaling-group-name "$ACTIVE_ASG" \
             --min-size 1 --max-size 1 --desired-capacity 1
-          aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name "$ACTIVE_ASG" \
-            --strategy Rolling
 
           echo "ACTIVE_ASG_COLOR=$ACTIVE_ASG_COLOR" >> $GITHUB_ENV
           echo "DELETE_ASG_COLOR=$DELETE_ASG_COLOR" >> $GITHUB_ENV
+
       - name: Wait for ALB Health Check → Switch Listener → Shutdown old ASG
         run: |
           DEPLOY_TG_NAME="weplate-tg-${ACTIVE_ASG_COLOR}"
