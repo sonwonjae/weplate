@@ -214,7 +214,8 @@ jobs:
 
           echo "ACTIVE_ASG_COLOR=$ACTIVE_ASG_COLOR" >> $GITHUB_ENV
           echo "DELETE_ASG_COLOR=$DELETE_ASG_COLOR" >> $GITHUB_ENV
-
+          echo "DELETE_ASG=$DELETE_ASG" >> $GITHUB_ENV
+          
       - name: Wait for ALB Health Check → Switch Listener → Shutdown old ASG
         run: |
           DEPLOY_TG_NAME="weplate-tg-${ACTIVE_ASG_COLOR}"
