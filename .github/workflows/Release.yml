@@ -15,39 +15,8 @@ env:
   CODEDEPLOY_DEPLOYMENT_GROUP: weplate-deploy-group
 
 jobs:
-  check-main-updated:
+  deploy:
     runs-on: ubuntu-latest
-    outputs:
-      should_deploy: ${{ steps.compare.outputs.should_deploy }}
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: main
-
-      - name: Compare main with origin/main
-        id: compare
-        run: |
-          git remote set-url origin https://github.com/${{ github.repository }}.git
-          git fetch origin main
-          LOCAL_SHA=$(git rev-parse HEAD)
-          REMOTE_SHA=$(git rev-parse origin/main)
-
-          echo "📟 Local HEAD: $LOCAL_SHA"
-          echo "📟 Remote HEAD: $REMOTE_SHA"
-
-          if [ "$LOCAL_SHA" = "$REMOTE_SHA" ]; then
-            echo "✅ No changes. Skipping deploy."
-            echo "should_deploy=false" >> $GITHUB_OUTPUT
-          else
-            echo "🚀 Main branch changed. Proceeding with deploy."
-            echo "should_deploy=true" >> $GITHUB_OUTPUT
-
-  deploy-if-updated:
-    runs-on: ubuntu-latest
-    needs: check-main-updated
-    if: needs.check-main-updated.outputs.should_deploy == 'true'
     steps:
       - name: Checkout main
         uses: actions/checkout@v4

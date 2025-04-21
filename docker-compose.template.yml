@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   client-weplate:
     container_name: client-weplate
@@ -8,6 +8,11 @@ services:
     image: $ECR_REGISTRY/weplate/client-weplate:$VERSION
     ports:
       - "1111:1111"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
 
   server-api:
     container_name: server-api
@@ -17,6 +22,11 @@ services:
     image: $ECR_REGISTRY/weplate/server-api:$VERSION
     ports:
       - "7777:7777"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
 
   server-auth:
     container_name: server-auth
@@ -26,6 +36,11 @@ services:
     image: $ECR_REGISTRY/weplate/server-auth:$VERSION
     ports:
       - "5555:5555"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 512M
 
   nginx:
     container_name: nginx
@@ -37,6 +52,11 @@ services:
       - client-weplate
       - server-api
       - server-auth
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 256M
 
   nginx-health-check:
     container_name: nginx-health-check
@@ -48,3 +68,8 @@ services:
       - client-weplate
       - server-api
       - server-auth
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 256M
