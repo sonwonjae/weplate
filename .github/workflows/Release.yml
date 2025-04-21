@@ -148,7 +148,7 @@ jobs:
           fi
 
           ACTIVE_ASG="weplate-$ACTIVE_ASG_COLOR-asg"
-          DELETE_ASG="${DELETE_ASG_COLOR:+weplate-$DELETE_ASG_COLOR-asg}"
+          DELETE_ASG="weplate-$DELETE_ASG_COLOR-asg"
 
           # Apply scaling
           aws autoscaling update-auto-scaling-group \
@@ -225,7 +225,8 @@ jobs:
 
           echo "✅ ALB listener forwarding complete"
 
-          if [ "$DELETE_ASG" != "" ]; then
+          echo "ℹ️ Delete Start '$DELETE_ASG_COLOR'"
+          if [ "$DELETE_ASG_COLOR" != "" ]; then
             echo "📦 Shutting down previous ASG: $DELETE_ASG"
             aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name "$DELETE_ASG" \
