@@ -37,3 +37,14 @@ services:
       - client-weplate
       - server-api
       - server-auth
+
+  nginx-health-check:
+    container_name: nginx-health-check
+    build: apps/nginx
+    image: $ECR_REGISTRY/weplate/nginx:$VERSION
+    ports:
+      - "8080:80"
+    depends_on:
+      - client-weplate
+      - server-api
+      - server-auth

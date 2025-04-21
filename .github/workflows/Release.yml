@@ -134,25 +134,28 @@ jobs:
           echo "Green count: $GREEN_COUNT"
 
           if [ "$BLUE_COUNT" -eq 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
-            ASG_COLOR="$BLUE_NAME"
+            ACTIVE_ASG_COLOR="$BLUE_NAME"
+            DELETE_ASG_COLOR="$GREEN_NAME"
           elif [ "$BLUE_COUNT" -gt 0 ] && [ "$GREEN_COUNT" -eq 0 ]; then
-            ASG_COLOR="$GREEN_NAME"
+            ACTIVE_ASG_COLOR="$GREEN_NAME"
+            DELETE_ASG_COLOR="$BLUE_NAME"
           elif [ "$GREEN_COUNT" -gt 0 ] && [ "$BLUE_COUNT" -eq 0 ]; then
-            ASG_COLOR="$BLUE_NAME"
+            ACTIVE_ASG_COLOR="$BLUE_NAME"
+            DELETE_ASG_COLOR="$GREEN_NAME"
           else
-            ASG_COLOR="$BLUE_NAME"
-            DELETE_COLOR="$GREEN_NAME"
+            ACTIVE_ASG_COLOR="$BLUE_NAME"
+            DELETE_ASG_COLOR="$GREEN_NAME"
           fi
 
-          TARGET_ASG="weplate-$ASG_COLOR-asg"
-          DELETE_ASG="${DELETE_COLOR:+weplate-$DELETE_COLOR-asg}"
+          ACTIVE_ASG="weplate-$ACTIVE_ASG_COLOR-asg"
+          DELETE_ASG="${DELETE_ASG_COLOR:+weplate-$DELETE_ASG_COLOR-asg}"
 
           # Apply scaling
           aws autoscaling update-auto-scaling-group \
-            --auto-scaling-group-name "$TARGET_ASG" \
+            --auto-scaling-group-name "$ACTIVE_ASG" \
             --min-size 1 --max-size 1 --desired-capacity 1
           aws autoscaling start-instance-refresh \
-            --auto-scaling-group-name "$TARGET_ASG" \
+            --auto-scaling-group-name "$ACTIVE_ASG" \
             --strategy Rolling
 
           # If both alive, shutdown DELETE
@@ -162,29 +165,34 @@ jobs:
               --min-size 0 --max-size 0 --desired-capacity 0
           fi
 
-          echo "ASG_COLOR=$ASG_COLOR" >> $GITHUB_ENV
-  
+          echo "ACTIVE_ASG_COLOR=$ACTIVE_ASG_COLOR" >> $GITHUB_ENV
+          echo "DELETE_ASG_COLOR=$DELETE_ASG_COLOR" >> $GITHUB_ENV
       - name: Wait for ALB Health Check → Switch Listener → Shutdown old ASG
         run: |
-          TG_NAME="weplate-tg-${ASG_COLOR}"
-          echo "✅ [$ASG_COLOR] start"
-          TG_ARN=$(aws elbv2 describe-target-groups \
-            --names "$TG_NAME" \
+          DEPLOY_TG_NAME="weplate-tg-${ACTIVE_ASG_COLOR}"
+          CURRENT_TG_NAME="weplate-tg-${DELETE_ASG_COLOR}"
+
+          DEPLOY_TG_ARN=$(aws elbv2 describe-target-groups \
+            --names "$DEPLOY_TG_NAME" \
             --query "TargetGroups[0].TargetGroupArn" --output text)
 
-          echo "🩺 Waiting for healthy target group: $TG_NAME"
+          CURRENT_TG_ARN=$(aws elbv2 describe-target-groups \
+            --names "$CURRENT_TG_NAME" \
+            --query "TargetGroups[0].TargetGroupArn" --output text)
+
+          echo "🩺 Waiting for healthy targets in: $DEPLOY_TG_NAME"
 
           START_TIME=$(date +%s)
           while true; do
             STATUS=$(aws elbv2 describe-target-health \
-              --target-group-arn "$TG_ARN" \
+              --target-group-arn "$DEPLOY_TG_ARN" \
               --query "TargetHealthDescriptions[].TargetHealth.State" \
               --output text)
 
             echo "Current target status: $STATUS"
 
             if [[ "$STATUS" == "healthy" ]]; then
-              echo "✅ All targets healthy"
+              echo "✅ All targets in $DEPLOY_TG_NAME are healthy"
               break
             fi
 
@@ -198,7 +206,7 @@ jobs:
             sleep 10
           done
 
-          echo "🔁 Switching ALB listener to target group $TG_NAME"
+          echo "🔁 Switching ALB listeners"
 
           for PORT in 80 443; do
             LISTENER_ARN=$(aws elbv2 describe-listeners \
@@ -206,14 +214,23 @@ jobs:
               --query "Listeners[?Port==\`${PORT}\`].ListenerArn" \
               --output text)
 
-            echo "🔄 Modifying listener on port $PORT: $LISTENER_ARN"
-
+            echo "🔄 Port $PORT → $DEPLOY_TG_NAME"
             aws elbv2 modify-listener \
               --listener-arn "$LISTENER_ARN" \
-              --default-actions Type=forward,TargetGroupArn="$TG_ARN"
+              --default-actions Type=forward,TargetGroupArn="$DEPLOY_TG_ARN"
           done
 
-          echo "✅ ALB listener now forwards to $TG_NAME"
+          LISTENER_ARN_8080=$(aws elbv2 describe-listeners \
+            --load-balancer-arn ${{ secrets.WEPLATE_ALB_ARN }} \
+            --query "Listeners[?Port==\`8080\`].ListenerArn" \
+            --output text)
+
+          echo "🔄 Port 8080 → $CURRENT_TG_NAME"
+          aws elbv2 modify-listener \
+            --listener-arn "$LISTENER_ARN_8080" \
+            --default-actions Type=forward,TargetGroupArn="$CURRENT_TG_ARN"
+
+          echo "✅ ALB listener forwarding complete"
 
           if [ "$DELETE_ASG" != "" ]; then
             echo "📦 Shutting down previous ASG: $DELETE_ASG"
