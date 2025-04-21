@@ -15,9 +15,8 @@ env:
   CODEDEPLOY_DEPLOYMENT_GROUP: weplate-deploy-group
 
 jobs:
-  Merge-Master-Branch-In-Develop-Branch:
+  deploy:
     runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
@@ -37,10 +36,6 @@ jobs:
           git checkout develop
           git merge origin/main --no-ff --no-edit --allow-unrelated-histories
           git push origin develop
-
-      - name: Checkout main
-        run: |
-          git checkout main
 
       - name: Get latest tag
         id: get_tag
@@ -111,10 +106,13 @@ jobs:
 
           for NAME in "${!services[@]}"; do
             echo "🔨 Pushing weplate/$NAME:$VERSION"
-            echo "🔨 weplate/$NAME:$VERSION tagging clear"
             docker push $ECR_REGISTRY/weplate/$NAME:$VERSION
             echo "🔨 Push Complete weplate/$NAME:$VERSION in $ECR_REGISTRY"
           done
+
+  determine-asg-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
       - name: Determine ASG and Apply Desired Scaling
         run: |
           BLUE_NAME="blue"
@@ -288,7 +286,6 @@ jobs:
               --auto-scaling-group-name "$DELETE_ASG" \
               --min-size 0 --desired-capacity 0 --max-size 0
 
-            # Step 2: Terminate instances (if any)
             INSTANCE_IDS=$(aws autoscaling describe-auto-scaling-groups \
               --auto-scaling-group-names "$DELETE_ASG" \
               --query "AutoScalingGroups[0].Instances[*].InstanceId" \
